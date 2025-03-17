@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 13312, guid: 0000000000000000e000000000000000, type: 0}
-  m_Name: pacman-sprites_112
+  m_Name: pacman-sprites_56
   m_EditorClassIdentifier: 
-  m_Sprite: {fileID: -3245581298192158213, guid: 1b5b76049093b6f4b93d208c5da045e5, type: 3}
+  m_Sprite: {fileID: 693815317947837326, guid: 1b5b76049093b6f4b93d208c5da045e5, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_Transform:
     e00: 1

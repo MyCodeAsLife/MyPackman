@@ -1,24 +1,24 @@
 using Assets.MyPackman.Presenter;
 using Assets.MyPackman.Settings;
-using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.UIElements;
 
 public class Packman : MonoBehaviour
 {
-    private readonly Vector3[] DirectionOffset = new Vector3[4] { new Vector3(-GameSettings.Step, 0f, 0f), new Vector3(GameSettings.Step, 0f, 0f),
-                                                                  new Vector3(0f, GameSettings.Step, 0f), new Vector3(0f, -GameSettings.Step, 0f) };   // Вынести в настройки??
+    //private readonly Vector3[] DirectionOffset = new Vector3[4] { new Vector3(-GameSettings.MovementStep, 0f, 0f),
+    //                                                              new Vector3(GameSettings.MovementStep, 0f, 0f),
+    //                                                              new Vector3(0f, GameSettings.MovementStep, 0f),
+    //                                                              new Vector3(0f, -GameSettings.MovementStep, 0f) };   // Вынести в настройки??
     private readonly LevelMap _map = new LevelMap();
-    private Coroutine _movement;
-    private Transform _transform;
+    //private Coroutine _movement;
+    //private Transform _transform;
     private PlayerInputActions _inputActions;
-    private bool[] _directionsPresed = new bool[4];
-    private int _lastDirection = GameSettings.NoDirection;
+    //private bool[] _directionsPresed = new bool[4];
+    //private int _lastDirection = GameSettings.NoDirection;
     private LevelConstructor _constructor;                                                                  // для тестов
 
-    private event Action Moved;
+    //private event Action Moved;
 
     private void OnEnable()
     {
@@ -154,21 +154,12 @@ public class Packman : MonoBehaviour
         _movement = null;
     }
 
-    private bool IsAvalableCell(Vector3 nexpPosition, int direction)
+    private bool IsAvalableCell(Vector3 nextPosition, int direction)
     {
-        int x = (int)(Mathf.Ceil(nexpPosition.x * 10));
-        int y = (int)(Mathf.Ceil(nexpPosition.y * 10));
+        int x = Mathf.RoundToInt(nextPosition.x);
+        int y = Mathf.RoundToInt(nextPosition.y);
 
-        Debug.Log($"{x} {y}");                                                                    //++++++++++++++++++++++++++++++++
-
-        if (x % 2 != 0 || y % 2 != 0)
-        {
-            nexpPosition = nexpPosition + DirectionOffset[direction];
-            //Debug.Log(nexpPosition);                                                                    //++++++++++++++++++++++++++++++++
-        }
-
-
-        if (GetMapTile(nexpPosition) == 0)
+        if (GetMapTile(nextPosition) == 1)            // Magic
             return false;
 
         return true;
@@ -176,12 +167,9 @@ public class Packman : MonoBehaviour
 
     private int GetMapTile(Vector3 position)
     {
-        int x = (int)(Mathf.Round(position.x * 10)) / 2;
-        int y = (int)(Mathf.Round(position.y * 10)) / 2;
-        //var x = (int)(position.x / GameSettings.GridCellSize);
-        //var y = (int)(position.y / GameSettings.GridCellSize);
-        Debug.Log(position);                                                                    //++++++++++++++++++++++++++++++++
-        Debug.Log($"{x} {y}");                                                                  //+++++++++++++++++++++++++++++++
+        int x = (int)(Mathf.RoundToInt(position.x));
+        int y = (int)(Mathf.RoundToInt(position.y));
+
         Vector3Int pos = new Vector3Int(x, y);                                                  //+++++++++++++++++++++++++++++++
         _constructor.AddTestObject(pos);                                                        //+++++++++++++++++++++++++++++++
         return _map.Map[-y, x];

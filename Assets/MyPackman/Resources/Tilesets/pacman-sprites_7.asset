@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 13312, guid: 0000000000000000e000000000000000, type: 0}
   m_Name: pacman-sprites_7
   m_EditorClassIdentifier: 
-  m_Sprite: {fileID: 1974049601870685115, guid: 1b5b76049093b6f4b93d208c5da045e5, type: 3}
+  m_Sprite: {fileID: 1974049601870685115, guid: 20e7a29e2bd67794ea3e4a20a8ce25be, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_Transform:
     e00: 1

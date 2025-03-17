@@ -2,7 +2,6 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.Tilemaps;
-using UnityEngine.UIElements;
 
 namespace Assets.MyPackman.Presenter
 {
@@ -10,9 +9,9 @@ namespace Assets.MyPackman.Presenter
     {
         [SerializeField] private Tilemap _tilemap;
         [SerializeField] private Tilemap _testTilemap;
-        [SerializeField] private Tile[] _tiles;
+        [SerializeField] private Tile[] _textures;
+        [SerializeField] private Tile[] _sprites;
         [SerializeField] private Packman _player;
-        //[SerializeField] private Palette
         private bool _isTesting = false;                            //для тестов
 
         private LevelMap _map;
@@ -25,13 +24,10 @@ namespace Assets.MyPackman.Presenter
             ConstructLevel();
 
             //Camera position по центру карты
-            float y = _map.Map.GetLength(0) * 0.2f * 0.5f;
-            float x = _map.Map.GetLength(1) * 0.2f * 0.5f;
-            Camera.main.transform.position = new Vector3(x, -y, -10);
-            Debug.Log(Camera.main.pixelHeight);                                             //+++++++++++++++++++++++++++++++++++
-            Debug.Log(Camera.main.pixelWidth);                                             //+++++++++++++++++++++++++++++++++++
-
-            Debug.Log(y + GameSettings.GridCellSize);       // Размер проекции камеры 
+            float y = _map.Map.GetLength(0) * GameSettings.GridCellSize * 0.5f;            // Magic
+            float x = _map.Map.GetLength(1) * GameSettings.GridCellSize * 0.5f;            // Magic
+            Camera.main.transform.position = new Vector3(x, -y, -10);            // Magic
+            //Camera.main.orthographicSize = y + GameSettings.GridCellSize;      // Размер проекции камеры должен быть кратем размерам спрайтов дабы избежать искажений последних
         }
 
         private void ConstructLevel()
@@ -40,10 +36,10 @@ namespace Assets.MyPackman.Presenter
             {
                 for (int x = 0; x < _map.Map.GetLength(1); x++)
                 {
-                    if (_map.Map[y, x] == 0)
-                        _tilemap.SetTile(new Vector3Int(x, -y), _tiles[227]);
-                    else if (_map.Map[y, x] == 3)
-                        Instantiate(_player).transform.position = new Vector3(x * 0.2f, -(y * 0.2f));
+                    if (_map.Map[y, x] > GameSettings.PackmanSpawn)
+                        _tilemap.SetTile(new Vector3Int(x, -y), _textures[_map.Map[y, x]]);
+                    else if (_map.Map[y, x] == GameSettings.PackmanSpawn)
+                        Instantiate(_player).transform.position = new Vector3(x * GameSettings.GridCellSize, -(y * GameSettings.GridCellSize));
                 }
             }
         }
@@ -59,16 +55,16 @@ namespace Assets.MyPackman.Presenter
 
         private IEnumerator Testing(Vector3Int position)                            //для тестов
         {
-            var timer = 1f;
-            var delay = new WaitForSeconds(0.3f);
+            var timer = 1f;            // Magic
+            var delay = new WaitForSeconds(0.3f);            // Magic
 
             while (timer > 0)
             {
-                _testTilemap.SetTile(position, _tiles[93]);
+                _testTilemap.SetTile(position, _textures[93]);
                 yield return delay;
                 _testTilemap.ClearAllTiles();
                 yield return delay;
-                timer -= 0.6f;
+                timer -= 0.6f;            // Magic
             }
 
             _isTesting = false;
