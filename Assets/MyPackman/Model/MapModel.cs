@@ -1,8 +1,8 @@
-public class LevelMap
+public class MapModel
 {
     public int[,] Map;
 
-    public LevelMap()
+    public MapModel()
     {
         Map = new int[,] {
             { 176,228,228,228,228,228,228,228,228,228,228,228,228,228,228,228,228,228,228,228,228,228,228,228,228,228,228,178},
