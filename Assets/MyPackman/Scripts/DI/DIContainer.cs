@@ -26,12 +26,12 @@ namespace DI
         }
 
 
-        public void RegistrTransient<T>(Func<DIContainer, T> factory)
+        public void RegisterTransient<T>(Func<DIContainer, T> factory)
         {
-            RegistrTransient(null, factory);
+            RegisterTransient(null, factory);
         }
 
-        public void RegistrTransient<T>(string tag, Func<DIContainer, T> factory)
+        public void RegisterTransient<T>(string tag, Func<DIContainer, T> factory)
         {
             var key = (tag, typeof(T));
             Register(key, factory, false);
