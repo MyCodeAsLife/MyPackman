@@ -5,14 +5,17 @@ namespace Game.UI
 {
     public class UIGameplayRootBinder : MonoBehaviour
     {
-        private Subject<Unit> _exitSceneSignalSubj;     // Тип объекта в момент подписки на который не срабатывает событие(Объект сигнала)
+        // Тип объекта в момент подписки на который не срабатывает событие(Объект сигнала)
+        private Subject<Unit> _exitSceneSignalSubj;
 
         public void OnGoToMainMenuButtonClick()
         {
-            _exitSceneSignalSubj?.OnNext(Unit.Default);     // Вызываем срабатывание события, передаем туда "ничего"
+            // Вызываем срабатывание события, передаем туда "ничего"
+            _exitSceneSignalSubj?.OnNext(Unit.Default);
         }
 
-        public void Bind(Subject<Unit> exitSceneSignalSubj) // Передаем объект сигнала извне, который не принимает значений
+        // Передаем объект сигнала извне, который не принимает значений
+        public void Bind(Subject<Unit> exitSceneSignalSubj)
         {
             _exitSceneSignalSubj = exitSceneSignalSubj;
         }

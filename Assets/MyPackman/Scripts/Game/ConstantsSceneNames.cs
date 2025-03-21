@@ -1,4 +1,4 @@
-﻿namespace Assets.MyPackman.Scripts.Settings
+﻿namespace Game
 {
     public static class ConstantsSceneNames
     {

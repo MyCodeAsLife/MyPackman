@@ -1,15 +1,23 @@
-using System;
+using R3;
 using UnityEngine;
 
 namespace Game.UI
 {
     public class UIMainMenuRootBinder : MonoBehaviour
     {
-        public event Action GoToGameplayButtonClicked;
+        // Тип объекта в момент подписки на который не срабатывает событие(Объект сигнала)
+        private Subject<Unit> _exitSceneSignalSubj;
 
         public void OnGoToGameplayButtonClick()
         {
-            GoToGameplayButtonClicked?.Invoke();
+            // Вызываем срабатывание события, передаем туда "ничего"
+            _exitSceneSignalSubj?.OnNext(Unit.Default);
+        }
+
+        // Передаем объект сигнала извне, который не принимает значений
+        public void Bind(Subject<Unit> exitSceneSignalSubj)
+        {
+            _exitSceneSignalSubj = exitSceneSignalSubj;
         }
     }
 }

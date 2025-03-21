@@ -20,9 +20,6 @@ namespace DI
             var service1 = _sceneContainer.Resolve<MyAwesomeProjectService>("option 1");
             var service2 = _sceneContainer.Resolve<MyAwesomeProjectService>("option 2");
 
-            //_sceneContainer.RegisterSingleton(_ => new MySceneService(serviceWithoutTag));                      // Регестрируем сервис сцены, которому нужен сервис проекта уже созданный.
-            _sceneContainer.RegisterSingleton(c => new MySceneService(c.Resolve<MyAwesomeProjectService>()));   // Регестрируем сервис сцены, которому нужен сервис проекта еще не созданный.
-            _sceneContainer.RegisterSingleton(_ => new MyAwesomeFactory());                                     // Регистрируем фабрику.
             _sceneContainer.RegisterInstance(new MyAwesomeObject("instance", 10));                              // Регистрируем конкретный объект.
 
             var objectFactory = _sceneContainer.Resolve<MyAwesomeFactory>();                                    // Получаем фабрику из контейнера

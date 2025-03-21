@@ -1,16 +1,23 @@
-﻿using Assets.MyPackman.Scripts.Settings;
+﻿using Game.Gameplay;
+using Game.MainMenu;
+using Game.Utils;
 using Game.UI;
 using R3;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using DI;
+using Game.Services;
 
-namespace Assets.MyPackman.Scripts
+namespace Game
 {
     public class GameEntryPoint
     {
-        private readonly Coroutines _coroutines;
         private static GameEntryPoint _instance;
+        private readonly Coroutines _coroutines;
+        private readonly DIContainer _rootContainer = new();    // Сюда ложим все что используется во всем проекте
+
+        private DIContainer _cacheSceneContainer;
         private UIRootView _uiRootView;
 
         // Загружается до загрузки сцены
@@ -34,6 +41,9 @@ namespace Assets.MyPackman.Scripts
             var prefabUIRoot = Resources.Load<UIRootView>("Prefabs/UIRoot");
             _uiRootView = Object.Instantiate(prefabUIRoot);
             Object.DontDestroyOnLoad(_uiRootView.gameObject);
+
+            _rootContainer.RegisterInstance(_uiRootView);
+            _rootContainer.RegisterFactory(_ => new SomeCommonService());
         }
 
         private void StartGame()
@@ -43,7 +53,9 @@ namespace Assets.MyPackman.Scripts
 
             if (sceneName == ConstantsSceneNames.Gameplay)
             {
-                _coroutines.StartCoroutine(LoadAndStartGameplay());
+                // Заглушка для запуска уровня из редактора
+                var gameplayEnterParams = new GameplayEnterParams("null.save", 1);
+                _coroutines.StartCoroutine(LoadAndStartGameplay(gameplayEnterParams));
                 return;
             }
 
@@ -59,45 +71,55 @@ namespace Assets.MyPackman.Scripts
             _coroutines.StartCoroutine(LoadAndStartMainMenu());
         }
 
-        private IEnumerator LoadAndStartGameplay(GameplayEnterParams gameplayEnterParams)      // Заглушка
+        private IEnumerator LoadAndStartGameplay(GameplayEnterParams gameplayEnterParams)
         {
             _uiRootView.ShowLoadingScreen();
+            _cacheSceneContainer?.Dispose();    // Очищаем контейнер сцены, если он есть
 
             yield return LoadScene(ConstantsSceneNames.Boot);
             // Загрузку новой сцены делаем через промежуточную пустую, чтобы старая успела полностью выгрузится
             yield return LoadScene(ConstantsSceneNames.Gameplay);
             // Заглушка для продления загрузки сцены на 3 секунды
             // Необходима задержка как минимум на 1 кадр, так как GameplayEntryPoint создастся только в следующем кадре
-            yield return new WaitForSeconds(2f);
+            yield return new WaitForSeconds(1f);
 
             var sceneEntryPoint = Object.FindFirstObjectByType<GameplayEntryPoint>();
-            sceneEntryPoint.Run(_uiRootView, gameplayEnterParams).Subscribe(gameplayExitParams =>
+            // Создаем новый контейнер для сцены и кэшируем его
+            var gameplayContainer = _cacheSceneContainer = new DIContainer(_rootContainer);
+            sceneEntryPoint.Run(gameplayContainer, gameplayEnterParams).Subscribe(gameplayExitParams =>
             {
-                _coroutines.StartCoroutine(LoadAndStartMainMenu());
+                _coroutines.StartCoroutine(LoadAndStartMainMenu(gameplayExitParams.MainMenuEnterParams));
             });             // Здесь в загруженную сцену передаются данные
 
             _uiRootView.HideLoadingScreen();
         }
 
-        private IEnumerator LoadAndStartMainMenu()      // Заглушка
+        // Можно сделать пораметры по умолчанию и передовать их при первом запуске игры вместо null
+        private IEnumerator LoadAndStartMainMenu(MainMenuEnterParams mainMenuEnterParams = null)
         {
             _uiRootView.ShowLoadingScreen();
+            _cacheSceneContainer?.Dispose();    // Очищаем контейнер сцены, если он есть
 
             yield return LoadScene(ConstantsSceneNames.Boot);
             // Загрузку новой сцены делаем через промежуточную пустую, чтобы старая успела полностью выгрузится
             yield return LoadScene(ConstantsSceneNames.MainMenu);
             // Заглушка для продления загрузки сцены на 3 секунды
             // Необходима задержка как минимум на 1 кадр, так как GameplayEntryPoint создастся только в следующем кадре
-            yield return new WaitForSeconds(2f);
+            yield return new WaitForSeconds(1f);
 
             var sceneEntryPoint = Object.FindFirstObjectByType<MainMenuEntryPoint>();
-            sceneEntryPoint.Run(_uiRootView);                                 // Здесь в загруженную сцену передаются данные
-
-            // Грязный код!!!!!!!!!
-            sceneEntryPoint.GoToGameplaySceneRequested += () =>
+            var mainMenuContainer = _cacheSceneContainer = new DIContainer(_rootContainer);
+            // Здесь в загруженную сцену передаются данные, а на вернувшийся сигнал подписываем лямбду ?
+            sceneEntryPoint.Run(mainMenuContainer, mainMenuEnterParams).Subscribe(mainMenuExitParams =>
             {
-                _coroutines.StartCoroutine(LoadAndStartGameplay());
-            };
+                var targetSceneName = mainMenuExitParams.TargetSceneEnterParams.SceneName;
+
+                if (targetSceneName == ConstantsSceneNames.Gameplay)
+                {
+                    _coroutines.StartCoroutine(LoadAndStartGameplay(mainMenuExitParams.TargetSceneEnterParams
+                                                                    .As<GameplayEnterParams>()));
+                }
+            });
 
             _uiRootView.HideLoadingScreen();
         }

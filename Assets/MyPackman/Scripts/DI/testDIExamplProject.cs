@@ -54,9 +54,7 @@ namespace DI
         {
             // Как бы при загрузке проекта
             var projectContainer = new DIContainer();                                               // Создаем DI-контайнер
-            projectContainer.RegisterSingleton(_ => new MyAwesomeProjectService());                 // Регестрируем синглтон уровня проекта.
-            projectContainer.RegisterSingleton("option 1", _ => new MyAwesomeProjectService());     // Регестрируем синглтон уровня проекта с тегом.
-            projectContainer.RegisterSingleton("option 2", _ => new MyAwesomeProjectService());     // Регестрируем синглтон уровня проекта с тегом.
+
 
             // Как бы при загрузке сцены
             var sceneRoot = FindFirstObjectByType<testDIExampleScene>();

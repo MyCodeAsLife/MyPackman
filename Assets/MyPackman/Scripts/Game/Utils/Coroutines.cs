@@ -1,3 +1,6 @@
 using UnityEngine;
 
-public class Coroutines : MonoBehaviour { }
+namespace Game.Utils
+{
+    public class Coroutines : MonoBehaviour { }
+}
