@@ -8,6 +8,8 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using DI;
 using Game.Services;
+using Game.State.Root;
+using Game.State;
 
 namespace Game
 {
@@ -42,8 +44,15 @@ namespace Game
             _uiRootView = Object.Instantiate(prefabUIRoot);
             Object.DontDestroyOnLoad(_uiRootView.gameObject);
 
+            // Регистрируем корневую UI
             _rootContainer.RegisterInstance(_uiRootView);
-            _rootContainer.RegisterFactory(_ => new SomeCommonService());
+
+            // Создаем систему загрузки/сохранения/сброса, и регестрируем ёё
+            var gameStateProvider = new PlayerPrefsGameStateProvider();
+            _rootContainer.RegisterInstance<IGameStateProvider>(gameStateProvider);
+
+            // Регистрируем фабрику создания сервиса уровня проекта, создастся при первом запросе и будет существовать до конца игры
+            _rootContainer.RegisterFactory(_ => new SomeCommonService()).AsSingle();
         }
 
         private void StartGame()
@@ -81,7 +90,14 @@ namespace Game
             yield return LoadScene(ConstantsSceneNames.Gameplay);
             // Заглушка для продления загрузки сцены на 3 секунды
             // Необходима задержка как минимум на 1 кадр, так как GameplayEntryPoint создастся только в следующем кадре
-            yield return new WaitForSeconds(1f);
+            yield return new WaitForSeconds(1f);        // Заглушка ++++++++++++++++++++++++++++
+
+            // Загрузка сотояния сцены(загрузка ранее сохраненной игры)
+            bool isGameStateLoaded = false;
+            // Достаем из контейнера провайдер и вызываем у него метод загрузки, а на его завершение подписываем лямбду меняющу переменную isGameStateLoaded
+            _rootContainer.Resolve<IGameStateProvider>().LoadGameState().Subscribe(_ => isGameStateLoaded = true);
+            // Ждем пока переменная isGameStateLoaded не изменится на true, тоесть пока загрузка не завершится
+            yield return new WaitUntil(() => isGameStateLoaded);
 
             var sceneEntryPoint = Object.FindFirstObjectByType<GameplayEntryPoint>();
             // Создаем новый контейнер для сцены и кэшируем его
@@ -105,7 +121,7 @@ namespace Game
             yield return LoadScene(ConstantsSceneNames.MainMenu);
             // Заглушка для продления загрузки сцены на 3 секунды
             // Необходима задержка как минимум на 1 кадр, так как GameplayEntryPoint создастся только в следующем кадре
-            yield return new WaitForSeconds(1f);
+            yield return new WaitForSeconds(1f);        // Заглушка ++++++++++++++++++++++++++++
 
             var sceneEntryPoint = Object.FindFirstObjectByType<MainMenuEntryPoint>();
             var mainMenuContainer = _cacheSceneContainer = new DIContainer(_rootContainer);
