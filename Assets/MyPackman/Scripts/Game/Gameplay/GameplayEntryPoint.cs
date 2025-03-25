@@ -1,9 +1,10 @@
-﻿using Game.MainMenu;
+﻿using DI;
+using Game.Gameplay.Static;
+using Game.MainMenu;
+using Game.Services;
 using Game.UI;
-using DI;
 using R3;
 using UnityEngine;
-using Game.Gameplay.Static;
 
 namespace Game.Gameplay
 {
@@ -24,8 +25,12 @@ namespace Game.Gameplay
             GameplayViewModelRegistrations.Register(gameplayViewModelContainer);
 
             //for tests
-            gameplayViewModelContainer.Resolve<UIGameplayRootViewModel>();
-            gameplayViewModelContainer.Resolve<WorldGameplayViewModel>();
+            {
+                var buildingsService = gameplayContainer.Resolve<BuildingsService>();
+                buildingsService.PlaceBuilding("Нечто", GetRandomPosition());
+                buildingsService.PlaceBuilding("Мяч", GetRandomPosition());
+                buildingsService.PlaceBuilding("Сарай", GetRandomPosition());
+            }
 
             // Создаем UI сцены из префаба и прикрепляем его к корневому UIRoot
             var uiScene = Instantiate(_sceneUIRootPrefab);
@@ -47,6 +52,17 @@ namespace Game.Gameplay
             var exitToMainMenuSceneSignal = exitSceneSignalSubj.Select(_ => exitParams);
             // И возвращаем его
             return exitToMainMenuSceneSignal;
+        }
+
+        //for tests
+        private Vector3Int GetRandomPosition()
+        {
+            var rand = new System.Random();
+            int X = rand.Next(20);
+            int Y = rand.Next(20);
+            int Z = rand.Next(20);
+
+            return new Vector3Int(X, Y, Z);
         }
     }
 }

@@ -6,7 +6,7 @@ namespace Game.State.Root
     [Serializable]
     public class GameSettingsState
     {
-        public int MusicValue;
+        public int MusicVolume;
         public int SFXVolume;
     }
 }

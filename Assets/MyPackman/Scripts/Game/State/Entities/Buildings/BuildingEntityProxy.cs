@@ -1,4 +1,5 @@
-﻿using R3;
+﻿using Game.State.Entities.Buildings;
+using R3;
 using UnityEngine;
 
 namespace Game.State.Buildings
@@ -9,6 +10,7 @@ namespace Game.State.Buildings
         // Данные которые не меняются в процессе
         public int Id { get; }
         public string TypeId { get; }
+        public BuildingEntity Origin { get; }
 
         // Данные которые меняются в процессе
         public ReactiveProperty<Vector3Int> Position { get; }
@@ -16,6 +18,7 @@ namespace Game.State.Buildings
 
         public BuildingEntityProxy(BuildingEntity buildingEntity)
         {
+            Origin = buildingEntity;
             Id = buildingEntity.Id;
             TypeId = buildingEntity.TypeId;
             Position = new ReactiveProperty<Vector3Int>(buildingEntity.Position);

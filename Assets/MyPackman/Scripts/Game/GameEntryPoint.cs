@@ -1,15 +1,14 @@
 ﻿using Game.Gameplay;
 using Game.MainMenu;
+using Game.Services;
+using Game.State;
 using Game.Utils;
 using Game.UI;
+using DI;
 using R3;
 using System.Collections;
-using UnityEngine;
 using UnityEngine.SceneManagement;
-using DI;
-using Game.Services;
-using Game.State.Root;
-using Game.State;
+using UnityEngine;
 
 namespace Game
 {
@@ -53,6 +52,9 @@ namespace Game
 
             // Регистрируем фабрику создания сервиса уровня проекта, создастся при первом запросе и будет существовать до конца игры
             _rootContainer.RegisterFactory(_ => new SomeCommonService()).AsSingle();
+
+            // Достаем из контейнера провайдер и вызываем у него метод загрузки
+            _rootContainer.Resolve<IGameStateProvider>().LoadSettingsState();
         }
 
         private void StartGame()
