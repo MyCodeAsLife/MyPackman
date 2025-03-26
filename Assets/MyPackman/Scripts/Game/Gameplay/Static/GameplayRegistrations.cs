@@ -1,6 +1,7 @@
 ﻿using DI;
 using Game.Gameplay.Commands;
 using Game.Services;
+using Game.Settings;
 using Game.State;
 using Game.State.cmd;
 
@@ -14,6 +15,8 @@ namespace Game.Gameplay.Static
         {
             var gameStateProvider = container.Resolve<IGameStateProvider>();
             var gameState = gameStateProvider.GameState;
+            var settingsProvader = container.Resolve<ISettingsProvider>();
+            var gameSettings = settingsProvader.GameSettings;
 
             // Создаем процессор команд а также обработчик строений
             var cmd = new CommandProcessor(gameStateProvider);
@@ -21,9 +24,12 @@ namespace Game.Gameplay.Static
             cmd.RegisterHandler(new CmdPlaseBuldingHandler(gameState));
             // Регистрируем процессор в DI контейнере сцены
             container.RegisterInstance<ICommanProcessor>(cmd);
-
             // Регистрируем создание сервиса
-            container.RegisterFactory(_ => new BuildingsService(gameState.Buildings, cmd)).AsSingle(); // Сервис должен быть в единственном экземпляре
+            container.RegisterFactory(_ => new BuildingsService(
+                gameState.Buildings,
+                gameSettings.BuildingsSettings,
+                cmd)
+            ).AsSingle(); // Сервис должен быть в единственном экземпляре
         }
     }
 }

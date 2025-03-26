@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7cb131f49a6384e4fbdc3d830c378207, type: 3}
+  m_Name: DummyBuildingSettings
+  m_EditorClassIdentifier: 
+  TypeId: dummy
+  TitleId: jdfhbng
+  DescriptionId: gajhd
+  LevelSettings:
+  - {fileID: 11400000, guid: e8584b1689b5c584c85fd79beefeb30b, type: 2}
+  - {fileID: 11400000, guid: 1c829b6717e8c0c4aa51a2836ba99200, type: 2}
+  - {fileID: 11400000, guid: 14f40fb4aa3910c4ca9a3839784b61c0, type: 2}

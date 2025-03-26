@@ -1,14 +1,15 @@
-﻿using Game.Gameplay;
+﻿using DI;
+using Game.Gameplay;
 using Game.MainMenu;
 using Game.Services;
+using Game.Settings;
 using Game.State;
-using Game.Utils;
 using Game.UI;
-using DI;
+using Game.Utils;
 using R3;
 using System.Collections;
-using UnityEngine.SceneManagement;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace Game
 {
@@ -31,7 +32,7 @@ namespace Game
             Screen.sleepTimeout = SleepTimeout.NeverSleep;  // Чтобы экран мобилки не гас если вы ничего не делаете (по умолчанию это отключенно)
 
             _instance = new GameEntryPoint();
-            _instance.StartGame();
+            _instance.RunGame();
         }
 
         private GameEntryPoint()
@@ -46,19 +47,25 @@ namespace Game
             // Регистрируем корневую UI
             _rootContainer.RegisterInstance(_uiRootView);
 
-            // Создаем систему загрузки/сохранения/сброса, и регестрируем ёё
+            // Провайдер по загрузке ApplicationSettings и базовых игровых настроек
+            var settingsProvader = new SettingsProvider();
+            _rootContainer.RegisterInstance<ISettingsProvider>(settingsProvader);
+
+            // Создаем систему загрузки/сохранения/сброса, и регестрируем её
             var gameStateProvider = new PlayerPrefsGameStateProvider();
             _rootContainer.RegisterInstance<IGameStateProvider>(gameStateProvider);
 
             // Регистрируем фабрику создания сервиса уровня проекта, создастся при первом запросе и будет существовать до конца игры
             _rootContainer.RegisterFactory(_ => new SomeCommonService()).AsSingle();
 
-            // Достаем из контейнера провайдер и вызываем у него метод загрузки
+            // Достаем из контейнера провайдер и вызываем у него метод загрузки для загрузки состояния\настроек приложения
             _rootContainer.Resolve<IGameStateProvider>().LoadSettingsState();
         }
 
-        private void StartGame()
+        private async void RunGame()
         {
+            await _rootContainer.Resolve<ISettingsProvider>().LoadGameSettings();
+
 #if UNITY_EDITOR
             var sceneName = SceneManager.GetActiveScene().name;
 

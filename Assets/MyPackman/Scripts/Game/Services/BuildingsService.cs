@@ -1,5 +1,6 @@
 ﻿using Game.Gameplay.Commands;
 using Game.Gameplay.View;
+using Game.Settings.Gameplay.Buildings;
 using Game.State.Buildings;
 using Game.State.cmd;
 using ObservableCollections;
@@ -17,14 +18,25 @@ namespace Game.Services
         private readonly ICommanProcessor _cmd;
         private readonly ObservableList<BuildingViewModel> _allBuildings = new();
         // Кэшируем ViewModel при их создании
-        private readonly Dictionary<int, BuildingViewModel> _allBuildingsMap = new();
+        private readonly Dictionary<int, BuildingViewModel> _buildingsMap = new();
+        // Кэшируем настройки всех строений
+        private readonly Dictionary<string, BuildingSettings> _buildingsSettingsMap = new();
 
         public IObservableCollection<BuildingViewModel> AllBuildings => _allBuildings;  // На вывод (ViewModel)
 
         // на ввод: реактивный список состояний строений(buildings) и процессор по обработке команд(cmd)
-        public BuildingsService(IObservableCollection<BuildingEntityProxy> buildings, ICommanProcessor cmd)
+        public BuildingsService(IObservableCollection<BuildingEntityProxy> buildings,
+                                BuildingsSettings buildingsSettings,
+                                ICommanProcessor cmd)
         {
+            Debug.Log("This");                              //+++++++++++++++++++++
             _cmd = cmd;
+
+            // Кэшируем настройки всех строений
+            foreach (var buildingSettings in buildingsSettings.AllBuildings)
+            {
+                _buildingsSettingsMap[buildingSettings.TypeId] = buildingSettings;
+            }
 
             // Пробегаемся по списку строений и для каждого создаем ViewModel
             foreach (var buildingEntity in buildings)
@@ -65,18 +77,20 @@ namespace Game.Services
 
         private void CreateBuildingViewModel(BuildingEntityProxy buildingEntity)
         {
-            var buldingViewModel = new BuildingViewModel(buildingEntity, this);
+            var buldingViewModel = new BuildingViewModel(buildingEntity,
+                                                        _buildingsSettingsMap[buildingEntity.TypeId],
+                                                        this);
 
             _allBuildings.Add(buldingViewModel);
-            _allBuildingsMap[buildingEntity.Id] = buldingViewModel;
+            _buildingsMap[buildingEntity.Id] = buldingViewModel;
         }
 
         private void RemoveBuildingViewModel(BuildingEntityProxy buldingEntity)
         {
-            if (_allBuildingsMap.TryGetValue(buldingEntity.Id, out var buldingViewModel))
+            if (_buildingsMap.TryGetValue(buldingEntity.Id, out var buldingViewModel))
             {
                 _allBuildings.Remove(buldingViewModel);
-                _allBuildingsMap.Remove(buldingEntity.Id);
+                _buildingsMap.Remove(buldingEntity.Id);
             }
         }
     }

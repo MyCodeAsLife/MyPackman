@@ -69,14 +69,14 @@ namespace Game.State
             {
                 Buildings = new List<BuildingEntity>
                 {
-                    new()
-                    {
-                        TypeId = "PRO100"
-                    },
-                    new()
-                    {
-                        TypeId = "SEMA4"
-                    }
+                    //new()
+                    //{
+                    //    TypeId = "PRO100"
+                    //},
+                    //new()
+                    //{
+                    //    TypeId = "SEMA4"
+                    //}
                 }
             };
 

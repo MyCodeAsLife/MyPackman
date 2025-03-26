@@ -1,5 +1,6 @@
 ﻿using DI;
 using Game.Gameplay.Static;
+using Game.Gameplay.View;
 using Game.MainMenu;
 using Game.Services;
 using Game.UI;
@@ -11,7 +12,7 @@ namespace Game.Gameplay
     public class GameplayEntryPoint : MonoBehaviour     // Похожа на MainMenuEntryPoint
     {
         [SerializeField] private UIGameplayRootBinder _sceneUIRootPrefab;
-        //private DIContainer _gameplayContainer;
+        [SerializeField] private WorldGameplayRootBinder _worldRootBinder;
 
         // Возвращает объект сингала, из которго можно только считать значение GameplayExitParams
         public Observable<GameplayExitParams> Run(DIContainer gameplayContainer, GameplayEnterParams sceneEnterParams)
@@ -21,16 +22,20 @@ namespace Game.Gameplay
             // Производим регистрацию всех необходимых для данной сцены сервисов, в контейнере сцены
             GameplayRegistrations.Register(gameplayContainer, sceneEnterParams);
             // Зачем создавать второй контейнер сцены? Чтобы чтобы другие сервисы сцены немогли доставать ViewModel-и?
-            var gameplayViewModelContainer = new DIContainer(gameplayContainer);    // Надо ли его кэшировать?
-            GameplayViewModelRegistrations.Register(gameplayViewModelContainer);
+            var gameplayViewModelsContainer = new DIContainer(gameplayContainer);    // Надо ли его кэшировать?
+            GameplayViewModelRegistrations.Register(gameplayViewModelsContainer);
 
             //for tests
             {
                 var buildingsService = gameplayContainer.Resolve<BuildingsService>();
-                buildingsService.PlaceBuilding("Нечто", GetRandomPosition());
-                buildingsService.PlaceBuilding("Мяч", GetRandomPosition());
-                buildingsService.PlaceBuilding("Сарай", GetRandomPosition());
+                buildingsService.PlaceBuilding("dummy", GetRandomPosition());
+                buildingsService.PlaceBuilding("dummy", GetRandomPosition());
+                buildingsService.PlaceBuilding("dummy", GetRandomPosition());
             }
+
+            //for test
+            _worldRootBinder.Bind(gameplayViewModelsContainer.Resolve<WorldGameplayRootViewModel>());
+            gameplayViewModelsContainer.Resolve<UIGameplayRootViewModel>();
 
             // Создаем UI сцены из префаба и прикрепляем его к корневому UIRoot
             var uiScene = Instantiate(_sceneUIRootPrefab);
@@ -58,11 +63,10 @@ namespace Game.Gameplay
         private Vector3Int GetRandomPosition()
         {
             var rand = new System.Random();
-            int X = rand.Next(20);
-            int Y = rand.Next(20);
-            int Z = rand.Next(20);
+            int X = rand.Next(-20, 21);
+            int Y = rand.Next(-20, 21);
 
-            return new Vector3Int(X, Y, Z);
+            return new Vector3Int(X, Y, 0);
         }
     }
 }
