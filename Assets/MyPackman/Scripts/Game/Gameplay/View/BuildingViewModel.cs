@@ -18,6 +18,7 @@ namespace Game.Gameplay.View
         public readonly string TypeId;
 
         public ReadOnlyReactiveProperty<Vector3Int> Position { get; }
+        public ReadOnlyReactiveProperty<int> Level { get; }
 
         public BuildingViewModel(BuildingEntityProxy buildingEntity,
                                  BuildingSettings buildingSettings,
@@ -30,6 +31,7 @@ namespace Game.Gameplay.View
 
             Position = buildingEntity.Position;
             BuildingEntityId = buildingEntity.Id;
+            Level = buildingEntity.Level;
 
             foreach (var buildingLevelSettings in _buildingSettings.LevelSettings)
             {

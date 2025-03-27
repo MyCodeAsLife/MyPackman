@@ -1,7 +1,9 @@
-﻿using Game.State.Entities.Buildings;
+﻿using Game.State.Buildings;
 using Game.State.cmd;
+using Game.State.Entities.Buildings;
 using Game.State.Root;
-using Game.State.Buildings;
+using System.Linq;
+using UnityEngine;
 
 namespace Game.Gameplay.Commands
 {
@@ -18,7 +20,16 @@ namespace Game.Gameplay.Commands
         {
             // Тут можно сначало провести валидацию: достаточно ли ресурсов, свободно ли место и т.д.
 
-            var entityId = _gameState.GetEntityId();
+            // Затем ищем текущую карту (передавать текущую карту в команде вместо того чтобы искать ее?)
+            var currentMap = _gameState.Maps.FirstOrDefault(map => map.Id == _gameState.CurrentMapId.CurrentValue);
+
+            if (currentMap == null)
+            {
+                Debug.Log($"Couldn't find MapState for id: {_gameState.CurrentMapId.CurrentValue}");
+                return false;
+            }
+
+            var entityId = _gameState.CreateEntityId();
             var newBuildingEntity = new BuildingEntity()
             {
                 Id = entityId,
@@ -27,7 +38,7 @@ namespace Game.Gameplay.Commands
             };
 
             var newBuildingEntityProxy = new BuildingEntityProxy(newBuildingEntity);
-            _gameState.Buildings.Add(newBuildingEntityProxy);
+            currentMap.Buildings.Add(newBuildingEntityProxy);
 
             return true;
         }

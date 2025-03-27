@@ -72,7 +72,8 @@ namespace Game
             if (sceneName == ConstantsSceneNames.Gameplay)
             {
                 // Заглушка для запуска уровня из редактора
-                var gameplayEnterParams = new GameplayEnterParams("null.save", 1);
+                int mapId = 0;
+                var gameplayEnterParams = new GameplayEnterParams(mapId);
                 _coroutines.StartCoroutine(LoadAndStartGameplay(gameplayEnterParams));
                 return;
             }

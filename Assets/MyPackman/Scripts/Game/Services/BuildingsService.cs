@@ -29,7 +29,6 @@ namespace Game.Services
                                 BuildingsSettings buildingsSettings,
                                 ICommanProcessor cmd)
         {
-            Debug.Log("This");                              //+++++++++++++++++++++
             _cmd = cmd;
 
             // Кэшируем настройки всех строений

@@ -7,8 +7,6 @@ namespace Game.Gameplay.View
 {
     public class WorldGameplayRootBinder : MonoBehaviour
     {
-        //[SerializeField] private BuildingBinder _prefabBuilding;
-
         private readonly Dictionary<int, BuildingBinder> _createBuildingsMap = new();
 
         private readonly CompositeDisposable _disposables = new();
@@ -31,11 +29,10 @@ namespace Game.Gameplay.View
             _disposables.Add(viewModel.AllBuildings.ObserveRemove().Subscribe(e => { DestroyBuilding(e.Value); }));
         }
 
+        // Конструктор строений на карте
         private void CreateBuilding(BuildingViewModel buildingViewModel)
         {
-            // заглушка
-            var buildingLevel = Random.Range(1, 4);
-
+            var buildingLevel = buildingViewModel.Level.CurrentValue;
             var buildingType = buildingViewModel.TypeId;
             var prefabBuildingLevelPath = $"Prefabs/Gameplay/Buildings/Building_{buildingType}_{buildingLevel}";
             var buildingPrefab = Resources.Load<BuildingBinder>(prefabBuildingLevelPath);

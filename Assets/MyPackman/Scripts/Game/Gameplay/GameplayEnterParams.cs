@@ -2,13 +2,11 @@ namespace Game.Gameplay
 {
     public class GameplayEnterParams : SceneEnterParams
     {
-        public string SaveFileName { get; }
-        public int LevelNumber { get; }
+        public int MapId { get; }
 
-        public GameplayEnterParams(string saveFileName, int levelNumber) : base(ConstantsSceneNames.Gameplay)
+        public GameplayEnterParams(int mapId) : base(ConstantsSceneNames.Gameplay)
         {
-            SaveFileName = saveFileName;
-            LevelNumber = levelNumber;
+            MapId = mapId;
         }
     }
 }

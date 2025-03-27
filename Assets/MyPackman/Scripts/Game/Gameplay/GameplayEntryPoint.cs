@@ -2,7 +2,6 @@
 using Game.Gameplay.Static;
 using Game.Gameplay.View;
 using Game.MainMenu;
-using Game.Services;
 using Game.UI;
 using R3;
 using UnityEngine;
@@ -25,14 +24,6 @@ namespace Game.Gameplay
             var gameplayViewModelsContainer = new DIContainer(gameplayContainer);    // Надо ли его кэшировать?
             GameplayViewModelRegistrations.Register(gameplayViewModelsContainer);
 
-            //for tests
-            {
-                var buildingsService = gameplayContainer.Resolve<BuildingsService>();
-                buildingsService.PlaceBuilding("dummy", GetRandomPosition());
-                buildingsService.PlaceBuilding("dummy", GetRandomPosition());
-                buildingsService.PlaceBuilding("dummy", GetRandomPosition());
-            }
-
             //for test
             _worldRootBinder.Bind(gameplayViewModelsContainer.Resolve<WorldGameplayRootViewModel>());
             gameplayViewModelsContainer.Resolve<UIGameplayRootViewModel>();
@@ -46,8 +37,9 @@ namespace Game.Gameplay
             uiScene.Bind(exitSceneSignalSubj);
 
             //for tests
-            Debug.Log($"Gameplay entry point: Run gameplay scene. Save filename: {sceneEnterParams.SaveFileName}. " +
-                      $"Scene name: {sceneEnterParams.SceneName}. Level number: {sceneEnterParams.LevelNumber}");
+            Debug.Log($"Gameplay entry point: Run gameplay scene. " +
+                      $"Scene name: {sceneEnterParams.SceneName}. " +
+                      $"Map ID: {sceneEnterParams.MapId}");
 
             // Создаем объект для возвращаемых параметров и заполняем его
             var mainMenuEnterParams = new MainMenuEnterParams("Result");

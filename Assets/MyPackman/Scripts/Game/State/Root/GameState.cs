@@ -1,4 +1,4 @@
-using Game.State.Entities.Buildings;
+using Game.State.Maps;
 using System;
 using System.Collections.Generic;
 
@@ -8,6 +8,9 @@ namespace Game.State.Root
     public class GameState
     {
         public int GlobalEntityId;
-        public List<BuildingEntity> Buildings = new();
+        public int CurrentMapId;        // Чтобы можно было сохранять текущую карту
+        public List<MapState> Maps = new();
+
+        public int CreateEntityId() => GlobalEntityId++;
     }
 }

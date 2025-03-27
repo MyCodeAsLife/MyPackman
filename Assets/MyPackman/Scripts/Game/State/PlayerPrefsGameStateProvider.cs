@@ -1,4 +1,4 @@
-﻿using Game.State.Entities.Buildings;
+﻿using Game.State.Maps;
 using Game.State.Root;
 using R3;
 using System.Collections.Generic;
@@ -67,17 +67,7 @@ namespace Game.State
             // Симулируем дефолтные предустановки
             _gameStateOrigin = new GameState
             {
-                Buildings = new List<BuildingEntity>
-                {
-                    //new()
-                    //{
-                    //    TypeId = "PRO100"
-                    //},
-                    //new()
-                    //{
-                    //    TypeId = "SEMA4"
-                    //}
-                }
+                Maps = new List<MapState>()
             };
 
             return new GameStateProxy(_gameStateOrigin);

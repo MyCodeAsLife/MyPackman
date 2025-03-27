@@ -38,9 +38,8 @@ namespace Game.MainMenu
             Debug.Log($"Main Menu entry point: Run main menu scene. Results: {mainMenuEnterParams?.Result}");
 
             // Формируем даннные для сцены, если нет(первый запуск к примеру) то можно создать параметры по умолчанию
-            var saveFileName = "Is null";
-            int levelNumber = 2;
-            var targetSceneEnterParams = new GameplayEnterParams(saveFileName, levelNumber);
+            int mapId = 0;
+            var targetSceneEnterParams = new GameplayEnterParams(mapId);
             // Заворачиваем сформированные данные о сценене в объект выходных данных MainMenu
             var mainMenuExitParams = new MainMenuExitParams(targetSceneEnterParams);
             // Заворачиваем данные в объект сигнала с которого можно только считывать и возвращаем его
