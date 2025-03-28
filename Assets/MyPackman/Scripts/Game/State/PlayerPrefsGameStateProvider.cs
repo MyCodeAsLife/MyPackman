@@ -1,4 +1,5 @@
-﻿using Game.State.Maps;
+﻿using Game.State.GameResources;
+using Game.State.Maps;
 using Game.State.Root;
 using R3;
 using System.Collections.Generic;
@@ -67,7 +68,12 @@ namespace Game.State
             // Симулируем дефолтные предустановки
             _gameStateOrigin = new GameState
             {
-                Maps = new List<MapState>()
+                Maps = new List<MapState>(),
+                GameResources = new List<GameResourceData>()
+                {
+                    new(){Amount = 0, GameResourceType = GameResourceType.SoftCurrency },
+                    new(){Amount = 0, GameResourceType = GameResourceType.HardCurrency },
+                },
             };
 
             return new GameStateProxy(_gameStateOrigin);

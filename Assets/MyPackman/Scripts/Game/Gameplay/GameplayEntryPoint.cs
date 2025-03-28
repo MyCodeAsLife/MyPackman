@@ -50,15 +50,5 @@ namespace Game.Gameplay
             // И возвращаем его
             return exitToMainMenuSceneSignal;
         }
-
-        //for tests
-        private Vector3Int GetRandomPosition()
-        {
-            var rand = new System.Random();
-            int X = rand.Next(-20, 21);
-            int Y = rand.Next(-20, 21);
-
-            return new Vector3Int(X, Y, 0);
-        }
     }
 }

@@ -8,8 +8,9 @@ namespace Game.Gameplay.View
     public class WorldGameplayRootBinder : MonoBehaviour
     {
         private readonly Dictionary<int, BuildingBinder> _createBuildingsMap = new();
-
         private readonly CompositeDisposable _disposables = new();
+
+        private WorldGameplayRootViewModel _viewModel;  // For tests
 
         private void OnDestroy()
         {
@@ -18,6 +19,8 @@ namespace Game.Gameplay.View
 
         public void Bind(WorldGameplayRootViewModel viewModel)
         {
+            _viewModel = viewModel;
+
             foreach (var buildingViewModel in viewModel.AllBuildings)
             {
                 CreateBuilding(buildingViewModel);
@@ -47,6 +50,15 @@ namespace Game.Gameplay.View
             {
                 Destroy(buildingBinder.gameObject);
                 _createBuildingsMap.Remove(buildingViewModel.BuildingEntityId);
+            }
+        }
+
+        // For tests
+        private void Update()
+        {
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                _viewModel.HandleTestInput();
             }
         }
     }

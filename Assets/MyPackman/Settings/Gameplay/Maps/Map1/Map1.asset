@@ -14,13 +14,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   MapId: 0
   InitialStateSettings:
-    Buildings:
+    InitialBuildings:
     - TypeId: dummy
       Level: 1
-      Position: {x: 5, y: 5, z: 0}
+      Position: {x: -5, y: 5, z: 0}
     - TypeId: dummy
       Level: 2
-      Position: {x: -10, y: 0, z: 0}
+      Position: {x: 5, y: 0, z: 0}
     - TypeId: dummy
       Level: 3
-      Position: {x: 10, y: 8, z: 0}
+      Position: {x: 5, y: 5, z: 0}

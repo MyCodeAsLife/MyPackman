@@ -1,7 +1,7 @@
 ﻿using DI;
-using Game.UI;
 using Game.Gameplay.View;
 using Game.Services;
+using Game.UI;
 
 namespace Game.Gameplay.Static
 {
@@ -13,7 +13,10 @@ namespace Game.Gameplay.Static
         {
             // Регистрируем сервис сцены Gameplay как single
             container.RegisterFactory(c => new UIGameplayRootViewModel()).AsSingle();
-            container.RegisterFactory(c => new WorldGameplayRootViewModel(c.Resolve<BuildingsService>())).AsSingle();
+            container.RegisterFactory(c => new WorldGameplayRootViewModel(
+                c.Resolve<BuildingsService>(),
+                c.Resolve<GameResourcesService>())
+            ).AsSingle();
         }
     }
 }

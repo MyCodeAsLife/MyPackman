@@ -1,5 +1,6 @@
 ﻿using DI;
 using Game.Gameplay.Commands;
+using Game.Gameplay.Commands.Handlers;
 using Game.Services;
 using Game.Settings;
 using Game.State;
@@ -27,6 +28,10 @@ namespace Game.Gameplay.Static
             cmd.RegisterHandler(new CmdPlaseBuldingHandler(gameState));
             // Регистрируем обработчик карт в процессоре команд
             cmd.RegisterHandler(new CmdCreateMapStateHandler(gameState, gameSettings));
+            // Регистрируем обработчик добавления/увеличения ресурсов
+            cmd.RegisterHandler(new CmdResourcesAddHandler(gameState));
+            // Регистрируем обработчик траты/уменьшения ресурсов
+            cmd.RegisterHandler(new CmdResourcesSpendHandler(gameState));
             // Регистрируем процессор в DI контейнере сцены
             container.RegisterInstance<ICommanProcessor>(cmd);
 
@@ -59,6 +64,8 @@ namespace Game.Gameplay.Static
                 gameSettings.BuildingsSettings,
                 cmd)
             ).AsSingle(); // Сервис должен быть в единственном экземпляре
+            // Регистрируем создание сервиса ресурсов(добавление, удаление, изменение)
+            container.RegisterFactory(_ => new GameResourcesService(gameState.Resources, cmd)).AsSingle();
         }
     }
 }
