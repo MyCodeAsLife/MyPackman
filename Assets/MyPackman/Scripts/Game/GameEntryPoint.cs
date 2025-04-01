@@ -40,7 +40,7 @@ namespace Game
             _coroutines = new GameObject("[COROUTINES]").AddComponent<Coroutines>();
             Object.DontDestroyOnLoad(_coroutines.gameObject);
 
-            var prefabUIRoot = Resources.Load<UIRootView>("Prefabs/UIRoot");
+            var prefabUIRoot = Resources.Load<UIRootView>("Prefabs/UI/UIRoot");
             _uiRootView = Object.Instantiate(prefabUIRoot);
             Object.DontDestroyOnLoad(_uiRootView.gameObject);
 

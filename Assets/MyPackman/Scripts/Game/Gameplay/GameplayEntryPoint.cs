@@ -1,4 +1,5 @@
 ﻿using DI;
+using Game.Common;
 using Game.Gameplay.Static;
 using Game.Gameplay.View;
 using Game.MainMenu;
@@ -25,16 +26,8 @@ namespace Game.Gameplay
             GameplayViewModelRegistrations.Register(gameplayViewModelsContainer);
 
             //for test
-            _worldRootBinder.Bind(gameplayViewModelsContainer.Resolve<WorldGameplayRootViewModel>());
-            gameplayViewModelsContainer.Resolve<UIGameplayRootViewModel>();
-
-            // Создаем UI сцены из префаба и прикрепляем его к корневому UIRoot
-            var uiScene = Instantiate(_sceneUIRootPrefab);
-            gameplayContainer.Resolve<UIRootView>().AttachSceneUI(uiScene.gameObject);
-
-            // Создаем объект сигнала который ничего не принимает и отдаем его UI-ю сцены, который будет его дергать
-            var exitSceneSignalSubj = new Subject<Unit>();
-            uiScene.Bind(exitSceneSignalSubj);
+            InitWorld(gameplayViewModelsContainer);
+            InitUI(gameplayViewModelsContainer);
 
             //for tests
             Debug.Log($"Gameplay entry point: Run gameplay scene. " +
@@ -45,10 +38,32 @@ namespace Game.Gameplay
             var mainMenuEnterParams = new MainMenuEnterParams("Result");
             // Заворачиваем созданный выше объект в новый объект
             var exitParams = new GameplayExitParams(mainMenuEnterParams);
+            var exitSceneRequest = gameplayContainer.Resolve<Subject<Unit>>(Constants.EXIT_SCENE_REQUEST_TAG);
             // Заворачиваем наш объект в объект сигнала с которого можно только считывать
-            var exitToMainMenuSceneSignal = exitSceneSignalSubj.Select(_ => exitParams);
+            var exitToMainMenuSceneSignal = exitSceneRequest.Select(_ => exitParams);
             // И возвращаем его
             return exitToMainMenuSceneSignal;
+        }
+
+        private void InitWorld(DIContainer viewsContainer)
+        {
+            _worldRootBinder.Bind(viewsContainer.Resolve<WorldGameplayRootViewModel>());
+        }
+
+        private void InitUI(DIContainer viewsContainer)
+        {
+            // Создаем UI сцены из префаба и прикрепляем его к корневому UIRoot
+            var uiRoot = viewsContainer.Resolve<UIRootView>();
+            var uiSceneRootBinder = Instantiate(_sceneUIRootPrefab);
+            uiRoot.AttachSceneUI(uiSceneRootBinder.gameObject);
+
+            // Запрашиваем рутовую вьюмодкль и пихаем ее в биндер, который создали
+            var uiSceneRootViewModel = viewsContainer.Resolve<UIGameplayRootViewModel>();
+            uiSceneRootBinder.Bind(uiSceneRootViewModel);
+
+            // For tests
+            var uiManager = viewsContainer.Resolve<GameplayUIManager>();
+            uiManager.OpenScreenGameplay();
         }
     }
 }

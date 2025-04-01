@@ -12,6 +12,7 @@ namespace Game.Gameplay.Static
         public static void Register(DIContainer container)
         {
             // Регистрируем сервис сцены Gameplay как single
+            container.RegisterFactory(c => new GameplayUIManager(container)).AsSingle();
             container.RegisterFactory(c => new UIGameplayRootViewModel()).AsSingle();
             container.RegisterFactory(c => new WorldGameplayRootViewModel(
                 c.Resolve<BuildingsService>(),

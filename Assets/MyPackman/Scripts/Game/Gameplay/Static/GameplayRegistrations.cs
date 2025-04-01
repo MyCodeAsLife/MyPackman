@@ -1,4 +1,5 @@
 ﻿using DI;
+using Game.Common;
 using Game.Gameplay.Commands;
 using Game.Gameplay.Commands.Handlers;
 using Game.Services;
@@ -6,6 +7,7 @@ using Game.Settings;
 using Game.State;
 using Game.State.cmd;
 using Game.State.Maps;
+using R3;
 using System;
 using System.Linq;
 
@@ -21,6 +23,8 @@ namespace Game.Gameplay.Static
             var gameState = gameStateProvider.GameState;
             var settingsProvader = container.Resolve<ISettingsProvider>();
             var gameSettings = settingsProvader.GameSettings;
+
+            container.RegisterInstance(Constants.EXIT_SCENE_REQUEST_TAG, new Subject<Unit>());
 
             // Создаем процессор команд а также обработчик строений
             var cmd = new CommandProcessor(gameStateProvider);
