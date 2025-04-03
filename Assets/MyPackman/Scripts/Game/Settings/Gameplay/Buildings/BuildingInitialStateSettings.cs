@@ -6,8 +6,8 @@ namespace Game.Settings.Gameplay.Buildings
     [Serializable]
     public class BuildingInitialStateSettings   // Состояние здания по умолчанию
     {
-        public string TypeId;
+        public string ConfigId;
         public int Level;
-        public Vector3Int Position;
+        public Vector2Int Position;
     }
 }

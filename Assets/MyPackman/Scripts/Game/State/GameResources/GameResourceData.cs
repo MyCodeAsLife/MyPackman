@@ -1,11 +1,8 @@
-﻿using System;
-
-namespace Game.State.GameResources
+﻿namespace Game.State.GameResources
 {
-    [Serializable]
     public class GameResourceData
     {
-        public GameResourceType GameResourceType;
-        public int Amount;
+        public GameResourceType GameResourceType { get; set; }
+        public int Amount { get; set; }
     }
 }

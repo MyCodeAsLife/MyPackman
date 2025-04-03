@@ -9,12 +9,12 @@ namespace Game.Gameplay.View
 {
     public class WorldGameplayRootViewModel
     {
-        public readonly IObservableCollection<BuildingViewModel> AllBuildings;
+        //public readonly IObservableCollection<BuildingViewModel> AllBuildings;
         private readonly GameResourcesService _gameResourcesService;
 
-        public WorldGameplayRootViewModel(BuildingsService buildingsService, GameResourcesService gameResourcesService)
+        public WorldGameplayRootViewModel(/*BuildingsService buildingsService,*/ GameResourcesService gameResourcesService)
         {
-            AllBuildings = buildingsService.AllBuildings;
+            //AllBuildings = buildingsService.AllBuildings;
             _gameResourcesService = gameResourcesService;
 
             // For tests

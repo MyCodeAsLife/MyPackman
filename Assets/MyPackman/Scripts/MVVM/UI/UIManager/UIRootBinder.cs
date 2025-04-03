@@ -40,7 +40,7 @@ namespace MVVM.UI.UIManager
             OnBind(viewModel);
         }
 
-        // Заглушка. Если понадобится сделать какието действя по окончанию
+        // Заглушка. Если понадобится сделать какието действя по окончанию привязки
         protected virtual void OnBind(UIRootViewModel viewModel) { }
     }
 }

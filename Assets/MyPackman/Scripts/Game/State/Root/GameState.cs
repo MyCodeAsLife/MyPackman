@@ -5,14 +5,13 @@ using System.Collections.Generic;
 
 namespace Game.State.Root
 {
-    [Serializable]  // Для сохранения состояния игры, и упаковывания в json
     public class GameState
     {
-        private int _globalEntityId;
+        private int _globalEntityId { get; set; }
 
-        public int CurrentMapId;        // Чтобы можно было сохранять текущую карту
-        public List<MapState> Maps;
-        public List<GameResourceData> GameResources;
+        public int CurrentMapId { get; set; }        // Чтобы можно было сохранять текущую карту
+        public List<MapData> Maps { get; set; }
+        public List<GameResourceData> GameResources { get; set; }
 
         public int CreateEntityId() => _globalEntityId++;
     }

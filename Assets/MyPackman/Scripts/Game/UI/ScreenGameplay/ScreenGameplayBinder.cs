@@ -26,7 +26,7 @@ namespace Game.UI.ScreenGameplay
 
         private void OnGoToMainMenuButtonClicked()
         {
-            ViewModel.RequestOpenPopupA();
+            ViewModel.RequestGoToMainMenu();
         }
 
         private void OnPopupBButtonClicked()
@@ -36,7 +36,7 @@ namespace Game.UI.ScreenGameplay
 
         private void OnPopupAButtonClicked()
         {
-            ViewModel.RequestGoToMainMenu();
+            ViewModel.RequestOpenPopupA();
         }
     }
 }

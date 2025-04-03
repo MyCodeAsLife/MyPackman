@@ -29,9 +29,9 @@ namespace Game.Gameplay.Static
             // Создаем процессор команд а также обработчик строений
             var cmd = new CommandProcessor(gameStateProvider);
             // Регистрируем обработчик строений в процессоре команд
-            cmd.RegisterHandler(new CmdPlaseBuldingHandler(gameState));
+            //cmd.RegisterHandler(new CmdPlaseBuldingHandler(gameState));
             // Регистрируем обработчик карт в процессоре команд
-            cmd.RegisterHandler(new CmdCreateMapStateHandler(gameState, gameSettings));
+            cmd.RegisterHandler(new CmdCreateMapHandler(gameState, gameSettings));
             // Регистрируем обработчик добавления/увеличения ресурсов
             cmd.RegisterHandler(new CmdResourcesAddHandler(gameState));
             // Регистрируем обработчик траты/уменьшения ресурсов
@@ -50,7 +50,7 @@ namespace Game.Gameplay.Static
             // Создание состояния, если его еще нет
             if (loadingMap == null)
             {
-                var command = new CmdCreateMapState(loadingMapId);
+                var command = new CmdCreateMap(loadingMapId);
                 bool success = cmd.Procces(command);
 
                 if (success == false)
@@ -63,11 +63,11 @@ namespace Game.Gameplay.Static
             }
 
             // Регистрируем создание сервиса строительства/перемещения/удаления зданий
-            container.RegisterFactory(_ => new BuildingsService(
-                loadingMap.Buildings,
-                gameSettings.BuildingsSettings,
-                cmd)
-            ).AsSingle(); // Сервис должен быть в единственном экземпляре
+            //container.RegisterFactory(_ => new BuildingsService(
+            //    loadingMap.Buildings,
+            //    gameSettings.BuildingsSettings,
+            //    cmd)
+            //).AsSingle(); // Сервис должен быть в единственном экземпляре
             // Регистрируем создание сервиса ресурсов(добавление, удаление, изменение)
             container.RegisterFactory(_ => new GameResourcesService(gameState.Resources, cmd)).AsSingle();
         }

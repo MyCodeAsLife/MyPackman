@@ -15,7 +15,7 @@ namespace Game.Gameplay.Static
             container.RegisterFactory(c => new GameplayUIManager(container)).AsSingle();
             container.RegisterFactory(c => new UIGameplayRootViewModel()).AsSingle();
             container.RegisterFactory(c => new WorldGameplayRootViewModel(
-                c.Resolve<BuildingsService>(),
+                //c.Resolve<BuildingsService>(),
                 c.Resolve<GameResourcesService>())
             ).AsSingle();
         }

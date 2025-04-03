@@ -1,7 +1,8 @@
-﻿using Game.State.Buildings;
+﻿using Game.State.Entities;
 using ObservableCollections;
 using R3;
 using System.Linq;
+using UnityEngine;
 
 namespace Game.State.Maps
 {
@@ -9,32 +10,32 @@ namespace Game.State.Maps
     public class Map
     {
         // Загружаем\получаем состояния строений
-        public Map(MapState mapState)
+        public Map(MapData mapData)
         {
-            Origin = mapState;
-            // Сперва загружаем все состояния в Proxy (перебираем все Entity и на их основе создаем Proxy и связываем их
-            mapState.Buildings.ForEach(buildingOrigin => Buildings.Add(new BuildingEntityProxy(buildingOrigin)));
+            Origin = mapData;
+            // Сперва загружаем все состояния в Proxy (перебираем все Entity и на их основе создаем реактивные свойства и связываем их)
+            mapData.Entities.ForEach(entityData => Entities.Add(EntitiesFactory.CreateEntity(entityData)));
 
-            // Далее регестрируем лямбду которая при создании нового Proxy, будет создавать новый Entyty и записывать в него данные
-            Buildings.ObserveAdd().Subscribe(element =>
+            //// Далее регестрируем лямбду которая при создании нового Proxy, будет создавать новый Entyty и записывать в него данные
+            Entities.ObserveAdd().Subscribe(element =>
             {
-                var addedBuildingEntity = element.Value;
-                mapState.Buildings.Add(addedBuildingEntity.Origin);
+                var addedEntity = element.Value;
+                mapData.Entities.Add(addedEntity.Origin);
             });
 
-            // Регестрируем лямбду которая при удалении Proxy, будет искать связанный с ним объект в Entity и удалять его
-            Buildings.ObserveRemove().Subscribe(element =>
+            //// Регестрируем лямбду которая при удалении Proxy, будет искать связанный с ним объект в Entity и удалять его
+            Entities.ObserveRemove().Subscribe(element =>
             {
-                var removedBuildingEntityProxy = element.Value;
-                var removedBuildingEntity = mapState.Buildings
-                                            .FirstOrDefault(building => building.Id == removedBuildingEntityProxy.Id);
-                mapState.Buildings.Remove(removedBuildingEntity);
+                var removedEntity = element.Value;
+                var removedEntityData = mapData.Entities
+                                            .FirstOrDefault(entity => entity.UniqueId == removedEntity.UniqueId);
+                mapData.Entities.Remove(removedEntityData);
             });
         }
 
         // Список эвентов, за которыми можно следить
-        public ObservableList<BuildingEntityProxy> Buildings { get; } = new();
-        public MapState Origin { get; }
+        public ObservableList<Entity> Entities { get; } = new();
+        public MapData Origin { get; }
         public int Id => Origin.Id;
     }
 }

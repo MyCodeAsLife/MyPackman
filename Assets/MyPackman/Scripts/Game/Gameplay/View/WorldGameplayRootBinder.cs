@@ -21,15 +21,15 @@ namespace Game.Gameplay.View
         {
             _viewModel = viewModel;
 
-            foreach (var buildingViewModel in viewModel.AllBuildings)
-            {
-                CreateBuilding(buildingViewModel);
-            }
+            //foreach (var buildingViewModel in viewModel.AllBuildings)
+            //{
+            //    CreateBuilding(buildingViewModel);
+            //}
 
-            // Подписка на: при добавление новой ViewModel, создавать для нее View
-            _disposables.Add(viewModel.AllBuildings.ObserveAdd().Subscribe(e => { CreateBuilding(e.Value); }));
-            // Подписка на: при удалении ViewModel, удалить относящийся к ней View
-            _disposables.Add(viewModel.AllBuildings.ObserveRemove().Subscribe(e => { DestroyBuilding(e.Value); }));
+            //// Подписка на: при добавление новой ViewModel, создавать для нее View
+            //_disposables.Add(viewModel.AllBuildings.ObserveAdd().Subscribe(e => { CreateBuilding(e.Value); }));
+            //// Подписка на: при удалении ViewModel, удалить относящийся к ней View
+            //_disposables.Add(viewModel.AllBuildings.ObserveRemove().Subscribe(e => { DestroyBuilding(e.Value); }));
         }
 
         // Конструктор строений на карте

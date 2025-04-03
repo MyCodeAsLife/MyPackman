@@ -1,6 +1,7 @@
 ﻿using Game.Settings;
 using Game.State.cmd;
-using Game.State.Entities.Buildings;
+using Game.State.Entities;
+using Game.State.Entities.Mergeable.Buildings;
 using Game.State.Maps;
 using Game.State.Root;
 using System.Collections.Generic;
@@ -9,18 +10,18 @@ using UnityEngine;
 
 namespace Game.Gameplay.Commands
 {
-    public class CmdCreateMapStateHandler : ICommandHandler<CmdCreateMapState>
+    public class CmdCreateMapHandler : ICommandHandler<CmdCreateMap>
     {
         private readonly GameStateProxy _gameState;
         private readonly GameSettings _gameSettings;
 
-        public CmdCreateMapStateHandler(GameStateProxy gameState, GameSettings gameSettings)
+        public CmdCreateMapHandler(GameStateProxy gameState, GameSettings gameSettings)
         {
             _gameState = gameState;
             _gameSettings = gameSettings;
         }
 
-        public bool Handle(CmdCreateMapState command)
+        public bool Handle(CmdCreateMap command)
         {
             var isMapAlreadyExisted = _gameState.Maps.Any(m => m.Id == command.MapId);
 
@@ -35,31 +36,34 @@ namespace Game.Gameplay.Commands
             var newMapSettings = _gameSettings.MapsSettings.Maps.First(m => m.MapId == command.MapId);
             // Вытаскиваем дефолные настройки карты (зачем они расщелены на 2 типа? MapSettings и MapInitialStateSettings)
             var newMapInitialStateSettings = newMapSettings.InitialStateSettings;
-            var initialBuildings = new List<BuildingEntity>();
+            var initialEntities = new List<EntityData>();
 
             // Достаем дефолтные настройки строений и из них создаем состояния(строения)
             foreach (var buildingSettings in newMapInitialStateSettings.InitialBuildings)
             {
-                var initialBuilding = new BuildingEntity
+                var initialBuilding = new BuildingEntityData()
                 {
-                    Id = _gameState.CreateEntityId(),
-                    TypeId = buildingSettings.TypeId,
+                    UniqueId = _gameState.CreateEntityId(),
+                    ConfigId = buildingSettings.ConfigId,
+                    Type = EntityType.Building,
                     Position = buildingSettings.Position,
                     Level = buildingSettings.Level,
+                    IsAutoCollectionEnabled = false,
+                    LastClickedTimeMS = 0,
                 };
 
-                initialBuildings.Add(initialBuilding);
+                initialEntities.Add(initialBuilding);
             }
 
             // Создаем карту из того состояние что получили выше
-            var newMapState = new MapState()
+            var newMapData = new MapData()
             {
                 Id = command.MapId,
-                Buildings = initialBuildings,
+                Entities = initialEntities,
             };
 
             // Создаем прокси для новой карты
-            var newMap = new Map(newMapState);
+            var newMap = new Map(newMapData);
             // Добавляем в список карт(кэшируем)
             _gameState.Maps.Add(newMap);
             return true;
