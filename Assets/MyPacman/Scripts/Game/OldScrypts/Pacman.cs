@@ -18,6 +18,7 @@ namespace MyPacman
 
         private void OnEnable()
         {
+
             _playerMoveHandler = new PlayerMovementHandler(transform.GetComponent<Rigidbody2D>());
             //_playerMoveHandler.Initialyze(() => _inputActions.Keyboard.Movement.ReadValue<Vector2>());
 
@@ -62,10 +63,12 @@ namespace MyPacman
         public void Initialize(IMapHandler mapHandler)
         {
             _mapHandler = mapHandler;
-            //_playerMoveHandler.Initialyze(_mapHandler.IsObstacleTile);
+            var mapSize = new Vector2(_mapHandler.Map.GetLength(1), -_mapHandler.Map.GetLength(0));
+
             _playerMoveHandler.Initialyze(
                 () => _inputActions.Keyboard.Movement.ReadValue<Vector2>(),
-                _mapHandler.IsObstacleTile);
+                _mapHandler.IsObstacleTile,
+                mapSize);
         }
 
         private void HandleCollision(Vector3 position)

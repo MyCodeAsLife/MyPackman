@@ -34,9 +34,10 @@ namespace MyPacman
         public const int NumberOfPelletTiles = 3;
         public const int NumberOfNodeTiles = 1;
 
-        //// Map settings
+        // Map settings
         public const float GridCellSize = 1f;
         //public const int GridCellPixelSize = 24;
+        public const int FieldsAtTheEdgesOfTheMap = 1;  // Отступы по краям карты
 
         // Triggers object names
         public const string TriggerPelletSmall = "PelletSmall(Clone)";

@@ -9,22 +9,25 @@ namespace MyPacman
         private ILevelConfig _currentLevel;     // DI - ? через interface
         private Tilemap _wallsTileMap;          // DI - ?
         private Tilemap _pelletsTilemap;        // DI - ?
-        private Tile[] _walls;                  // DI - ?
+        //private Tile[] _walls;                  // DI - ?
 
         // For test
         private Vector3Int _currentCellPosition;
         private RuleTile _testTile;
 
+
         public MapHandler(Tilemap wallsTileMap, Tilemap pelletsTilemap, Tile[] walls, ILevelConfig level)
         {
             _wallsTileMap = wallsTileMap;
             _pelletsTilemap = pelletsTilemap;
-            _walls = walls;
+            //_walls = walls;
             _currentLevel = level;
 
             // For test
             _testTile = Resources.Load<RuleTile>("Assets/TestRuleTile");
         }
+
+        public int[,] Map => _currentLevel.Map;
 
         // Передовать класс(по типу патерна комманда) в котором будет указан нужный tilemap, нужный массив тайлов и номер тайла
         public void ChangeTile(Vector3 position, int objectNumber)
@@ -45,8 +48,8 @@ namespace MyPacman
 
         public bool IsObstacleTile(Vector2 position, string testMessage)      // Незакончен
         {
+
             var cellPosition = ConvertToCellPosition(position);
-            //Debug.Log(testMessage + cellPosition + $" | pos: {position}");                  // +++++++++++++++++++++++++++++++++++ц
 
             if (_currentCellPosition != cellPosition)
             {
@@ -54,9 +57,12 @@ namespace MyPacman
                 Coroutines.StartRoutine(FleakerTile(cellPosition, _testTile));
             }
 
-            // Увеличить текущее местоположение на 1 относительно направления движения +
-            // Привести полученную позицию к ближайшей ячейке   +
-            // Проверить на проходимость ячейки +
+            if (_currentLevel.Map.GetLength(0) <= cellPosition.y ||
+                cellPosition.y <= 0 ||
+                _currentLevel.Map.GetLength(1) <= cellPosition.x ||
+                cellPosition.x <= 0)
+                return false;
+
             if (_currentLevel.Map[cellPosition.y, cellPosition.x] > 0)
                 return true;
 
@@ -66,12 +72,13 @@ namespace MyPacman
         private Vector3Int ConvertToCellPosition(Vector3 position)      // Переделать под Vector2?
         {
             int X = (int)position.x;
-            int Y = (int)(position.y - 1);
+            //int Y = (int)(position.y - 1);
+            int Y = Mathf.Abs((int)(position.y - 1));
 
-            if (Y < 0)
-                Y = Mathf.Abs(Y);
-            else
-                Y = 0;
+            //if (Y < 0)
+            //    Y = Mathf.Abs(Y);
+            //else
+            //    Y = 0;
 
             return new Vector3Int(X, Y);
         }
