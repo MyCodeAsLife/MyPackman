@@ -5,6 +5,7 @@ namespace MyPacman
 {
     public interface IPlayerMovementHandler
     {
+        public event Action<Vector3Int> TileChanged;
         public void Tick();             // Сделать общий Update через R3?
         public void Move();
         public void StartMoving();

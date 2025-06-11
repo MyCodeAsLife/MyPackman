@@ -6,6 +6,7 @@ namespace MyPacman
     public class Pacman : MonoBehaviour
     {
         private int _pelletLayer;
+        private Rigidbody2D _rigidbody;
 
         private PlayerInputActions _inputActions;
         private IPlayerMovementHandler _playerMoveHandler;
@@ -18,8 +19,8 @@ namespace MyPacman
 
         private void OnEnable()
         {
-
-            _playerMoveHandler = new PlayerMovementHandler(transform.GetComponent<Rigidbody2D>());
+            _rigidbody = GetComponent<Rigidbody2D>();
+            _playerMoveHandler = new PlayerMovementHandler(_rigidbody);
             //_playerMoveHandler.Initialyze(() => _inputActions.Keyboard.Movement.ReadValue<Vector2>());
 
             _inputActions = new PlayerInputActions();
@@ -39,27 +40,6 @@ namespace MyPacman
             _playerMoveHandler.Tick();
         }
 
-        private void OnTriggerEnter2D(Collider2D collision)
-        {
-            switch (collision.gameObject.name)
-            {
-                case GameConstants.TriggerPelletSmall:
-                    Debug.Log(GameConstants.TriggerPelletSmall);
-                    break;
-
-                case GameConstants.TriggerPelletMedium:
-                    Debug.Log(GameConstants.TriggerPelletMedium);
-                    break;
-
-                case GameConstants.TriggerPelletLarge:
-                    Debug.Log(GameConstants.TriggerPelletLarge);
-                    break;
-            }
-
-            HandleCollision(transform.position);
-            //collision.gameObject.SetActive(false);
-        }
-
         public void Initialize(IMapHandler mapHandler)
         {
             _mapHandler = mapHandler;
@@ -69,11 +49,8 @@ namespace MyPacman
                 () => _inputActions.Keyboard.Movement.ReadValue<Vector2>(),
                 _mapHandler.IsObstacleTile,
                 mapSize);
-        }
 
-        private void HandleCollision(Vector3 position)
-        {
-            _mapHandler.ChangeTile(position, GameConstants.EmptyTile);
+            _playerMoveHandler.TileChanged += _mapHandler.OnPlayerTilesChanged;         // Вынести в отдельный инициализатор
         }
 
         private void OnMoveStarted(InputAction.CallbackContext context)

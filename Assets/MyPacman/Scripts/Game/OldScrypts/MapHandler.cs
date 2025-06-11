@@ -30,22 +30,23 @@ namespace MyPacman
         public int[,] Map => _currentLevel.Map;
 
         // Передовать класс(по типу патерна комманда) в котором будет указан нужный tilemap, нужный массив тайлов и номер тайла
-        public void ChangeTile(Vector3 position, int objectNumber)
+        public void ChangeTile(Vector3Int tilePosition, int objectNumber)
         {
-            var handlePosition = ConvertToCellPosition(position);
+            //var handlePosition = ConvertToCellPosition(position);
 
-            _currentLevel.Map[handlePosition.y, handlePosition.x] = objectNumber;                       // Изменяет Модель
+            _currentLevel.Map[tilePosition.y, tilePosition.x] = objectNumber;                       // Изменяет Модель
 
             if (objectNumber > 0)
             {
-                _wallsTileMap.SetTile(new Vector3Int(handlePosition.x, -handlePosition.y), null);        // Изменяет Presenter
+                _wallsTileMap.SetTile(new Vector3Int(tilePosition.x, -tilePosition.y), null);        // Изменяет Presenter
             }
             else
             {
-                _pelletsTilemap.SetTile(new Vector3Int(handlePosition.x, -handlePosition.y), null);
+                _pelletsTilemap.SetTile(new Vector3Int(tilePosition.x, -tilePosition.y), null);
             }
         }
 
+        // В данный момент не используется
         public bool IsObstacleTile(Vector2 position, string testMessage)      // Незакончен
         {
 
@@ -69,16 +70,10 @@ namespace MyPacman
             return false;
         }
 
-        private Vector3Int ConvertToCellPosition(Vector3 position)      // Переделать под Vector2?
+        public static Vector3Int ConvertToCellPosition(Vector2 position)      // Вынести в другой класс?
         {
             int X = (int)position.x;
-            //int Y = (int)(position.y - 1);
             int Y = Mathf.Abs((int)(position.y - 1));
-
-            //if (Y < 0)
-            //    Y = Mathf.Abs(Y);
-            //else
-            //    Y = 0;
 
             return new Vector3Int(X, Y);
         }
@@ -125,6 +120,36 @@ namespace MyPacman
             }
 
             return numberOfPaths > 2 || horizontal != 0 || vertical != 0 ? true : false;                                    //Magic
+        }
+
+        public void OnPlayerTilesChanged(Vector3Int newPlayerTilePosition)      // Обработка содержимого плитки
+        {
+            //
+            var tile = _pelletsTilemap.GetTile(new Vector3Int(newPlayerTilePosition.x, -newPlayerTilePosition.y));
+
+            if (tile != null)
+            {
+                ChangeTile(newPlayerTilePosition, 0);
+
+                switch (tile.name)
+                {
+                    case "0":
+                        Debug.Log("0");                         // Magic - SmallPellet RuleTile name
+                        break;
+
+                    case "1":
+                        Debug.Log("1");                         // Magic - MediumPellet RuleTile name
+                        break;
+
+                    case "2":
+                        Debug.Log("2");                         // Magic - LargePellet RuleTile name
+                        break;
+
+                    default:
+                        throw new System.Exception($"Undefined tile type: {tile.name}");        // Вынести в константы
+                }
+
+            }
         }
 
         // For test

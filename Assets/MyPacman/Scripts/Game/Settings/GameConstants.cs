@@ -21,7 +21,7 @@ namespace MyPacman
         // Paths to prefabs
         public const string GhostFullPath = "Prefabs/Ghost";
         public const string PacmanFullPath = "Prefabs/Pacman";
-        //public const string NoFrictionMaterialFullPath = "NoFrictionMaterial";    // Материал без трения
+        public const string NoFrictionMaterialFullPath = "Prefabs/NoFrictionMaterial";    // Материал без трения
         public const string WallTilesFolderPath = "Assets/WallTiles/";
         public const string NodeRuleTileFolderPath = "Assets/NodeRuleTile/";
         public const string PelletRuleTilesFolderPath = "Assets/PelletRuleTiles/";
@@ -39,10 +39,10 @@ namespace MyPacman
         //public const int GridCellPixelSize = 24;
         public const int FieldsAtTheEdgesOfTheMap = 1;  // Отступы по краям карты
 
-        // Triggers object names
-        public const string TriggerPelletSmall = "PelletSmall(Clone)";
-        public const string TriggerPelletMedium = "PelletMedium(Clone)";
-        public const string TriggerPelletLarge = "PelletLarge(Clone)";
+        //// Triggers object names
+        //public const string TriggerPelletSmall = "PelletSmall(Clone)";
+        //public const string TriggerPelletMedium = "PelletMedium(Clone)";
+        //public const string TriggerPelletLarge = "PelletLarge(Clone)";
         //public const string TriggerNode = "Node(Clone)";
 
         //// Score cost
