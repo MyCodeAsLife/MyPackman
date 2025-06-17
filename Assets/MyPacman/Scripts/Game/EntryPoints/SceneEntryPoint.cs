@@ -39,14 +39,15 @@ namespace MyPacman
             var gameplayViewModelsContainer = new DIContainer(_sceneContainer);     // Создаем отдельный контейнер для ViewModel's
             //GameplayViewModelRegistartions.Register(gameplayViewModelsContainer);   // Регистрируем все ViewModel's необходимые для сцены
 
-            _sceneContainer.RegisterFactory(_ => new CharacterFactory());
-            _sceneContainer.RegisterFactory<Pacman>(c => c.Resolve<CharacterFactory>().CreatePacman(Vector3.zero));
-            _sceneContainer.RegisterFactory<Ghost>(c => c.Resolve<CharacterFactory>().CreateGhost(Vector3.zero));
+            //_sceneContainer.RegisterFactory(_ => new CharacterFactory());
+            //_sceneContainer.RegisterFactory<Pacman>(c => c.Resolve<CharacterFactory>().CreatePacman(Vector3.zero));
+            //_sceneContainer.RegisterFactory<PacmanView>(c => c.Resolve<CharacterFactory>().CreatePacmanTest(Vector3.zero));
+            //_sceneContainer.RegisterFactory<Ghost>(c => c.Resolve<CharacterFactory>().CreateGhost(Vector3.zero));
 
-            _sceneContainer.RegisterInstance<ILevelConfig>(new NormalLevelConfig());
+            //_sceneContainer.RegisterInstance<ILevelConfig>(new NormalLevelConfig());
 
-            InitUI(gameplayViewModelsContainer);
-            InitWorld(gameplayViewModelsContainer);
+            //InitUI(gameplayViewModelsContainer);
+            //InitWorld(gameplayViewModelsContainer);
 
             //// Заглушка
             //var dummy = gameObject.AddComponent<SceneEntryPoint>();
@@ -95,23 +96,23 @@ namespace MyPacman
             return exitParams;
         }
 
-        private void InitWorld(DIContainer viewsContainer)
-        {
-            //CreateViewRootBinder(viewsContainer);
-        }
+        //private void InitWorld(DIContainer viewsContainer)
+        //{
+        //    //CreateViewRootBinder(viewsContainer);
+        //}
 
-        private void InitUI(DIContainer viewsContainer)
-        {
-            //CreateUIRootBinder();
+        //private void InitUI(DIContainer viewsContainer)
+        //{
+        //    //CreateUIRootBinder();
 
-            //// Запрашиваем рутовую вьюмодель и пихаем ее в биндер, который создали
-            //var uiSceneRootViewModel = viewsContainer.Resolve<UIGameplayRootViewModel>();
-            //_uiScene.Bind(uiSceneRootViewModel);
+        //    //// Запрашиваем рутовую вьюмодель и пихаем ее в биндер, который создали
+        //    //var uiSceneRootViewModel = viewsContainer.Resolve<UIGameplayRootViewModel>();
+        //    //_uiScene.Bind(uiSceneRootViewModel);
 
-            //// For test Можно открывать окошки
-            //var uiManager = viewsContainer.Resolve<GameplayUIManager>();
-            //uiManager.OpenScreenGameplay();
-        }
+        //    //// For test Можно открывать окошки
+        //    //var uiManager = viewsContainer.Resolve<GameplayUIManager>();
+        //    //uiManager.OpenScreenGameplay();
+        //}
 
         private void CreateScene()
         {
@@ -164,7 +165,7 @@ namespace MyPacman
         {
             const float OffsetFromScreenAspectRatio = 16f / 9f;                 // Magic
 
-            var map = _sceneContainer.Resolve<ILevelConfig>().Map;
+            var map = _sceneContainer.Resolve<ILevelConfig>().Map;              // Данные получать на основе GameState
             float y = map.GetLength(0) * GameConstants.GridCellSize * GameConstants.Half;
             float x = map.GetLength(1) * GameConstants.GridCellSize * GameConstants.Half;
 

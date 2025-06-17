@@ -4,32 +4,34 @@ using System.Linq;
 
 namespace MyPacman
 {
-    public class Map    // Переименовать в MapState
+    public class Map
     {
-        public Map(MapData mapState)
+        private EntitiesFactory _entitiesFactory = new();       // Или вынести регистрацию в DI?
+
+        public Map(MapData mapData)
         {
-            Origin = mapState;
-            mapState.Entities.ForEach(entityData => Entities.Add(EntitiesFactory.CreateEntity(entityData)));
+            OriginData = mapData;
+            mapData.Entities.ForEach(entityData => Entities.Add(_entitiesFactory.CreateEntity(entityData)));
 
             // При добавлении элемента в Entities текущего класса, добавится элемент в Entities класса GameState
             Entities.ObserveAdd().Subscribe(collectionAddEvent =>
             {
                 var addedEntity = collectionAddEvent.Value;
-                mapState.Entities.Add(addedEntity.Origin);
+                mapData.Entities.Add(addedEntity.Origin);
             });
 
             // При удалении элемента из Entities текущего класса, также удалится элемент из Entities класса GameState
             Entities.ObserveRemove().Subscribe(collectionRemovedEvent =>
             {
                 var removedEntity = collectionRemovedEvent.Value;
-                var removedEntityData = mapState.Entities.FirstOrDefault(entityData =>
+                var removedEntityData = mapData.Entities.FirstOrDefault(entityData =>
                                                     entityData.UniqId == removedEntity.UniqueId);
-                mapState.Entities.Remove(removedEntityData);
+                mapData.Entities.Remove(removedEntityData);
             });
         }
 
-        public int Id => Origin.Id;
-        public MapData Origin { get; }
+        public int Id => OriginData.Id;
+        public MapData OriginData { get; }
         public ObservableList<Entity> Entities { get; } = new();
     }
 }

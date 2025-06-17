@@ -1,5 +1,4 @@
 using R3;
-using Unity.VisualScripting;
 using UnityEngine;
 
 namespace MyPacman
@@ -16,16 +15,17 @@ namespace MyPacman
             GameplayEnterParams gameplayEnterParams = sceneEnterParams.As<GameplayEnterParams>();
 
             // Регистрация всего необходимого для данной сцены
+            var gameplayRegistartions = new GameplayRegistrations(_sceneContainer, gameplayEnterParams);    // Регистрируем все сервисы необходимые для сцены
             //GameplayRegistrations.Register(_sceneContainer, gameplayEnterParams);   // Регистрируем все сервисы необходимые для сцены
-            var gameplayViewModelsContainer = new DIContainer(_sceneContainer);     // Создаем отдельный контейнер для ViewModel's
+            //var gameplayViewModelsContainer = new DIContainer(_sceneContainer);     // Создаем отдельный контейнер для ViewModel's
             //GameplayViewModelRegistartions.Register(gameplayViewModelsContainer);   // Регистрируем все ViewModel's необходимые для сцены
 
-            InitUI(gameplayViewModelsContainer);
-            InitWorld(gameplayViewModelsContainer);
+            //InitUI(gameplayViewModelsContainer);
+            //InitWorld(gameplayViewModelsContainer);
 
-            //// Заглушка
-            //var dummy = gameObject.AddComponent<SceneEntryPoint>();
-            //dummy.Run(_sceneContainer);
+            // Заглушка
+            var dummy = gameObject.AddComponent<SceneEntryPoint>();
+            dummy.Run(sceneEnterParams, _sceneContainer);
 
             // Привязка сигнала к UI сцены (на кнопку выхода в MainMenu)
             var exitParams = CreateExitParams();
@@ -67,22 +67,22 @@ namespace MyPacman
             return exitParams;
         }
 
-        private void InitWorld(DIContainer viewsContainer)
-        {
-            //CreateViewRootBinder(viewsContainer);
-        }
+        //private void InitWorld(DIContainer viewsContainer)
+        //{
+        //    //CreateViewRootBinder(viewsContainer);
+        //}
 
-        private void InitUI(DIContainer viewsContainer)
-        {
-            //CreateUIRootBinder();
+        //private void InitUI(DIContainer viewsContainer)
+        //{
+        //    //CreateUIRootBinder();
 
-            //// Запрашиваем рутовую вьюмодель и пихаем ее в биндер, который создали
-            //var uiSceneRootViewModel = viewsContainer.Resolve<UIGameplayRootViewModel>();
-            //_uiScene.Bind(uiSceneRootViewModel);
+        //    //// Запрашиваем рутовую вьюмодель и пихаем ее в биндер, который создали
+        //    //var uiSceneRootViewModel = viewsContainer.Resolve<UIGameplayRootViewModel>();
+        //    //_uiScene.Bind(uiSceneRootViewModel);
 
-            //// For test Можно открывать окошки
-            //var uiManager = viewsContainer.Resolve<GameplayUIManager>();
-            //uiManager.OpenScreenGameplay();
-        }
+        //    //// For test Можно открывать окошки
+        //    //var uiManager = viewsContainer.Resolve<GameplayUIManager>();
+        //    //uiManager.OpenScreenGameplay();
+        //}
     }
 }

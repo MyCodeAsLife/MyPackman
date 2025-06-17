@@ -1,8 +1,8 @@
 ﻿namespace MyPacman
 {
-    public class EntitiesFactory       // Статика плохо!!! Переделать
+    public class EntitiesFactory
     {
-        public static Entity CreateEntity(EntityData entityData)    // Ресурсоемкие процессы, но делаются редко
+        public Entity CreateEntity(EntityData entityData)    // Ресурсоемкие процессы, но делаются редко
         {
             switch (entityData.Type)
             {

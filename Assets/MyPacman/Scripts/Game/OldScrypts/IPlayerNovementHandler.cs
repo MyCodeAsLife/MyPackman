@@ -10,6 +10,6 @@ namespace MyPacman
         public void Move();
         public void StartMoving();
         public void StopMoving();
-        public void Initialyze(Func<Vector2> getDirection, Func<Vector2, string, bool> isObstacleTile, Vector2 mapSize);
+        public void Initialyze(Func<Vector2> getDirection, Vector2 mapSize);
     }
 }

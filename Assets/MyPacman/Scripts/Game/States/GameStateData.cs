@@ -11,8 +11,6 @@ namespace MyPacman
         public ScoreData Score { get; set; }
         public ScoreData HigthScore { get; set; }
         public LifePointData LifePoints { get; set; }
-        //public List<MapData> Maps { get; set; }
-        //public List<ResourceData> Resources { get; set; }        // Почему валюта не часть Map ?
 
         public int CreateEntityId()
         {

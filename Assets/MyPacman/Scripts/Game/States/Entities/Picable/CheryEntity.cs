@@ -2,7 +2,7 @@
 {
     public class CheryEntity : Entity
     {
-        public CheryEntity(EntityData data) : base(data)
+        public CheryEntity(CheryEntityData data) : base(data)
         {
         }
     }

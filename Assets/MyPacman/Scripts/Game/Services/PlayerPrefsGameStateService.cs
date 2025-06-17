@@ -61,7 +61,7 @@ namespace MyPacman
                 _settingsStateOrigin = JsonConvert.DeserializeObject<GameSettingsStateData>(json);
                 SettingsState = new GameSettingsState(_settingsStateOrigin);
 
-                //Debug.Log("GameSettingsState loaded: " + json);                                  //++++++++++++++++++++++++++++++++
+                Debug.Log("GameSettingsState loaded: " + json);                                  //++++++++++++++++++++++++++++++++
             }
 
             return Observable.Return(SettingsState);
@@ -100,7 +100,7 @@ namespace MyPacman
         }
 
         // Настройки по умолчанию загружать из выбранной карты
-        private GameState CreateGameStateFromSettings()    // Похожа на CreateGameSettingsStateFromSettings
+        private GameState CreateGameStateFromSettings()
         {
             //// Делаем фейк
             //_gameStateOrigin = new GameStateData
@@ -113,10 +113,19 @@ namespace MyPacman
             //}
             //};
 
+            _gameStateOrigin = new GameStateData()
+            {
+                CurrentMapId = 0,                   // Правильно ли что оно тут инициализируется?
+                Map = new MapData() { Entities = new() },
+                Score = new ScoreData(),
+                HigthScore = new ScoreData() { Amount = 20000 },
+                LifePoints = new LifePointData() { Amount = 3 },
+            };
+
             return new GameState(_gameStateOrigin);
         }
 
-        private GameSettingsState CreateGameSettingsStateFromSettings()    // Похожа на CreateGameStateFromSettings
+        private GameSettingsState CreateGameSettingsStateFromSettings()
         {
             // Делаем фейк
             _settingsStateOrigin = new GameSettingsStateData

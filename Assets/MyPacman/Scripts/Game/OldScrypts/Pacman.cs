@@ -14,12 +14,12 @@ namespace MyPacman
         private void OnEnable()
         {
             _rigidbody = GetComponent<Rigidbody2D>();
-            _playerMoveHandler = new PlayerMovementHandler(_rigidbody);
+            _playerMoveHandler = new PlayerMovementHandler(_rigidbody, null);
 
-            _inputActions = new PlayerInputActions();
-            _inputActions.Enable();
-            _inputActions.Keyboard.Movement.started += OnMoveStarted;
-            _inputActions.Keyboard.Movement.canceled += OnMoveCanceled;
+            //_inputActions = new PlayerInputActions();
+            //_inputActions.Enable();
+            //_inputActions.Keyboard.Movement.started += OnMoveStarted;
+            //_inputActions.Keyboard.Movement.canceled += OnMoveCanceled;
         }
 
         private void OnDisable()
@@ -33,17 +33,18 @@ namespace MyPacman
             _playerMoveHandler.Tick();
         }
 
-        public void Initialize(IMapHandler mapHandler)
+        public void Initialize(IMapHandler mapHandler, PlayerInputActions inputActions)
         {
             _mapHandler = mapHandler;
             var mapSize = new Vector2(_mapHandler.Map.GetLength(1), -_mapHandler.Map.GetLength(0));
 
-            _playerMoveHandler.Initialyze(
-                () => _inputActions.Keyboard.Movement.ReadValue<Vector2>(),
-                _mapHandler.IsObstacleTile,
-                mapSize);
-
+            _playerMoveHandler.Initialyze(() => _inputActions.Keyboard.Movement.ReadValue<Vector2>(), mapSize);
             _playerMoveHandler.TileChanged += _mapHandler.OnPlayerTilesChanged;         // Вынести в отдельный инициализатор
+
+            _inputActions = inputActions;
+            _inputActions.Enable();
+            _inputActions.Keyboard.Movement.started += OnMoveStarted;
+            _inputActions.Keyboard.Movement.canceled += OnMoveCanceled;
         }
 
         private void OnMoveStarted(InputAction.CallbackContext context)

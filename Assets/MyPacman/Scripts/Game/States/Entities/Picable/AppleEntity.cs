@@ -2,7 +2,7 @@
 {
     public class AppleEntity : Entity
     {
-        public AppleEntity(EntityData data) : base(data)
+        public AppleEntity(AppleEntityData data) : base(data)
         {
         }
     }

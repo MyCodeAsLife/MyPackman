@@ -1,0 +1,58 @@
+﻿using UnityEngine;
+using UnityEngine.InputSystem;
+
+namespace MyPacman
+{
+    public class PacmanView : MonoBehaviour
+    {
+        private PacmanEntity _entity;
+        private IGameStateService _gameStateService;
+        private Rigidbody2D _rigidbody;
+        private PlayerMovementHandler _playerMoveHandler;       // Переделать в сервис
+        private PlayerInputActions _inputActions;
+
+        private float _timer;
+
+        private void OnDisable()
+        {
+            _inputActions.Disable();
+            _inputActions.Keyboard.Movement.performed -= OnMoveStarted;
+            _inputActions.Keyboard.Movement.canceled -= OnMoveCanceled;
+        }
+
+        private void Update()
+        {
+            _playerMoveHandler.Tick();
+
+            if (_timer > 1f)    // Автосохранение раз в секунду, вынести в сервис сохранений                 Magic
+            {
+                _gameStateService.SaveGameState();
+                _timer = 0f;
+            }
+        }
+
+        public void Bind(PacmanEntity entity, PlayerInputActions inputActions, IGameStateService gameStateService)
+        {
+            _entity = entity;
+            _gameStateService = gameStateService;
+
+            _rigidbody = GetComponent<Rigidbody2D>();
+            _playerMoveHandler = new PlayerMovementHandler(_rigidbody, _entity);
+
+            _inputActions = inputActions;
+            _inputActions.Enable();
+            _inputActions.Keyboard.Movement.started += OnMoveStarted;
+            _inputActions.Keyboard.Movement.canceled += OnMoveCanceled;
+        }
+
+        private void OnMoveStarted(InputAction.CallbackContext context)
+        {
+            _playerMoveHandler.StartMoving();
+        }
+
+        private void OnMoveCanceled(InputAction.CallbackContext context)
+        {
+            _playerMoveHandler.StopMoving();
+        }
+    }
+}

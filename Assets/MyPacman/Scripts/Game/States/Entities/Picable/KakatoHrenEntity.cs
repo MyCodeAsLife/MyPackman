@@ -2,7 +2,7 @@
 {
     public class KakatoHrenEntity : Entity
     {
-        public KakatoHrenEntity(EntityData data) : base(data)
+        public KakatoHrenEntity(KakatoHrenEntityData data) : base(data)
         {
         }
     }

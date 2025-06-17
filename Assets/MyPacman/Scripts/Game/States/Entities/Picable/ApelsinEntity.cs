@@ -2,7 +2,7 @@
 {
     public class ApelsinEntity : Entity
     {
-        public ApelsinEntity(EntityData data) : base(data)
+        public ApelsinEntity(ApelsinEntityData data) : base(data)
         {
         }
     }

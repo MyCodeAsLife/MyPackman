@@ -2,7 +2,7 @@
 {
     public class KlubnikaEntity : Entity
     {
-        public KlubnikaEntity(EntityData data) : base(data)
+        public KlubnikaEntity(KlubnikaEntityData data) : base(data)
         {
         }
     }

@@ -2,7 +2,7 @@
 {
     public class KolokolchikEntity : Entity
     {
-        public KolokolchikEntity(EntityData data) : base(data)
+        public KolokolchikEntity(KolokolchikEntityData data) : base(data)
         {
         }
     }

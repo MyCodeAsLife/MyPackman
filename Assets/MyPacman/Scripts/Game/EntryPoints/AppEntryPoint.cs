@@ -23,14 +23,13 @@ namespace MyPacman
 
         private AppEntryPoint()
         {
+            var gameStateProvider = new PlayerPrefsGameStateService();                 // Сервис загрузки\сохранения
+            _projectContainer.RegisterInstance<IGameStateService>(gameStateProvider);  // Регистрация сервиса загрузки\сохранения
+            _projectContainer.Resolve<IGameStateService>().LoadSettingsState();        // Загрузка настроек приложения из соранения
+
             //var settingsProvider = new SettingsProvider();                              // Сервис настроек
             //_projectContainer.RegisterInstance<ISettingsProvider>(settingsProvider);    // Регистрация сервиса настроек
-            //var gameStateProvider = new PlayerPrefsGameStateProvider();                 // Сервис загрузки\сохранения
-
-            //_projectContainer.RegisterFactory(_ => new SomeCommonService()).AsSingle(); // Некий тестовый сервис
-            //_projectContainer.RegisterInstance<IGameStateProvider>(gameStateProvider);  // Регистрация сервиса загрузки\сохранения
-
-            //_projectContainer.Resolve<IGameStateProvider>().LoadSettingsState();        // Загрузка настроек из соранения
+            //_projectContainer.RegisterFactory(_ => new SomeCommonService()).AsSingle(); // Некий тестовый
 
             //var loadingScreenPrefab = Resources.Load<UIRootView>(GameConstants.UIRootViewFullPath); // Загрузка префаба корневого UI
             //_uiRoot = Object.Instantiate(loadingScreenPrefab);                                      // Создание корневого UI из префаба
@@ -96,13 +95,13 @@ namespace MyPacman
 
             yield return new WaitForSeconds(1f);
 
-            //bool isGameStateLoaded = false;
-            //_projectContainer.Resolve<IGameStateProvider>().LoadGameState().Subscribe(_ => isGameStateLoaded = true);
-            //yield return new WaitUntil(() => isGameStateLoaded);
+            bool isGameStateLoaded = false;
+            _projectContainer.Resolve<IGameStateService>().LoadGameState().Subscribe(_ => isGameStateLoaded = true);
+            yield return new WaitUntil(() => isGameStateLoaded);
 
             var gameplayContainer = _cashedSceneContainer = new DIContainer(_projectContainer);
-            //var sceneEntryPoint = Object.FindFirstObjectByType<GameplayEntryPoint>();
-            var sceneEntryPoint = Object.FindFirstObjectByType<SceneEntryPoint>();
+            var sceneEntryPoint = Object.FindFirstObjectByType<GameplayEntryPoint>();
+            //var sceneEntryPoint = Object.FindFirstObjectByType<SceneEntryPoint>();
 
             sceneEntryPoint.Run(sceneEnterParams, gameplayContainer).Subscribe(gameplayExitParams =>
             {

@@ -2,7 +2,7 @@
 {
     public class GhostEntity : Entity
     {
-        public GhostEntity(EntityData data) : base(data)
+        public GhostEntity(GhostEntityData data) : base(data)
         {
         }
     }

@@ -2,7 +2,7 @@
 {
     public class KeyEntity : Entity
     {
-        public KeyEntity(EntityData data) : base(data)
+        public KeyEntity(KeyEntityData data) : base(data)
         {
         }
     }

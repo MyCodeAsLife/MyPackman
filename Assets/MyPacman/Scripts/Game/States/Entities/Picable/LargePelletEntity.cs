@@ -2,7 +2,7 @@
 {
     public class LargePelletEntity : Entity
     {
-        public LargePelletEntity(EntityData data) : base(data)
+        public LargePelletEntity(LargePelletEntityData data) : base(data)
         {
         }
     }

@@ -5,14 +5,14 @@ namespace MyPacman
 {
     public abstract class Entity
     {
-        public readonly ReactiveProperty<Vector2Int> Position;
+        public readonly ReactiveProperty<Vector3Int> Position;
 
         public Entity(EntityData data)
         {
             Origin = data;
 
-            Position = new ReactiveProperty<Vector2Int>(data.Position);
-            Position.Subscribe(newPosition => { data.Position = newPosition; });
+            Position = new ReactiveProperty<Vector3Int>(data.Position);
+            Position.Subscribe(newPosition => data.Position = newPosition);
         }
 
         public EntityData Origin { get; }

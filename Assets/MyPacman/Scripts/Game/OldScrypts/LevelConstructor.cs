@@ -10,10 +10,12 @@ namespace MyPacman
         private readonly Tilemap _pelletsTileMap;               // Получать через DI ?
         private readonly Tilemap _nodesTileMap;                 // Получать через DI ?
         private readonly Tile[] _walls;                         // Получать через DI ?
-        private readonly ILevelConfig _level;                     // Получать через DI ?
+        private readonly ILevelConfig _level;                   // Получать через DI ?
         private readonly RuleTile[] _pelletsRule;
         private readonly RuleTile[] _nodeRule;
         private readonly IMapHandler _mapHandler;
+
+        private readonly GameState _gameState;
 
         public LevelConstructor(DIContainer sceneContainer)
         {
@@ -28,6 +30,13 @@ namespace MyPacman
             _level = sceneContainer.Resolve<ILevelConfig>();                                                      // Получать от MainMenu? при загрузке сцены
             _sceneContainer.RegisterInstance<IMapHandler>(new MapHandler(_wallsTileMap, _pelletsTileMap, _walls, _level));   // Создание классов вынести в DI?
             _mapHandler = sceneContainer.Resolve<IMapHandler>();
+
+            // Из GameState получить всю инфу о карте.
+            // И на ее основе конструировать карту.
+            _gameState = sceneContainer.Resolve<GameState>();
+            // получить _level
+            // получить _pelletsTileMap (переделать в picables и добавить туда все подбираемое)
+            // персонажей создавать как отдельные сущности
         }
 
         public void ConstructLevel()        // Передовать команды в MapHendler, чтобы только он менял Tilemap?
@@ -65,18 +74,6 @@ namespace MyPacman
                     }
                 }
             }
-
-            //for (int y = 0; y < _level.Map.GetLength(0); y++)
-            //{
-            //    string str = $"{y}: ";
-
-            //    for (int x = 0; x < _level.Map.GetLength(1); x++)
-            //    {
-            //        str += $"{_level.Map[y, x]}, ";
-            //    }
-
-            //    Debug.Log(str);
-            //}
         }
 
         private Tile[] LoadTiles(string folderPath, int count)
@@ -106,13 +103,32 @@ namespace MyPacman
             var newPosition = new Vector3(newX, newY);
 
             var player = _sceneContainer.Resolve<Pacman>();
+            var inputActions = _sceneContainer.Resolve<PlayerInputActions>();
             player.transform.position = newPosition;
             player.transform.rotation = Quaternion.identity;
             player.gameObject.SetActive(true);
-            player.Initialize(_mapHandler);
+            player.Initialize(_mapHandler, inputActions);
 
             // Не изменять. Понадобится для спавна игрока при смерти
             //_mapHandler.ChangeTile(new Vector3(x, y + 1), GameConstants.EmptyTile);
+        }
+
+        private void SpawnPacmanTest(float x, float y)
+        {
+            float newX = x * GameConstants.GridCellSize + GameConstants.GridCellSize * GameConstants.Half;
+            float newY = -(y * GameConstants.GridCellSize - GameConstants.GridCellSize * GameConstants.Half);
+            var newPosition = new Vector3(newX, newY);
+
+            var player = _sceneContainer.Resolve<PacmanView>();
+            var inputActions = _sceneContainer.Resolve<PlayerInputActions>();
+            player.transform.position = newPosition;                            // Позицию получить из GameState
+            player.transform.rotation = Quaternion.identity;
+
+            var gameStateService = _sceneContainer.Resolve<IGameStateService>();
+
+            player.Bind(_mapHandler, inputActions);
+
+            player.gameObject.SetActive(true);
         }
     }
 }

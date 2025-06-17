@@ -21,6 +21,7 @@ namespace MyPacman
         // Paths to prefabs
         public const string GhostFullPath = "Prefabs/Ghost";
         public const string PacmanFullPath = "Prefabs/Pacman";
+        public const string PacmanTestFullPath = "Prefabs/PacmanTest";
         public const string NoFrictionMaterialFullPath = "Prefabs/NoFrictionMaterial";    // Материал без трения
         public const string WallTilesFolderPath = "Assets/WallTiles/";
         public const string NodeRuleTileFolderPath = "Assets/NodeRuleTile/";
