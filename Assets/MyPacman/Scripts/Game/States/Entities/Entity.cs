@@ -17,7 +17,7 @@ namespace MyPacman
 
         public EntityData Origin { get; }
         public int UniqueId => Origin.UniqId;
-        public string ConfigId => Origin.ConfigId;
+        //public string ConfigId => Origin.ConfigId;        // ID конфига объека настроек ScriptableObject
         public EntityType Type => Origin.Type;
     }
 }

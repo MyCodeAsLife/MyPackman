@@ -6,11 +6,13 @@ namespace MyPacman
 {
     public class Map
     {
-        private EntitiesFactory _entitiesFactory = new();       // Или вынести регистрацию в DI?
+        private EntitiesFactory _entitiesFactory;       // Или вынести регистрацию в DI?
 
-        public Map(MapData mapData)
+        public Map(MapData mapData, EntitiesFactory entitiesFactory)
         {
             OriginData = mapData;
+            _entitiesFactory = entitiesFactory;
+
             mapData.Entities.ForEach(entityData => Entities.Add(_entitiesFactory.CreateEntity(entityData)));
 
             // При добавлении элемента в Entities текущего класса, добавится элемент в Entities класса GameState

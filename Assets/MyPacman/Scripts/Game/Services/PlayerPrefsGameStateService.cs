@@ -9,11 +9,18 @@ namespace MyPacman
         private const string GAME_STATE_KEY = nameof(GAME_STATE_KEY);           // Вынести в контсанты
         private const string SETTINGS_STATE_KEY = nameof(SETTINGS_STATE_KEY);   // Вынести в контсанты
 
+        private readonly EntitiesFactory _entitiesFactory;
+
         public GameState GameState { get; private set; }
         public GameSettingsState SettingsState { get; private set; }
 
         private GameStateData _gameStateOrigin { get; set; }
         private GameSettingsStateData _settingsStateOrigin { get; set; }
+
+        public PlayerPrefsGameStateService(EntitiesFactory entitiesFactory)
+        {
+            _entitiesFactory = entitiesFactory;
+        }
 
         public Observable<GameState> LoadGameState()   // Похожа на LoadSettingsState
         {
@@ -37,7 +44,7 @@ namespace MyPacman
                 // Загружаем
                 var json = PlayerPrefs.GetString(GAME_STATE_KEY);
                 _gameStateOrigin = JsonConvert.DeserializeObject<GameStateData>(json);
-                GameState = new GameState(_gameStateOrigin);
+                GameState = new GameState(_gameStateOrigin, _entitiesFactory);
 
                 Debug.Log("GameState loaded: " + json);                                  //++++++++++++++++++++++++++++++++
             }
@@ -102,27 +109,26 @@ namespace MyPacman
         // Настройки по умолчанию загружать из выбранной карты
         private GameState CreateGameStateFromSettings()
         {
-            //// Делаем фейк
-            //_gameStateOrigin = new GameStateData
-            //{
-            //    Maps = new List<MapData>(),
-            //    Resources = new List<ResourceData>()
-            //{
-            //    new() {ResourceType = ResourceType.SoftCurrency, Amount = 0},
-            //    new() {ResourceType = ResourceType.HardCurrency, Amount = 0},
-            //}
-            //};
+            _gameStateOrigin = new GameStateData();
 
-            _gameStateOrigin = new GameStateData()
+            _gameStateOrigin.CurrentMapId = 0;                   // Правильно ли что оно тут инициализируется?
+            _gameStateOrigin.Map = new MapData()
             {
-                CurrentMapId = 0,                   // Правильно ли что оно тут инициализируется?
-                Map = new MapData() { Entities = new() },
-                Score = new ScoreData(),
-                HigthScore = new ScoreData() { Amount = 20000 },
-                LifePoints = new LifePointData() { Amount = 3 },
+                Entities = new()
+                    {
+                        new PacmanEntityData()
+                        {
+                            UniqId = _gameStateOrigin.CreateEntityId(),
+                            Type = EntityType.Pacman,
+                        },
+                    },
             };
 
-            return new GameState(_gameStateOrigin);
+            _gameStateOrigin.Score = new ScoreData();
+            _gameStateOrigin.HigthScore = new ScoreData() { Amount = 20000 };
+            _gameStateOrigin.LifePoints = new LifePointData() { Amount = 3 };
+
+            return new GameState(_gameStateOrigin, _entitiesFactory);
         }
 
         private GameSettingsState CreateGameSettingsStateFromSettings()

@@ -13,11 +13,11 @@ namespace MyPacman
 
         public readonly ReactiveProperty<int> CurrentMapId = new();
 
-        public GameState(GameStateData gameStateData)
+        public GameState(GameStateData gameStateData, EntitiesFactory entitiesFactory)
         {
             _gameStateData = gameStateData;
 
-            Map = new ReactiveProperty<Map>(new Map(_gameStateData.Map));
+            Map = new ReactiveProperty<Map>(new Map(_gameStateData.Map, entitiesFactory));
             Score = new ReactiveProperty<Score>(new Score(_gameStateData.Score));
             HigthScore = new ReactiveProperty<Score>(new Score(_gameStateData.HigthScore));
             LifePoints = new ReactiveProperty<LifePoint>(new LifePoint(_gameStateData.LifePoints));

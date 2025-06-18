@@ -29,15 +29,24 @@ namespace MyPacman
                 _gameStateService.SaveGameState();
                 _timer = 0f;
             }
+
+            _timer += Time.deltaTime;
         }
 
-        public void Bind(PacmanEntity entity, PlayerInputActions inputActions, IGameStateService gameStateService)
+        public void Bind(PacmanEntity entity,
+            PlayerInputActions inputActions,
+            IGameStateService gameStateService,
+            IMapHandler mapHandler)
         {
             _entity = entity;
             _gameStateService = gameStateService;
 
             _rigidbody = GetComponent<Rigidbody2D>();
             _playerMoveHandler = new PlayerMovementHandler(_rigidbody, _entity);
+
+            var mapSize = new Vector2(mapHandler.Map.GetLength(1), -mapHandler.Map.GetLength(0));
+            _playerMoveHandler.Initialyze(() => _inputActions.Keyboard.Movement.ReadValue<Vector2>(), mapSize);
+            _playerMoveHandler.TileChanged += mapHandler.OnPlayerTilesChanged;         // Вынести в отдельный инициализатор
 
             _inputActions = inputActions;
             _inputActions.Enable();

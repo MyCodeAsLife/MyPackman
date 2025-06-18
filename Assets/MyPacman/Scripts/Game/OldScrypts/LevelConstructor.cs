@@ -1,3 +1,4 @@
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
@@ -33,7 +34,7 @@ namespace MyPacman
 
             // Из GameState получить всю инфу о карте.
             // И на ее основе конструировать карту.
-            _gameState = sceneContainer.Resolve<GameState>();
+            _gameState = sceneContainer.Resolve<IGameStateService>().GameState;
             // получить _level
             // получить _pelletsTileMap (переделать в picables и добавить туда все подбираемое)
             // персонажей создавать как отдельные сущности
@@ -54,7 +55,7 @@ namespace MyPacman
                     else if (_level.Map[y, x] == GameConstants.EmptyTile)
                         _wallsTileMap.SetTile(cellPosition, null);
                     else if (_level.Map[y, x] == -1)                                                       // Magic
-                        SpawnPacman(x, y);
+                        SpawnPacmanTest(x, y);
                     else if (_level.Map[y, x] == -4)                                                       // Magic
                     {
                         if (_mapHandler.IsIntersactionTile(x, y))
@@ -105,8 +106,8 @@ namespace MyPacman
             var player = _sceneContainer.Resolve<Pacman>();
             var inputActions = _sceneContainer.Resolve<PlayerInputActions>();
             player.transform.position = newPosition;
-            player.transform.rotation = Quaternion.identity;
-            player.gameObject.SetActive(true);
+            //player.transform.rotation = Quaternion.identity;
+            //player.gameObject.SetActive(true);
             player.Initialize(_mapHandler, inputActions);
 
             // Не изменять. Понадобится для спавна игрока при смерти
@@ -115,18 +116,31 @@ namespace MyPacman
 
         private void SpawnPacmanTest(float x, float y)
         {
-            float newX = x * GameConstants.GridCellSize + GameConstants.GridCellSize * GameConstants.Half;
-            float newY = -(y * GameConstants.GridCellSize - GameConstants.GridCellSize * GameConstants.Half);
-            var newPosition = new Vector3(newX, newY);
+            var pacmanEntity = _gameState.Map.Value.Entities.First(entity => entity.Type == EntityType.Pacman);
+            var gameStateService = _sceneContainer.Resolve<IGameStateService>();
 
             var player = _sceneContainer.Resolve<PacmanView>();
             var inputActions = _sceneContainer.Resolve<PlayerInputActions>();
-            player.transform.position = newPosition;                            // Позицию получить из GameState
+
+            float newX = 0;
+            float newY = 0;
+
+            if (pacmanEntity.Position.Value == Vector3Int.zero)     // Позицию определять на этапе загрузки?
+            {
+                newX = x * GameConstants.GridCellSize + GameConstants.GridCellSize * GameConstants.Half;
+                newY = -(y * GameConstants.GridCellSize - GameConstants.GridCellSize * GameConstants.Half);
+            }
+            else
+            {
+                var position = pacmanEntity.Position.Value;
+                newX = position.x * GameConstants.GridCellSize + GameConstants.GridCellSize * GameConstants.Half;
+                newY = -(position.y * GameConstants.GridCellSize - GameConstants.GridCellSize * GameConstants.Half);
+            }
+
             player.transform.rotation = Quaternion.identity;
+            player.transform.position = new Vector3(newX, newY);
 
-            var gameStateService = _sceneContainer.Resolve<IGameStateService>();
-
-            player.Bind(_mapHandler, inputActions);
+            player.Bind(pacmanEntity as PacmanEntity, inputActions, gameStateService, _mapHandler);
 
             player.gameObject.SetActive(true);
         }

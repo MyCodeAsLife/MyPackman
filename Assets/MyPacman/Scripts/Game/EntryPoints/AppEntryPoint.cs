@@ -23,9 +23,12 @@ namespace MyPacman
 
         private AppEntryPoint()
         {
-            var gameStateProvider = new PlayerPrefsGameStateService();                 // Сервис загрузки\сохранения
+            _projectContainer.RegisterInstance(new EntitiesFactory());                  // Фабрика сущностей
+
+            var gameStateProvider = new PlayerPrefsGameStateService(_projectContainer.Resolve<EntitiesFactory>());        // Сервис загрузки\сохранения
             _projectContainer.RegisterInstance<IGameStateService>(gameStateProvider);  // Регистрация сервиса загрузки\сохранения
             _projectContainer.Resolve<IGameStateService>().LoadSettingsState();        // Загрузка настроек приложения из соранения
+
 
             //var settingsProvider = new SettingsProvider();                              // Сервис настроек
             //_projectContainer.RegisterInstance<ISettingsProvider>(settingsProvider);    // Регистрация сервиса настроек
