@@ -9,6 +9,7 @@ namespace MyPacman
 
         private PlayerInputActions _inputActions;
         private IPlayerMovementHandler _playerMoveHandler;
+        private TimeService _timeService;
         private IMapHandler _mapHandler;
 
         private void OnEnable()
@@ -26,15 +27,17 @@ namespace MyPacman
         {
             _inputActions.Disable();
             _inputActions.Keyboard.Movement.performed -= OnMoveStarted;
+            _timeService.TimeHasTicked -= _playerMoveHandler.Tick;
         }
 
-        private void Update()
-        {
-            _playerMoveHandler.Tick();
-        }
+        //private void Update()
+        //{
+        //    _playerMoveHandler.Tick();
+        //}
 
-        public void Initialize(IMapHandler mapHandler, PlayerInputActions inputActions)
+        public void Initialize(IMapHandler mapHandler, PlayerInputActions inputActions, TimeService timeService)
         {
+            _timeService = timeService;
             _mapHandler = mapHandler;
             var mapSize = new Vector2(_mapHandler.Map.GetLength(1), -_mapHandler.Map.GetLength(0));
 
@@ -45,6 +48,8 @@ namespace MyPacman
             _inputActions.Enable();
             _inputActions.Keyboard.Movement.started += OnMoveStarted;
             _inputActions.Keyboard.Movement.canceled += OnMoveCanceled;
+
+            _timeService.TimeHasTicked += _playerMoveHandler.Tick;
         }
 
         private void OnMoveStarted(InputAction.CallbackContext context)

@@ -7,7 +7,7 @@ namespace MyPacman
         public GameplayRegistrations(DIContainer sceneContainer, GameplayEnterParams gameplayEnterParams)
         {
             //var gameStateProvider = sceneContainer.Resolve<IGameStateService>();
-            sceneContainer.RegisterFactory<PlayerInputActions>(_ => new PlayerInputActions()).AsSingle();
+            //sceneContainer.RegisterFactory<PlayerInputActions>(_ => new PlayerInputActions()).AsSingle();
 
             sceneContainer.RegisterFactory(_ => new CharacterFactory()).AsSingle();
             sceneContainer.RegisterFactory<Pacman>(c => c.Resolve<CharacterFactory>().CreatePacman(Vector3.zero)).AsSingle();

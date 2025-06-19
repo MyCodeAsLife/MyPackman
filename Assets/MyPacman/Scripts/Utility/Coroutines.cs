@@ -13,9 +13,10 @@ namespace MyPacman
             {
                 if (_instance == null)
                 {
-                    var go = new GameObject("[COROUTINE MANAGER]");
+                    var go = GameObject.Find("[Utilities Manager]");        // Magic
+                    //var go = new GameObject("[COROUTINE MANAGER]");
                     _instance = go.AddComponent<Coroutines>();
-                    DontDestroyOnLoad(go);
+                    //DontDestroyOnLoad(go);
                 }
 
                 return _instance;

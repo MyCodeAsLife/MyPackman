@@ -20,23 +20,24 @@ namespace MyPacman
             _inputActions.Keyboard.Movement.canceled -= OnMoveCanceled;
         }
 
-        private void Update()
-        {
-            _playerMoveHandler.Tick();
+        //private void Update()
+        //{
+        //    _playerMoveHandler.Tick();
 
-            if (_timer > 1f)    // Автосохранение раз в секунду, вынести в сервис сохранений                 Magic
-            {
-                _gameStateService.SaveGameState();
-                _timer = 0f;
-            }
+        //    if (_timer > 1f)    // Автосохранение раз в секунду, вынести в сервис сохранений                 Magic
+        //    {
+        //        _gameStateService.SaveGameState();
+        //        _timer = 0f;
+        //    }
 
-            _timer += Time.deltaTime;
-        }
+        //    _timer += Time.deltaTime;
+        //}
 
         public void Bind(PacmanEntity entity,
             PlayerInputActions inputActions,
             IGameStateService gameStateService,
-            IMapHandler mapHandler)
+            IMapHandler mapHandler,
+            TimeService timeService)
         {
             _entity = entity;
             _gameStateService = gameStateService;
@@ -52,6 +53,9 @@ namespace MyPacman
             _inputActions.Enable();
             _inputActions.Keyboard.Movement.started += OnMoveStarted;
             _inputActions.Keyboard.Movement.canceled += OnMoveCanceled;
+
+            timeService.TimeHasTicked += Tick;
+            timeService.TimeHasTicked += _playerMoveHandler.Tick;
         }
 
         private void OnMoveStarted(InputAction.CallbackContext context)
@@ -62,6 +66,17 @@ namespace MyPacman
         private void OnMoveCanceled(InputAction.CallbackContext context)
         {
             _playerMoveHandler.StopMoving();
+        }
+
+        private void Tick()
+        {
+            if (_timer > 1f)    // Автосохранение раз в секунду, вынести в сервис сохранений                 Magic
+            {
+                _gameStateService.SaveGameState();
+                _timer = 0f;
+            }
+
+            _timer += Time.deltaTime;
         }
     }
 }

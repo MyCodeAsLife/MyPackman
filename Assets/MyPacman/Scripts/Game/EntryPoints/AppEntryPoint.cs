@@ -23,20 +23,9 @@ namespace MyPacman
 
         private AppEntryPoint()
         {
-            _projectContainer.RegisterInstance(new EntitiesFactory());                  // Фабрика сущностей
+            new ApplicationRegistrations(_projectContainer);
 
-            var gameStateProvider = new PlayerPrefsGameStateService(_projectContainer.Resolve<EntitiesFactory>());        // Сервис загрузки\сохранения
-            _projectContainer.RegisterInstance<IGameStateService>(gameStateProvider);  // Регистрация сервиса загрузки\сохранения
             _projectContainer.Resolve<IGameStateService>().LoadSettingsState();        // Загрузка настроек приложения из соранения
-
-
-            //var settingsProvider = new SettingsProvider();                              // Сервис настроек
-            //_projectContainer.RegisterInstance<ISettingsProvider>(settingsProvider);    // Регистрация сервиса настроек
-            //_projectContainer.RegisterFactory(_ => new SomeCommonService()).AsSingle(); // Некий тестовый
-
-            //var loadingScreenPrefab = Resources.Load<UIRootView>(GameConstants.UIRootViewFullPath); // Загрузка префаба корневого UI
-            //_uiRoot = Object.Instantiate(loadingScreenPrefab);                                      // Создание корневого UI из префаба
-            //_projectContainer.RegisterInstance(_uiRoot);                                            // Регистрация корневого UI
         }
 
         private /*async*/ void RunApplication()

@@ -108,7 +108,8 @@ namespace MyPacman
             player.transform.position = newPosition;
             //player.transform.rotation = Quaternion.identity;
             //player.gameObject.SetActive(true);
-            player.Initialize(_mapHandler, inputActions);
+            var timeService = _sceneContainer.Resolve<TimeService>();
+            player.Initialize(_mapHandler, inputActions, timeService);
 
             // Не изменять. Понадобится для спавна игрока при смерти
             //_mapHandler.ChangeTile(new Vector3(x, y + 1), GameConstants.EmptyTile);
@@ -121,6 +122,7 @@ namespace MyPacman
 
             var player = _sceneContainer.Resolve<PacmanView>();
             var inputActions = _sceneContainer.Resolve<PlayerInputActions>();
+            var timeService = _sceneContainer.Resolve<TimeService>();
 
             float newX = 0;
             float newY = 0;
@@ -140,7 +142,7 @@ namespace MyPacman
             player.transform.rotation = Quaternion.identity;
             player.transform.position = new Vector3(newX, newY);
 
-            player.Bind(pacmanEntity as PacmanEntity, inputActions, gameStateService, _mapHandler);
+            player.Bind(pacmanEntity as PacmanEntity, inputActions, gameStateService, _mapHandler, timeService);
 
             player.gameObject.SetActive(true);
         }
