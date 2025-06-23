@@ -8,12 +8,12 @@ namespace MyPacman
     {
         private readonly DIContainer _sceneContainer;
         private readonly Tilemap _wallsTileMap;                 // Получать через DI ?
-        private readonly Tilemap _pelletsTileMap;               // Получать через DI ?
-        private readonly Tilemap _nodesTileMap;                 // Получать через DI ?
+        private readonly Tilemap _pickablesTileMap;               // Получать через DI ?
+        //private readonly Tilemap _nodesTileMap;                 // Получать через DI ?
         private readonly Tile[] _walls;                         // Получать через DI ?
+        private readonly RuleTile[] _pelletsRuleTiles;
+        //private readonly RuleTile[] _nodesRuleTiles;
         private readonly ILevelConfig _level;                   // Получать через DI ?
-        private readonly RuleTile[] _pelletsRule;
-        private readonly RuleTile[] _nodeRule;
         private readonly IMapHandler _mapHandler;
 
         private readonly GameState _gameState;
@@ -22,24 +22,27 @@ namespace MyPacman
         {
             _sceneContainer = sceneContainer;
             _wallsTileMap = sceneContainer.Resolve<Tilemap>(GameConstants.Obstacle);
-            _pelletsTileMap = sceneContainer.Resolve<Tilemap>(GameConstants.Pellet);
-            _nodesTileMap = sceneContainer.Resolve<Tilemap>(GameConstants.Node);
+            _pickablesTileMap = sceneContainer.Resolve<Tilemap>(GameConstants.Pellet);
+            //_nodesTileMap = sceneContainer.Resolve<Tilemap>(GameConstants.Node);
 
             _walls = LoadTiles(GameConstants.WallTilesFolderPath, GameConstants.NumberOfWallTiles);
-            _pelletsRule = LoadRuleTiles(GameConstants.PelletRuleTilesFolderPath, GameConstants.NumberOfPelletTiles);
-            _nodeRule = LoadRuleTiles(GameConstants.NodeRuleTileFolderPath, GameConstants.NumberOfNodeTiles);
+            _pelletsRuleTiles = LoadRuleTiles(GameConstants.PelletRuleTilesFolderPath, GameConstants.NumberOfPelletTiles);
+            //_nodesRuleTiles = LoadRuleTiles(GameConstants.NodeRuleTileFolderPath, GameConstants.NumberOfNodeTiles);
             _level = sceneContainer.Resolve<ILevelConfig>();                                                      // Получать от MainMenu? при загрузке сцены
-            _sceneContainer.RegisterInstance<IMapHandler>(new MapHandler(_wallsTileMap, _pelletsTileMap, _walls, _level));   // Создание классов вынести в DI?
+            sceneContainer.RegisterInstance<IMapHandler>(new MapHandler(_wallsTileMap, _pickablesTileMap, _walls, _level));   // Создание классов вынести в DI?
             _mapHandler = sceneContainer.Resolve<IMapHandler>();
 
             // Из GameState получить всю инфу о карте.
             // И на ее основе конструировать карту.
             _gameState = sceneContainer.Resolve<IGameStateService>().GameState;
             // получить _level
-            // получить _pelletsTileMap (переделать в picables и добавить туда все подбираемое)
             // персонажей создавать как отдельные сущности
         }
 
+        // При конструировании уровня:
+        // 1 - Проверить на пустоту Entities в gameState
+        // 2 - Если не пусто то из "оригинальной" карты брать только препятствия
+        // 3 - Если пусто то берем все из "оригинальной" карты и создаем сущности
         public void ConstructLevel()        // Передовать команды в MapHendler, чтобы только он менял Tilemap?
         {
             _wallsTileMap.ClearAllTiles();
@@ -54,23 +57,23 @@ namespace MyPacman
                         _wallsTileMap.SetTile(cellPosition, _walls[_level.Map[y, x]]);
                     else if (_level.Map[y, x] == GameConstants.EmptyTile)
                         _wallsTileMap.SetTile(cellPosition, null);
-                    else if (_level.Map[y, x] == -1)                                                       // Magic
+                    else if (_level.Map[y, x] == GameConstants.PacmanSpawn)
                         SpawnPacmanTest(x, y);
-                    else if (_level.Map[y, x] == -4)                                                       // Magic
+                    else if (_level.Map[y, x] == GameConstants.SmallPellet)
                     {
                         if (_mapHandler.IsIntersactionTile(x, y))
                         {
-                            _nodesTileMap.SetTile(cellPosition, _nodeRule[0]);                     // Magic
+                            //_nodesTileMap.SetTile(cellPosition, _nodeRule[0]);                     // Magic
                             int chance = Random.Range(0, 100);
 
                             if (chance < 10)                                                       // Magic
-                                _pelletsTileMap.SetTile(cellPosition, _pelletsRule[2]);            // Magic
+                                _pickablesTileMap.SetTile(cellPosition, _pelletsRuleTiles[2]);            // Magic
                             else
-                                _pelletsTileMap.SetTile(cellPosition, _pelletsRule[1]);            // Magic
+                                _pickablesTileMap.SetTile(cellPosition, _pelletsRuleTiles[1]);            // Magic
                         }
                         else
                         {
-                            _pelletsTileMap.SetTile(cellPosition, _pelletsRule[0]);                // Magic
+                            _pickablesTileMap.SetTile(cellPosition, _pelletsRuleTiles[0]);                // Magic
                         }
                     }
                 }
@@ -91,8 +94,10 @@ namespace MyPacman
         {
             RuleTile[] ruleTiles = new RuleTile[count];
 
-            for (int tileName = 0; tileName < count; tileName++)
-                ruleTiles[tileName] = Resources.Load<RuleTile>($"{folderPath}{tileName}");
+            //for (int tileName = 0; tileName < count; tileName++)
+            //    ruleTiles[tileName] = Resources.Load<RuleTile>($"{folderPath}{tileName}");
+
+            ruleTiles = Resources.LoadAll<RuleTile>(folderPath);
 
             return ruleTiles;
         }

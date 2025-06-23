@@ -8,5 +8,6 @@ namespace MyPacman
     {
         public int Id { get; set; }
         public List<EntityData> Entities { get; set; }
+        public ILevelConfig LevelConfig { get; set; }       // Правильнее сохранить путь до оригинальной карты
     }
 }

@@ -29,7 +29,6 @@ namespace MyPacman
 
         public int[,] Map => _currentLevel.Map;
 
-        // Передовать класс(по типу патерна комманда) в котором будет указан нужный tilemap, нужный массив тайлов и номер тайла
         public void ChangeTile(Vector3Int tilePosition, int objectNumber)
         {
             //var handlePosition = ConvertToCellPosition(position);
@@ -50,7 +49,7 @@ namespace MyPacman
         public bool IsObstacleTile(Vector2 position, string testMessage)      // Незакончен
         {
 
-            var cellPosition = ConvertToCellPosition(position);
+            var cellPosition = ConvertToTilePosition(position);
 
             if (_currentCellPosition != cellPosition)
             {
@@ -70,7 +69,7 @@ namespace MyPacman
             return false;
         }
 
-        public static Vector3Int ConvertToCellPosition(Vector2 position)      // Вынести в другой класс?
+        public static Vector3Int ConvertToTilePosition(Vector2 position)      // Вынести в другой класс?
         {
             int X = (int)position.x;
             int Y = Mathf.Abs((int)(position.y - 1));
@@ -78,6 +77,7 @@ namespace MyPacman
             return new Vector3Int(X, Y);
         }
 
+        // Выпилить!
         public bool IsIntersactionTile(int x, int y)       // Проверка на перекресток
         {
             int numberOfPaths = 0;
@@ -91,28 +91,28 @@ namespace MyPacman
             int downY = y - 1;
             int upY = y + 1;
 
-            if (leftX >= 0 && (_currentLevel.Map[y, leftX] == GameConstants.PelletTile ||
+            if (leftX >= 0 && (_currentLevel.Map[y, leftX] == GameConstants.SmallPellet ||
                              _currentLevel.Map[y, leftX] == GameConstants.EmptyTile))
             {
                 numberOfPaths++;
                 vertical++;
             }
 
-            if (rigthX < maxLengthX && (_currentLevel.Map[y, rigthX] == GameConstants.PelletTile ||
+            if (rigthX < maxLengthX && (_currentLevel.Map[y, rigthX] == GameConstants.SmallPellet ||
                                        _currentLevel.Map[y, rigthX] == GameConstants.EmptyTile))
             {
                 numberOfPaths++;
                 vertical--;
             }
 
-            if (downY >= 0 && (_currentLevel.Map[downY, x] == GameConstants.PelletTile ||
+            if (downY >= 0 && (_currentLevel.Map[downY, x] == GameConstants.SmallPellet ||
                                _currentLevel.Map[downY, x] == GameConstants.EmptyTile))
             {
                 numberOfPaths++;
                 horizontal++;
             }
 
-            if (upY < maxLengthY && (_currentLevel.Map[upY, x] == GameConstants.PelletTile ||
+            if (upY < maxLengthY && (_currentLevel.Map[upY, x] == GameConstants.SmallPellet ||
                                         _currentLevel.Map[upY, x] == GameConstants.EmptyTile))
             {
                 numberOfPaths++;
@@ -130,19 +130,20 @@ namespace MyPacman
             if (tile != null)
             {
                 ChangeTile(newPlayerTilePosition, 0);
+                int pellet = int.Parse(tile.name);
 
-                switch (tile.name)
+                switch (pellet)
                 {
-                    case "0":
-                        Debug.Log("0");                         // Magic - SmallPellet RuleTile name
+                    case GameConstants.SmallPellet:
+                        Debug.Log(GameConstants.SmallPellet);                         // Magic - SmallPellet RuleTile name
                         break;
 
-                    case "1":
-                        Debug.Log("1");                         // Magic - MediumPellet RuleTile name
+                    case GameConstants.MediumPellet:
+                        Debug.Log(GameConstants.MediumPellet);                         // Magic - MediumPellet RuleTile name
                         break;
 
-                    case "2":
-                        Debug.Log("2");                         // Magic - LargePellet RuleTile name
+                    case GameConstants.LargePellet:
+                        Debug.Log(GameConstants.LargePellet);                         // Magic - LargePellet RuleTile name
                         break;
 
                     default:

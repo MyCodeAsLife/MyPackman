@@ -35,5 +35,6 @@ namespace MyPacman
         public int Id => OriginData.Id;
         public MapData OriginData { get; }
         public ObservableList<Entity> Entities { get; } = new();
+        public ILevelConfig LevelConfig => OriginData.LevelConfig;
     }
 }

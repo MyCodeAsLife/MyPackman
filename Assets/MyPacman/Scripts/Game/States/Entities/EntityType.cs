@@ -1,11 +1,11 @@
 ﻿public enum EntityType
 {
     Unknown = 0,
-    Pacman = 1,
-    Ghost = 2,
-    SmallPellet = 3,       // Тот ресурс что валяется на сцене
-    MediumPellet = 4,      // Тот ресурс что валяется на сцене
-    LargePellet = 5,       // Тот ресурс что валяется на сцене
+    Pacman = -1,
+    Ghost = -2,
+    SmallPellet = -3,       // Тот ресурс что валяется на сцене
+    MediumPellet = -4,      // Тот ресурс что валяется на сцене
+    LargePellet = -5,       // Тот ресурс что валяется на сцене
     Chery = 6,          // Перепроверить название
     Klubnika = 7,       // Перепроверить название
     Apelsin = 8,        // Перепроверить название

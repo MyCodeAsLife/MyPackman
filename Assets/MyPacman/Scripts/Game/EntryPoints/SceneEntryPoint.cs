@@ -121,7 +121,7 @@ namespace MyPacman
 
             CreateWallFrame(sceneFrame.transform);
             CreatePelletFrame(sceneFrame.transform);
-            CreateNodeFrame(sceneFrame.transform);
+            CreateNodeFrame(sceneFrame.transform);      // Выпилить
 
             var levelConstarctor = new LevelConstructor(_sceneContainer);
             levelConstarctor.ConstructLevel();
@@ -132,8 +132,8 @@ namespace MyPacman
             var walls = new GameObject(GameConstants.Obstacle);
             walls.transform.parent = parent;
             walls.layer = LayerMask.NameToLayer(GameConstants.Obstacle);
-            var wallsTilemap = walls.AddComponent<Tilemap>();
-            _sceneContainer.RegisterInstance(GameConstants.Obstacle, wallsTilemap);
+            var obstacleTilemap = walls.AddComponent<Tilemap>();
+            _sceneContainer.RegisterInstance(GameConstants.Obstacle, obstacleTilemap);
             walls.AddComponent<TilemapRenderer>();
             var wallsCollider = walls.AddComponent<TilemapCollider2D>();
             //wallsCollider.sharedMaterial = Resources.Load<PhysicsMaterial2D>(GameConstants.NoFrictionMaterialFullPath); // Материал для скольжения, не используется
@@ -151,6 +151,7 @@ namespace MyPacman
             pellets.AddComponent<TilemapRenderer>();
         }
 
+        // Выпилить
         private void CreateNodeFrame(Transform parent)
         {
             var nodes = new GameObject(GameConstants.Node);

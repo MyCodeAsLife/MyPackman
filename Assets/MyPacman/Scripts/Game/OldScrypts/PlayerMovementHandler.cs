@@ -5,8 +5,8 @@ namespace MyPacman
 {
     public class PlayerMovementHandler : IPlayerMovementHandler
     {
-        private Rigidbody2D _rigidbody;
-        private PacmanEntity _entity;
+        private readonly Rigidbody2D _rigidbody;
+        private readonly PacmanEntity _entity;
         private Func<Vector2> _getDirection;
         private Vector3Int _currentTilePosition;
         private Vector2 _mapSize;
@@ -38,7 +38,7 @@ namespace MyPacman
             nextPosY = RepeatInRange(nextPosY, _mapSize.y + 2, 0);
 
             var newPosition = new Vector2(nextPosX, nextPosY);
-            var newTilePosition = MapHandler.ConvertToCellPosition(newPosition);
+            var newTilePosition = MapHandler.ConvertToTilePosition(newPosition);
 
             if (_currentTilePosition != newTilePosition)
             {

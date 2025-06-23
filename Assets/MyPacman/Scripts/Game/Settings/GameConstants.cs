@@ -24,8 +24,8 @@ namespace MyPacman
         public const string PacmanTestFullPath = "Prefabs/PacmanTest";
         public const string NoFrictionMaterialFullPath = "Prefabs/NoFrictionMaterial";    // Материал без трения
         public const string WallTilesFolderPath = "Assets/WallTiles/";
-        public const string NodeRuleTileFolderPath = "Assets/NodeRuleTile/";
-        public const string PelletRuleTilesFolderPath = "Assets/PelletRuleTiles/";
+        public const string NodeRuleTileFolderPath = "Assets/NodesRuleTiles/";
+        public const string PelletRuleTilesFolderPath = "Assets/PelletsRuleTiles/";
         //public const string UIRootViewFullPath = "Prefabs/UI/RootViewUI";
         //public const string UIMainMenuFullPath = "Prefabs/UI/MainMenuUI";
         //public const string UIGameplayFullPath = "Prefabs/UI/GameplayUI";
@@ -33,7 +33,7 @@ namespace MyPacman
         // Number of tiles along the specified path
         public const int NumberOfWallTiles = 38;
         public const int NumberOfPelletTiles = 3;
-        public const int NumberOfNodeTiles = 1;
+        public const int NumberOfNodeTiles = 1;         // Количество подбираемых вещей в папке Prefabs(apple, key и т.д.)
 
         // Map settings
         public const float GridCellSize = 1f;
@@ -56,8 +56,10 @@ namespace MyPacman
 
         // Level Constructor - переделать в enum?
         public const int EmptyTile = 0;
-        public const int PelletTile = -4;
-        //public const int PacmanSpawn = -1;
+        public const int PacmanSpawn = -1;
+        public const int SmallPellet = -3;
+        public const int MediumPellet = -4;
+        public const int LargePellet = -5;
 
         //// Errors
         //public const string PositionOnMapNotFound = "Position on map, not Found.";
