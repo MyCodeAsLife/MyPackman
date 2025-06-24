@@ -51,9 +51,14 @@ namespace MyPacman
             if (_entity != null)        // Переделать под реактивщину
             {
                 _entity.Position.Value = newTilePosition;
-                //_entity.AxisPosition.Value = newPosition;
-                _entity.PositionX.Value = newPosition.x;
-                _entity.PositionY.Value = newPosition.y;
+
+                //// old
+                //_entity.PositionX.Value = newPosition.x;
+                //_entity.PositionY.Value = newPosition.y;
+
+                // new
+                _entity.NewPosition.Value = newPosition;
+                _entity.Direction.Value = currentDirection;
             }
         }
 
@@ -74,8 +79,12 @@ namespace MyPacman
 
             if (_entity != null)
             {
-                Vector2 position = new Vector2(_entity.PositionX.CurrentValue, _entity.PositionY.CurrentValue);
-                _rigidbody.position = position;
+                //// old
+                //Vector2 position = new Vector2(_entity.PositionX.CurrentValue, _entity.PositionY.CurrentValue);
+                //_rigidbody.position = position;
+
+                // new
+                _rigidbody.position = _entity.NewPosition.CurrentValue;
             }
         }
 

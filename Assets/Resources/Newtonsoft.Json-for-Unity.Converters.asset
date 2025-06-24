@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: Newtonsoft.Json-for-Unity.Converters
   m_EditorClassIdentifier: 
   useUnityContractResolver: 1
-  useAllOutsideConverters: 1
+  useAllOutsideConverters: 0
   outsideConverters: []
-  useAllUnityConverters: 1
+  useAllUnityConverters: 0
   unityConverters:
   - enabled: 0
     converterName: Newtonsoft.Json.UnityConverters.AI.NavMesh.NavMeshQueryFilterConverter
@@ -217,7 +217,7 @@ MonoBehaviour:
     converterName: Newtonsoft.Json.UnityConverters.Scripting.RangeIntConverter
     converterAssembly: Newtonsoft.Json.UnityConverters
     settings: []
-  useAllJsonNetConverters: 1
+  useAllJsonNetConverters: 0
   jsonNetConverters:
   - enabled: 1
     converterName: Newtonsoft.Json.Converters.StringEnumConverter

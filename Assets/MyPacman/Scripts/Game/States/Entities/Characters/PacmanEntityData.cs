@@ -1,4 +1,5 @@
 ﻿using System;
+using UnityEngine;
 
 namespace MyPacman
 {
@@ -7,5 +8,7 @@ namespace MyPacman
     {
         public float PositionX { get; set; }
         public float PositionY { get; set; }
+
+        public Vector2Int Direction { get; set; }
     }
 }

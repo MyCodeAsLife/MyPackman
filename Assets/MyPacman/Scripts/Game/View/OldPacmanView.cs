@@ -3,7 +3,7 @@ using UnityEngine.InputSystem;
 
 namespace MyPacman
 {
-    public class PacmanView : MonoBehaviour
+    public class OldPacmanView : MonoBehaviour      // Выпилить
     {
         private PacmanEntity _entity;
         private IGameStateService _gameStateService;

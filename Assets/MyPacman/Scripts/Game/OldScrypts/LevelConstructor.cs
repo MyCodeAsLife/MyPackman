@@ -125,7 +125,7 @@ namespace MyPacman
             var pacmanEntity = _gameState.Map.Value.Entities.First(entity => entity.Type == EntityType.Pacman);
             var gameStateService = _sceneContainer.Resolve<IGameStateService>();
 
-            var player = _sceneContainer.Resolve<PacmanView>();
+            var player = _sceneContainer.Resolve<OldPacmanView>();
             var inputActions = _sceneContainer.Resolve<PlayerInputActions>();
             var timeService = _sceneContainer.Resolve<TimeService>();
 

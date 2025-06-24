@@ -12,9 +12,9 @@ namespace MyPacman
             return pacman;
         }
 
-        public PacmanView CreatePacmanTest(Vector3 position)
+        public OldPacmanView CreatePacmanTest(Vector3 position)
         {
-            var pacman = Resources.Load<PacmanView>(GameConstants.PacmanTestFullPath);
+            var pacman = Resources.Load<OldPacmanView>(GameConstants.PacmanTestFullPath);
             pacman = Object.Instantiate(pacman, position, Quaternion.identity);
             pacman.gameObject.SetActive(true);
             return pacman;
