@@ -6,21 +6,16 @@ namespace MyPacman
 {
     public class PlayerPrefsGameStateService : IGameStateService
     {
-        private const string GAME_STATE_KEY = nameof(GAME_STATE_KEY);           // Вынести в контсанты
-        private const string SETTINGS_STATE_KEY = nameof(SETTINGS_STATE_KEY);   // Вынести в контсанты
+        private const string GAME_STATE_KEY = nameof(GAME_STATE_KEY);           // Переделать под сохранение\загрузку из файла
+        private const string SETTINGS_STATE_KEY = nameof(SETTINGS_STATE_KEY);   // Переделать под сохранение\загрузку из файла
 
-        private readonly EntitiesFactory _entitiesFactory;
+        private readonly EntitiesFactory _entitiesFactory = new();
 
         public GameState GameState { get; private set; }
         public GameSettingsState SettingsState { get; private set; }
 
         private GameStateData _gameStateOrigin { get; set; }
         private GameSettingsStateData _settingsStateOrigin { get; set; }
-
-        public PlayerPrefsGameStateService(EntitiesFactory entitiesFactory)
-        {
-            _entitiesFactory = entitiesFactory;
-        }
 
         public Observable<GameState> LoadGameState()   // Похожа на LoadSettingsState
         {
@@ -31,15 +26,7 @@ namespace MyPacman
                 TypeNameAssemblyFormatHandling = TypeNameAssemblyFormatHandling.Simple,
             };
 
-            if (!PlayerPrefs.HasKey(GAME_STATE_KEY))
-            {
-                GameState = CreateGameStateFromSettings();  // Создаем дефолтное состояние
-                                                            // В продакшене Formatting.Indented лучше не использовать, даполнительные затраты ресурсов
-                Debug.Log("GameState created from settings: " + JsonConvert.SerializeObject(_gameStateOrigin, Formatting.Indented));    //++++++++++++++++++++++++++++++++
-
-                SaveGameState();    // Сохраняем дефолтное состояние
-            }
-            else
+            if (PlayerPrefs.HasKey(GAME_STATE_KEY))
             {
                 // Загружаем
                 var json = PlayerPrefs.GetString(GAME_STATE_KEY);
@@ -47,6 +34,15 @@ namespace MyPacman
                 GameState = new GameState(_gameStateOrigin, _entitiesFactory);
 
                 Debug.Log("GameState loaded: " + json);                                  //++++++++++++++++++++++++++++++++
+            }
+            else
+            {
+                // Создаем по умолчанию
+                GameState = CreateGameStateFromSettings();  // Создаем дефолтное состояние
+                                                            // В продакшене Formatting.Indented лучше не использовать, даполнительные затраты ресурсов
+                Debug.Log("GameState created from settings: " + JsonConvert.SerializeObject(_gameStateOrigin, Formatting.Indented));    //++++++++++++++++++++++++++++++++
+
+                SaveGameState();    // Сохраняем дефолтное состояние
             }
 
             return Observable.Return(GameState);
@@ -111,7 +107,7 @@ namespace MyPacman
         {
             _gameStateOrigin = new GameStateData();
 
-            _gameStateOrigin.CurrentMapId = 0;                   // Правильно ли что оно тут инициализируется?
+            _gameStateOrigin.CurrentMapId = 0;                   // Правильно ли что оно тут инициализируется?      Magic
             _gameStateOrigin.Map = new MapData()
             {
                 Entities = new()
@@ -120,6 +116,7 @@ namespace MyPacman
                         {
                             UniqId = _gameStateOrigin.CreateEntityId(),
                             Type = EntityType.Pacman,
+                            PrefabPath = GameConstants.PacmanNewFullPath,
                         },
                     },
             };

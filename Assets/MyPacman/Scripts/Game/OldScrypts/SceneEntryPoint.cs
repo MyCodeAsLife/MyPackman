@@ -8,32 +8,12 @@ namespace MyPacman
     {
         private DIContainer _sceneContainer;
 
-        //public void Run(DIContainer sceneContainer)
-        //{
-        //    _sceneContainer = sceneContainer;
-
-        //    // + Çàðåãåñòðèðîâàòü èãðîâîãî ïåðñîíàæà
-        //    // Çàðåãåñòðèðîâàòü êîíòðîëëåð (îáðàáîò÷èê íàæàòèÿ êëàâèø)
-        //    // Çàðåãåñòðèðîâàòü ïðîòèâíèêîâ
-        //    // + Çàðåãåñòðèðîâàòü óðîâåíü
-        //    // ×òî åùå çàðåãåñòðèðîâàòü?
-        //    _sceneContainer.RegisterFactory(_ => new CharacterFactory());
-        //    _sceneContainer.RegisterFactory<Pacman>(c => c.Resolve<CharacterFactory>().CreatePacman(Vector3.zero));
-        //    _sceneContainer.RegisterFactory<Ghost>(c => c.Resolve<CharacterFactory>().CreateGhost(Vector3.zero));     // Ìîæíî ðàçáèòü íà ñèíãëòîíû ghost 1, 2, 3 è ò.ä.
-
-        //    _sceneContainer.RegisterInstance<ILevelConfig>(new NormalLevelConfig());           // Ïåðåäåëàòü ïîä LevelData
-
-        //    new LevelData(new NormalLevelConfig());
-
-        //    InitializeCamera();
-        //    CreateScene();
-        //}
-
         public Observable<SceneExitParams> Run(SceneEnterParams sceneEnterParams, DIContainer sceneContainer)
         {
             _sceneContainer = sceneContainer;
             GameplayEnterParams gameplayEnterParams = sceneEnterParams.As<GameplayEnterParams>();
 
+            var gameplayRegistartions = new GameplayRegistrations(_sceneContainer, gameplayEnterParams);    // Регистрируем все сервисы необходимые для сцены
             // Регистрация всего необходимого для данной сцены
             //GameplayRegistrations.Register(_sceneContainer, gameplayEnterParams);   // Регистрируем все сервисы необходимые для сцены
             var gameplayViewModelsContainer = new DIContainer(_sceneContainer);     // Создаем отдельный контейнер для ViewModel's
@@ -48,10 +28,6 @@ namespace MyPacman
 
             //InitUI(gameplayViewModelsContainer);
             //InitWorld(gameplayViewModelsContainer);
-
-            //// Заглушка
-            //var dummy = gameObject.AddComponent<SceneEntryPoint>();
-            //dummy.Run(_sceneContainer);
 
             InitializeCamera();
             CreateScene();
@@ -136,7 +112,6 @@ namespace MyPacman
             _sceneContainer.RegisterInstance(GameConstants.Obstacle, obstacleTilemap);
             walls.AddComponent<TilemapRenderer>();
             var wallsCollider = walls.AddComponent<TilemapCollider2D>();
-            //wallsCollider.sharedMaterial = Resources.Load<PhysicsMaterial2D>(GameConstants.NoFrictionMaterialFullPath); // Материал для скольжения, не используется
         }
 
         private void CreatePelletFrame(Transform parent)

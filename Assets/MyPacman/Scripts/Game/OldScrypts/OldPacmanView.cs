@@ -20,19 +20,6 @@ namespace MyPacman
             _inputActions.Keyboard.Movement.canceled -= OnMoveCanceled;
         }
 
-        //private void Update()
-        //{
-        //    _playerMoveHandler.Tick();
-
-        //    if (_timer > 1f)    // Автосохранение раз в секунду, вынести в сервис сохранений                 Magic
-        //    {
-        //        _gameStateService.SaveGameState();
-        //        _timer = 0f;
-        //    }
-
-        //    _timer += Time.deltaTime;
-        //}
-
         public void Bind(PacmanEntity entity,
             PlayerInputActions inputActions,
             IGameStateService gameStateService,

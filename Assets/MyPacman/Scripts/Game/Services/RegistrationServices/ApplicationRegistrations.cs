@@ -7,7 +7,7 @@
             var entitiesFactory = new EntitiesFactory();
             projectContainer.RegisterInstance(entitiesFactory);                  // Фабрика сущностей
             projectContainer.RegisterFactory<IGameStateService>(
-                _ => new PlayerPrefsGameStateService(entitiesFactory)
+                _ => new PlayerPrefsGameStateService()
                 ).AsSingle();  // Регистрация сервиса загрузки\сохранения
 
             projectContainer.RegisterFactory<PlayerInputActions>(_ => new PlayerInputActions()).AsSingle();

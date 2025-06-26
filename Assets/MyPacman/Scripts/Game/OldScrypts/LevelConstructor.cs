@@ -132,7 +132,7 @@ namespace MyPacman
             float newX = 0;
             float newY = 0;
 
-            if (pacmanEntity.Position.Value == Vector3Int.zero)     // ѕозицию определ€ть на этапе загрузки?
+            if (pacmanEntity.Position.Value == Vector2.zero)     // ѕозицию определ€ть на этапе загрузки?
             {
                 newX = x * GameConstants.GridCellSize + GameConstants.GridCellSize * GameConstants.Half;
                 newY = -(y * GameConstants.GridCellSize - GameConstants.GridCellSize * GameConstants.Half);
