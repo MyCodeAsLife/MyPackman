@@ -5,7 +5,7 @@ namespace MyPacman
 {
     public class OldPacmanView : MonoBehaviour      // Выпилить
     {
-        private PacmanEntity _entity;
+        private Pacman _entity;
         private IGameStateService _gameStateService;
         private Rigidbody2D _rigidbody;
         private PlayerMovementHandler _playerMoveHandler;       // Переделать в сервис
@@ -20,7 +20,7 @@ namespace MyPacman
             _inputActions.Keyboard.Movement.canceled -= OnMoveCanceled;
         }
 
-        public void Bind(PacmanEntity entity,
+        public void Bind(Pacman entity,
             PlayerInputActions inputActions,
             IGameStateService gameStateService,
             IMapHandler mapHandler,

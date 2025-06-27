@@ -11,7 +11,7 @@ namespace MyPacman
             sceneContainer.RegisterFactory(_ => new CharacterFactory()).AsSingle();
             sceneContainer.RegisterFactory(c => c.Resolve<CharacterFactory>().CreatePacman(Vector3.zero)).AsSingle();               // Выпилить
             sceneContainer.RegisterFactory(c => c.Resolve<CharacterFactory>().CreatePacmanTest(Vector3.zero)).AsSingle();           // Выпилить
-            sceneContainer.RegisterFactory(c => c.Resolve<CharacterFactory>().CreateGhost(Vector3.zero));                           // Выпилить
+            //sceneContainer.RegisterFactory(c => c.Resolve<CharacterFactory>().CreateGhost(Vector3.zero));                           // Выпилить
 
             sceneContainer.RegisterInstance<ILevelConfig>(new NormalLevelConfig());
 

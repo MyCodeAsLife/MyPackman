@@ -97,7 +97,7 @@ namespace MyPacman
 
             CreateWallFrame(sceneFrame.transform);
             CreatePelletFrame(sceneFrame.transform);
-            CreateNodeFrame(sceneFrame.transform);      // Выпилить
+            CreateFruitFrame(sceneFrame.transform);      // Выпилить
 
             var levelConstarctor = new LevelConstructor(_sceneContainer);
             levelConstarctor.ConstructLevel();
@@ -127,14 +127,14 @@ namespace MyPacman
         }
 
         // Выпилить
-        private void CreateNodeFrame(Transform parent)
+        private void CreateFruitFrame(Transform parent)
         {
-            var nodes = new GameObject(GameConstants.Node);
-            nodes.transform.parent = parent;
-            nodes.layer = LayerMask.NameToLayer(GameConstants.Node);
-            var nodesTilemap = nodes.AddComponent<Tilemap>();
-            nodes.AddComponent<TilemapCollider2D>();
-            _sceneContainer.RegisterInstance(GameConstants.Node, nodesTilemap);
+            var Fruits = new GameObject(GameConstants.Fruit);
+            Fruits.transform.parent = parent;
+            Fruits.layer = LayerMask.NameToLayer(GameConstants.Fruit);
+            var FruitsTilemap = Fruits.AddComponent<Tilemap>();
+            Fruits.AddComponent<TilemapCollider2D>();
+            _sceneContainer.RegisterInstance(GameConstants.Fruit, FruitsTilemap);
         }
 
         private void InitializeCamera()

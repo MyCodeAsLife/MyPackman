@@ -13,7 +13,7 @@ namespace MyPacman
         // Layers and Tilemaps
         public const string Obstacle = nameof(Obstacle);
         public const string Pellet = nameof(Pellet);
-        public const string Node = nameof(Node);
+        public const string Fruit = nameof(Fruit);
 
         // LayerMask
         public const int LayerMaskEverything = -1;
@@ -25,7 +25,7 @@ namespace MyPacman
         public const string PacmanNewFullPath = "Prefabs/NewPacman";
         public const string NoFrictionMaterialFullPath = "Prefabs/NoFrictionMaterial";    // Материал без трения
         public const string WallTilesFolderPath = "Assets/WallTiles/";
-        public const string NodeRuleTileFolderPath = "Assets/NodesRuleTiles/";
+        public const string FruitRuleTileFolderPath = "Assets/FruitsRuleTiles/";
         public const string PelletRuleTilesFolderPath = "Assets/PelletsRuleTiles/";
         //public const string UIRootViewFullPath = "Prefabs/UI/RootViewUI";
         //public const string UIMainMenuFullPath = "Prefabs/UI/MainMenuUI";
@@ -34,7 +34,7 @@ namespace MyPacman
         // Number of tiles along the specified path
         public const int NumberOfWallTiles = 38;
         public const int NumberOfPelletTiles = 3;
-        public const int NumberOfNodeTiles = 1;         // Количество подбираемых вещей в папке Prefabs(apple, key и т.д.)
+        public const int NumberOfFruitTiles = 1;         // Количество подбираемых вещей в папке Prefabs(apple, key и т.д.)
 
         // Map settings
         public const float GridCellSize = 1f;
@@ -45,15 +45,17 @@ namespace MyPacman
         //public const string TriggerPelletSmall = "PelletSmall(Clone)";
         //public const string TriggerPelletMedium = "PelletMedium(Clone)";
         //public const string TriggerPelletLarge = "PelletLarge(Clone)";
-        //public const string TriggerNode = "Node(Clone)";
+        //public const string TriggerFruit = "Fruit(Clone)";
 
         //// Score cost
         //public const int CostPelletSmall = 5;
         //public const int CostPelletMedium = 15;
         //public const int CostPelletLarge = 50;
 
-        // Packman settings
+        // Gameplay settings
         public const float PlayerSpeed = 6f;
+        public const int StartLifePointsAmount = 3;
+        public const int StartingDifficultyLevel = 1;
 
         // Level Constructor - переделать в enum?
         public const int EmptyTile = 0;

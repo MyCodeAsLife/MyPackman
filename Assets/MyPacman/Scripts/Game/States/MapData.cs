@@ -6,8 +6,10 @@ namespace MyPacman
     [Serializable]
     public class MapData
     {
-        public int Id { get; set; }
         public List<EntityData> Entities { get; set; }
-        public ILevelConfig LevelConfig { get; set; }       // Правильнее сохранить путь до оригинальной карты
+        public int LevelNumber { get; set; }                // Уровень сложности
+        public int NumberOfFruits {  get; set; }            // Кол-во фруктов на уровень
+        public int NumberOfPellets {  get; set; }           // Кол-во гранул на уровень
+        public int NumberOfCollectedPellets { get; set; }   // Кол-во подобранных за уровень гранул
     }
 }

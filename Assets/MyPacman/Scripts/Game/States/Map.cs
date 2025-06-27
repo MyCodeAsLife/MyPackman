@@ -6,12 +6,17 @@ namespace MyPacman
 {
     public class Map
     {
-        private EntitiesFactory _entitiesFactory;       // Или вынести регистрацию в DI?
+        public readonly ReactiveProperty<int> LevelNumber;
+        public readonly ReactiveProperty<int> NumberOfFruits;
+        public readonly ReactiveProperty<int> NumberOfPellets;
+        public readonly ReactiveProperty<int> NumberOfCollectedPellets;
 
-        public Map(MapData mapData, EntitiesFactory entitiesFactory)
+        private readonly EntitiesFactory _entitiesFactory = new();       // Или вынести регистрацию в DI?
+
+        public Map(MapData mapData/*, EntitiesFactory entitiesFactory*/)
         {
             OriginData = mapData;
-            _entitiesFactory = entitiesFactory;
+            //_entitiesFactory = entitiesFactory;
 
             mapData.Entities.ForEach(entityData => Entities.Add(_entitiesFactory.CreateEntity(entityData)));
 
@@ -30,11 +35,14 @@ namespace MyPacman
                                                     entityData.UniqId == removedEntity.UniqueId);
                 mapData.Entities.Remove(removedEntityData);
             });
+
+            LevelNumber = new ReactiveProperty<int>(mapData.LevelNumber);
+            NumberOfFruits = new ReactiveProperty<int>(mapData.NumberOfFruits);
+            NumberOfPellets = new ReactiveProperty<int>(mapData.NumberOfPellets);
+            NumberOfCollectedPellets = new ReactiveProperty<int>(mapData.NumberOfCollectedPellets);
         }
 
-        public int Id => OriginData.Id;
         public MapData OriginData { get; }
         public ObservableList<Entity> Entities { get; } = new();
-        public ILevelConfig LevelConfig => OriginData.LevelConfig;
     }
 }

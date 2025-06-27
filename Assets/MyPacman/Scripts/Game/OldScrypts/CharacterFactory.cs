@@ -2,11 +2,11 @@
 
 namespace MyPacman
 {
-    public class CharacterFactory
+    public class CharacterFactory       // Выпилить
     {
-        public Pacman CreatePacman(Vector3 position)
+        public OldPacman CreatePacman(Vector3 position)
         {
-            var pacman = Resources.Load<Pacman>(GameConstants.PacmanFullPath);
+            var pacman = Resources.Load<OldPacman>(GameConstants.PacmanFullPath);
             pacman = Object.Instantiate(pacman, position, Quaternion.identity);
             pacman.gameObject.SetActive(true);
             return pacman;
@@ -20,12 +20,12 @@ namespace MyPacman
             return pacman;
         }
 
-        public Ghost CreateGhost(Vector3 position)
-        {
-            var ghost = Resources.Load<Ghost>(GameConstants.GhostFullPath);
-            ghost = Object.Instantiate(ghost, position, Quaternion.identity);
-            ghost.gameObject.SetActive(true);
-            return ghost;
-        }
+        //public Ghost CreateGhost(Vector3 position)
+        //{
+        //    var ghost = Resources.Load<Ghost>(GameConstants.GhostFullPath);
+        //    ghost = Object.Instantiate(ghost, position, Quaternion.identity);
+        //    ghost.gameObject.SetActive(true);
+        //    return ghost;
+        //}
     }
 }

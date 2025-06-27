@@ -7,7 +7,7 @@ namespace MyPacman
     public class PlayerMovemenService
     {
         private PlayerInputActions _inputActions;
-        private PacmanEntity _entity;
+        private Pacman _entity;
 
         private IGameStateService _gameStateService;            //For save
         private float _timer;                                   //For save
@@ -26,7 +26,7 @@ namespace MyPacman
             _inputActions.Keyboard.Movement.canceled -= OnMoveCanceled;
         }
 
-        public void Bind(PacmanEntity entity,
+        public void Bind(Pacman entity,
             PlayerInputActions inputActions,            // Нужно передавать или создать здесь?
             IGameStateService gameStateService,
             IMapHandler mapHandler,

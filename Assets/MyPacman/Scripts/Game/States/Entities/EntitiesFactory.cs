@@ -7,43 +7,46 @@
             switch (entityData.Type)
             {
                 case EntityType.Pacman:
-                    return new PacmanEntity(entityData as PacmanEntityData);
+                    return new Pacman(entityData as PacmanData);
 
                 case EntityType.Ghost:
-                    return new GhostEntity(entityData as GhostEntityData);
+                    return new Ghost(entityData as GhostData);
 
                 case EntityType.SmallPellet:
-                    return new SmallPelletEntity(entityData as SmallPelletEntityData);
+                    return new SmallPellet(entityData as SmallPelletData);
 
                 case EntityType.MediumPellet:
-                    return new MediumPelletEntity(entityData as MediumPelletEntityData);
+                    return new MediumPellet(entityData as MediumPelletData);
 
                 case EntityType.LargePellet:
-                    return new LargePelletEntity(entityData as LargePelletEntityData);
+                    return new LargePellet(entityData as LargePelletData);
 
-                case EntityType.Chery:
-                    return new CheryEntity(entityData as CheryEntityData);
+                case EntityType.Fruit:
+                    return new Fruit(entityData as FruitData);
 
-                case EntityType.Klubnika:
-                    return new KlubnikaEntity(entityData as KlubnikaEntityData);
+                //case EntityType.Chery:
+                //    return new CheryEntity(entityData as CheryEntityData);
 
-                case EntityType.Apelsin:
-                    return new ApelsinEntity(entityData as ApelsinEntityData);
+                //case EntityType.Klubnika:
+                //    return new KlubnikaEntity(entityData as KlubnikaEntityData);
 
-                case EntityType.Apple:
-                    return new AppleEntity(entityData as AppleEntityData);
+                //case EntityType.Apelsin:
+                //    return new ApelsinEntity(entityData as ApelsinEntityData);
 
-                case EntityType.Avokado:
-                    return new AvokadoEntity(entityData as AvokadoEntityData);
+                //case EntityType.Apple:
+                //    return new AppleEntity(entityData as AppleEntityData);
 
-                case EntityType.KakatoHren:
-                    return new KakatoHrenEntity(entityData as KakatoHrenEntityData);
+                //case EntityType.Avokado:
+                //    return new AvokadoEntity(entityData as AvokadoEntityData);
 
-                case EntityType.Kolokolchik:
-                    return new KolokolchikEntity(entityData as KolokolchikEntityData);
+                //case EntityType.KakatoHren:
+                //    return new KakatoHrenEntity(entityData as KakatoHrenEntityData);
 
-                case EntityType.Key:
-                    return new KeyEntity(entityData as KeyEntityData);
+                //case EntityType.Kolokolchik:
+                //    return new KolokolchikEntity(entityData as KolokolchikEntityData);
+
+                //case EntityType.Key:
+                //    return new KeyEntity(entityData as KeyEntityData);
 
                 default:
                     throw new System.Exception($"Unsuported entity type: {entityData.Type}");       // Magic

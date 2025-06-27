@@ -9,10 +9,10 @@ namespace MyPacman
         private readonly DIContainer _sceneContainer;
         private readonly Tilemap _wallsTileMap;                 // Получать через DI ?
         private readonly Tilemap _pickablesTileMap;               // Получать через DI ?
-        //private readonly Tilemap _nodesTileMap;                 // Получать через DI ?
+        //private readonly Tilemap _FruitsTileMap;                 // Получать через DI ?
         private readonly Tile[] _walls;                         // Получать через DI ?
         private readonly RuleTile[] _pelletsRuleTiles;
-        //private readonly RuleTile[] _nodesRuleTiles;
+        //private readonly RuleTile[] _FruitsRuleTiles;
         private readonly ILevelConfig _level;                   // Получать через DI ?
         private readonly IMapHandler _mapHandler;
 
@@ -23,11 +23,11 @@ namespace MyPacman
             _sceneContainer = sceneContainer;
             _wallsTileMap = sceneContainer.Resolve<Tilemap>(GameConstants.Obstacle);
             _pickablesTileMap = sceneContainer.Resolve<Tilemap>(GameConstants.Pellet);
-            //_nodesTileMap = sceneContainer.Resolve<Tilemap>(GameConstants.Node);
+            //_FruitsTileMap = sceneContainer.Resolve<Tilemap>(GameConstants.Fruit);
 
             _walls = LoadTiles(GameConstants.WallTilesFolderPath, GameConstants.NumberOfWallTiles);
             _pelletsRuleTiles = LoadRuleTiles(GameConstants.PelletRuleTilesFolderPath, GameConstants.NumberOfPelletTiles);
-            //_nodesRuleTiles = LoadRuleTiles(GameConstants.NodeRuleTileFolderPath, GameConstants.NumberOfNodeTiles);
+            //_FruitsRuleTiles = LoadRuleTiles(GameConstants.FruitRuleTileFolderPath, GameConstants.NumberOfFruitTiles);
             _level = sceneContainer.Resolve<ILevelConfig>();                                                      // Получать от MainMenu? при загрузке сцены
             sceneContainer.RegisterInstance<IMapHandler>(new MapHandler(_wallsTileMap, _pickablesTileMap, _walls, _level));   // Создание классов вынести в DI?
             _mapHandler = sceneContainer.Resolve<IMapHandler>();
@@ -63,7 +63,7 @@ namespace MyPacman
                     {
                         if (_mapHandler.IsIntersactionTile(x, y))
                         {
-                            //_nodesTileMap.SetTile(cellPosition, _nodeRule[0]);                     // Magic
+                            //_FruitsTileMap.SetTile(cellPosition, _FruitRule[0]);                     // Magic
                             int chance = Random.Range(0, 100);
 
                             if (chance < 10)                                                       // Magic
@@ -108,7 +108,7 @@ namespace MyPacman
             float newY = -(y * GameConstants.GridCellSize - GameConstants.GridCellSize * GameConstants.Half);
             var newPosition = new Vector3(newX, newY);
 
-            var player = _sceneContainer.Resolve<Pacman>();
+            var player = _sceneContainer.Resolve<OldPacman>();
             var inputActions = _sceneContainer.Resolve<PlayerInputActions>();
             player.transform.position = newPosition;
             //player.transform.rotation = Quaternion.identity;
@@ -122,7 +122,7 @@ namespace MyPacman
 
         private void SpawnPacmanTest(float x, float y)
         {
-            var pacmanEntity = _gameState.Map.Value.Entities.First(entity => entity.Type == EntityType.Pacman);
+            var Pacman = _gameState.Map.Value.Entities.First(entity => entity.Type == EntityType.Pacman);
             var gameStateService = _sceneContainer.Resolve<IGameStateService>();
 
             var player = _sceneContainer.Resolve<OldPacmanView>();
@@ -132,14 +132,14 @@ namespace MyPacman
             float newX = 0;
             float newY = 0;
 
-            if (pacmanEntity.Position.Value == Vector2.zero)     // Позицию определять на этапе загрузки?
+            if (Pacman.Position.Value == Vector2.zero)     // Позицию определять на этапе загрузки?
             {
                 newX = x * GameConstants.GridCellSize + GameConstants.GridCellSize * GameConstants.Half;
                 newY = -(y * GameConstants.GridCellSize - GameConstants.GridCellSize * GameConstants.Half);
             }
             else
             {
-                var position = pacmanEntity.Position.Value;
+                var position = Pacman.Position.Value;
                 newX = position.x * GameConstants.GridCellSize + GameConstants.GridCellSize * GameConstants.Half;
                 newY = -(position.y * GameConstants.GridCellSize - GameConstants.GridCellSize * GameConstants.Half);
             }
@@ -147,7 +147,7 @@ namespace MyPacman
             player.transform.rotation = Quaternion.identity;
             player.transform.position = new Vector3(newX, newY);
 
-            player.Bind(pacmanEntity as PacmanEntity, inputActions, gameStateService, _mapHandler, timeService);
+            player.Bind(Pacman as Pacman, inputActions, gameStateService, _mapHandler, timeService);
 
             player.gameObject.SetActive(true);
         }

@@ -6,7 +6,7 @@ namespace MyPacman
     public class PlayerMovementHandler : IPlayerMovementHandler
     {
         private readonly Rigidbody2D _rigidbody;
-        private readonly PacmanEntity _entity;
+        private readonly Pacman _entity;
         private Func<Vector2> _getDirection;
         private Vector3Int _currentTilePosition;
         private Vector2 _mapSize;
@@ -15,7 +15,7 @@ namespace MyPacman
 
         private event Action Moved;
 
-        public PlayerMovementHandler(Rigidbody2D rigidbody, PacmanEntity entity)
+        public PlayerMovementHandler(Rigidbody2D rigidbody, Pacman entity)
         {
             _rigidbody = rigidbody;
             _entity = entity;

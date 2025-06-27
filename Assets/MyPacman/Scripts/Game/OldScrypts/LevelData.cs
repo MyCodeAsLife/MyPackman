@@ -11,7 +11,7 @@ namespace MyPacman
         public int Hearts { get; private set; }
 
         public Ghost[] Ghosts;
-        public Pacman Pacman;           // Отделить игровую модель от методов
+        public OldPacman Pacman;           // Отделить игровую модель от методов
 
         public LevelData(ILevelConfig config)
         {

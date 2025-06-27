@@ -9,8 +9,6 @@ namespace MyPacman
         private const string GAME_STATE_KEY = nameof(GAME_STATE_KEY);           // Переделать под сохранение\загрузку из файла
         private const string SETTINGS_STATE_KEY = nameof(SETTINGS_STATE_KEY);   // Переделать под сохранение\загрузку из файла
 
-        private readonly EntitiesFactory _entitiesFactory = new();
-
         public GameState GameState { get; private set; }
         public GameSettingsState SettingsState { get; private set; }
 
@@ -31,7 +29,7 @@ namespace MyPacman
                 // Загружаем
                 var json = PlayerPrefs.GetString(GAME_STATE_KEY);
                 _gameStateOrigin = JsonConvert.DeserializeObject<GameStateData>(json);
-                GameState = new GameState(_gameStateOrigin, _entitiesFactory);
+                GameState = new GameState(_gameStateOrigin/*, _entitiesFactory*/);
 
                 Debug.Log("GameState loaded: " + json);                                  //++++++++++++++++++++++++++++++++
             }
@@ -112,7 +110,7 @@ namespace MyPacman
             {
                 Entities = new()
                     {
-                        new PacmanEntityData()
+                        new PacmanData()
                         {
                             UniqId = _gameStateOrigin.CreateEntityId(),
                             Type = EntityType.Pacman,
@@ -121,11 +119,11 @@ namespace MyPacman
                     },
             };
 
-            _gameStateOrigin.Score = new ScoreData();
-            _gameStateOrigin.HigthScore = new ScoreData() { Amount = 20000 };
-            _gameStateOrigin.LifePoints = new LifePointData() { Amount = 3 };
+            _gameStateOrigin.Score = 0;
+            _gameStateOrigin.HigthScore = 20000;
+            _gameStateOrigin.LifePoints = 3;
 
-            return new GameState(_gameStateOrigin, _entitiesFactory);
+            return new GameState(_gameStateOrigin/*, _entitiesFactory*/);
         }
 
         private GameSettingsState CreateGameSettingsStateFromSettings()
