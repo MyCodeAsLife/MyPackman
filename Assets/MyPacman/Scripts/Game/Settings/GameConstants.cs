@@ -25,7 +25,7 @@ namespace MyPacman
         public const string PacmanNewFullPath = "Prefabs/NewPacman";
         public const string NoFrictionMaterialFullPath = "Prefabs/NoFrictionMaterial";    // Материал без трения
         public const string WallTilesFolderPath = "Assets/WallTiles/";
-        public const string FruitRuleTileFolderPath = "Assets/FruitsRuleTiles/";
+        public const string FruitRuleTilesFolderPath = "Assets/FruitsRuleTiles/";
         public const string PelletRuleTilesFolderPath = "Assets/PelletsRuleTiles/";
         //public const string UIRootViewFullPath = "Prefabs/UI/RootViewUI";
         //public const string UIMainMenuFullPath = "Prefabs/UI/MainMenuUI";

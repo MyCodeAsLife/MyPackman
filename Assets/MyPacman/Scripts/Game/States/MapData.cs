@@ -6,7 +6,7 @@ namespace MyPacman
     [Serializable]
     public class MapData
     {
-        public List<EntityData> Entities { get; set; }
+        public List<EntityData> Entities { get; set; } = new();
         public int LevelNumber { get; set; }                // Уровень сложности
         public int NumberOfFruits {  get; set; }            // Кол-во фруктов на уровень
         public int NumberOfPellets {  get; set; }           // Кол-во гранул на уровень
