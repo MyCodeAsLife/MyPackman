@@ -1,49 +1,49 @@
-using System.Linq;
+п»їusing System.Linq;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
 namespace MyPacman
 {
-    public class LevelConstructor
+    public class LevelCreator
     {
         private readonly DIContainer _sceneContainer;
-        private readonly Tilemap _wallsTileMap;                 // Получать через DI ?
-        private readonly Tilemap _pickablesTileMap;               // Получать через DI ?
-        //private readonly Tilemap _FruitsTileMap;                 // Получать через DI ?
-        private readonly Tile[] _walls;                         // Получать через DI ?
+        private readonly Tilemap _wallsTileMap;                 // РџРѕР»СѓС‡Р°С‚СЊ С‡РµСЂРµР· DI ?
+        private readonly Tilemap _ediblesTileMap;               // РџРѕР»СѓС‡Р°С‚СЊ С‡РµСЂРµР· DI ?
+        //private readonly Tilemap _FruitsTileMap;                 // РџРѕР»СѓС‡Р°С‚СЊ С‡РµСЂРµР· DI ?
+        private readonly Tile[] _walls;                         // РџРѕР»СѓС‡Р°С‚СЊ С‡РµСЂРµР· DI ?
         private readonly RuleTile[] _pelletsRuleTiles;
         //private readonly RuleTile[] _FruitsRuleTiles;
-        private readonly ILevelConfig _level;                   // Получать через DI ?
-        private readonly IMapHandler _mapHandler;
+        private readonly ILevelConfig _level;                   // РџРѕР»СѓС‡Р°С‚СЊ С‡РµСЂРµР· DI ?
+        private readonly MapHandlerService _mapHandler;
 
         private readonly GameState _gameState;
 
-        public LevelConstructor(DIContainer sceneContainer)
+        public LevelCreator(DIContainer sceneContainer)
         {
             _sceneContainer = sceneContainer;
             _wallsTileMap = sceneContainer.Resolve<Tilemap>(GameConstants.Obstacle);
-            _pickablesTileMap = sceneContainer.Resolve<Tilemap>(GameConstants.Pellet);
+            _ediblesTileMap = sceneContainer.Resolve<Tilemap>(GameConstants.Pellet);
             //_FruitsTileMap = sceneContainer.Resolve<Tilemap>(GameConstants.Fruit);
 
             _walls = LoadTiles(GameConstants.WallTilesFolderPath, GameConstants.NumberOfWallTiles);
             _pelletsRuleTiles = LoadRuleTiles(GameConstants.PelletRuleTilesFolderPath, GameConstants.NumberOfPelletTiles);
             //_FruitsRuleTiles = LoadRuleTiles(GameConstants.FruitRuleTileFolderPath, GameConstants.NumberOfFruitTiles);
-            _level = sceneContainer.Resolve<ILevelConfig>();                                                      // Получать от MainMenu? при загрузке сцены
-            sceneContainer.RegisterInstance<IMapHandler>(new MapHandler(_wallsTileMap, _pickablesTileMap, _walls, _level));   // Создание классов вынести в DI?
-            _mapHandler = sceneContainer.Resolve<IMapHandler>();
+            _level = sceneContainer.Resolve<ILevelConfig>();                                                      // РџРѕР»СѓС‡Р°С‚СЊ РѕС‚ MainMenu? РїСЂРё Р·Р°РіСЂСѓР·РєРµ СЃС†РµРЅС‹
+            sceneContainer.RegisterInstance(new MapHandlerService(_wallsTileMap, _ediblesTileMap, _walls, _level));   // РЎРѕР·РґР°РЅРёРµ РєР»Р°СЃСЃРѕРІ РІС‹РЅРµСЃС‚Рё РІ DI?
+            _mapHandler = sceneContainer.Resolve<MapHandlerService>();
 
-            // Из GameState получить всю инфу о карте.
-            // И на ее основе конструировать карту.
+            // РР· GameState РїРѕР»СѓС‡РёС‚СЊ РІСЃСЋ РёРЅС„Сѓ Рѕ РєР°СЂС‚Рµ.
+            // Р РЅР° РµРµ РѕСЃРЅРѕРІРµ РєРѕРЅСЃС‚СЂСѓРёСЂРѕРІР°С‚СЊ РєР°СЂС‚Сѓ.
             _gameState = sceneContainer.Resolve<IGameStateService>().GameState;
-            // получить _level
-            // персонажей создавать как отдельные сущности
+            // РїРѕР»СѓС‡РёС‚СЊ _level
+            // РїРµСЂСЃРѕРЅР°Р¶РµР№ СЃРѕР·РґР°РІР°С‚СЊ РєР°Рє РѕС‚РґРµР»СЊРЅС‹Рµ СЃСѓС‰РЅРѕСЃС‚Рё
         }
 
-        // При конструировании уровня:
-        // 1 - Проверить на пустоту Entities в gameState
-        // 2 - Если не пусто то из "оригинальной" карты брать только препятствия
-        // 3 - Если пусто то берем все из "оригинальной" карты и создаем сущности
-        public void ConstructLevel()        // Передовать команды в MapHendler, чтобы только он менял Tilemap?
+        // РџСЂРё РєРѕРЅСЃС‚СЂСѓРёСЂРѕРІР°РЅРёРё СѓСЂРѕРІРЅСЏ:
+        // 1 - РџСЂРѕРІРµСЂРёС‚СЊ РЅР° РїСѓСЃС‚РѕС‚Сѓ Entities РІ gameState
+        // 2 - Р•СЃР»Рё РЅРµ РїСѓСЃС‚Рѕ С‚Рѕ РёР· "РѕСЂРёРіРёРЅР°Р»СЊРЅРѕР№" РєР°СЂС‚С‹ Р±СЂР°С‚СЊ С‚РѕР»СЊРєРѕ РїСЂРµРїСЏС‚СЃС‚РІРёСЏ
+        // 3 - Р•СЃР»Рё РїСѓСЃС‚Рѕ С‚Рѕ Р±РµСЂРµРј РІСЃРµ РёР· "РѕСЂРёРіРёРЅР°Р»СЊРЅРѕР№" РєР°СЂС‚С‹ Рё СЃРѕР·РґР°РµРј СЃСѓС‰РЅРѕСЃС‚Рё
+        public void ConstructLevel()        // РџРµСЂРµРґРѕРІР°С‚СЊ РєРѕРјР°РЅРґС‹ РІ MapHendler, С‡С‚РѕР±С‹ С‚РѕР»СЊРєРѕ РѕРЅ РјРµРЅСЏР» Tilemap?
         {
             _wallsTileMap.ClearAllTiles();
 
@@ -67,13 +67,13 @@ namespace MyPacman
                             int chance = Random.Range(0, 100);
 
                             if (chance < 10)                                                       // Magic
-                                _pickablesTileMap.SetTile(cellPosition, _pelletsRuleTiles[2]);            // Magic
+                                _ediblesTileMap.SetTile(cellPosition, _pelletsRuleTiles[2]);            // Magic
                             else
-                                _pickablesTileMap.SetTile(cellPosition, _pelletsRuleTiles[1]);            // Magic
+                                _ediblesTileMap.SetTile(cellPosition, _pelletsRuleTiles[1]);            // Magic
                         }
                         else
                         {
-                            _pickablesTileMap.SetTile(cellPosition, _pelletsRuleTiles[0]);                // Magic
+                            _ediblesTileMap.SetTile(cellPosition, _pelletsRuleTiles[0]);                // Magic
                         }
                     }
                 }
@@ -116,7 +116,7 @@ namespace MyPacman
             var timeService = _sceneContainer.Resolve<TimeService>();
             player.Initialize(_mapHandler, inputActions, timeService);
 
-            // Не изменять. Понадобится для спавна игрока при смерти
+            // РќРµ РёР·РјРµРЅСЏС‚СЊ. РџРѕРЅР°РґРѕР±РёС‚СЃСЏ РґР»СЏ СЃРїР°РІРЅР° РёРіСЂРѕРєР° РїСЂРё СЃРјРµСЂС‚Рё
             //_mapHandler.ChangeTile(new Vector3(x, y + 1), GameConstants.EmptyTile);
         }
 
@@ -132,7 +132,7 @@ namespace MyPacman
             float newX = 0;
             float newY = 0;
 
-            if (Pacman.Position.Value == Vector2.zero)     // Позицию определять на этапе загрузки?
+            if (Pacman.Position.Value == Vector2.zero)     // РџРѕР·РёС†РёСЋ РѕРїСЂРµРґРµР»СЏС‚СЊ РЅР° СЌС‚Р°РїРµ Р·Р°РіСЂСѓР·РєРё?
             {
                 newX = x * GameConstants.GridCellSize + GameConstants.GridCellSize * GameConstants.Half;
                 newY = -(y * GameConstants.GridCellSize - GameConstants.GridCellSize * GameConstants.Half);

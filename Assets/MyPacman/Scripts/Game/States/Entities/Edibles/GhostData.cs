@@ -1,8 +1,5 @@
-﻿using System;
-
-namespace MyPacman
+﻿namespace MyPacman
 {
-    [Serializable]
     public class GhostData : EdibleData
     {
     }

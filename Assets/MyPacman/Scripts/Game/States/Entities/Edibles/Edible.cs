@@ -2,7 +2,7 @@
 {
     public class Edible : Entity
     {
-        public readonly EntityPoints Points;
+        public readonly EdibleEntityPoints Points;
 
         public Edible(EdibleData data) : base(data)
         {

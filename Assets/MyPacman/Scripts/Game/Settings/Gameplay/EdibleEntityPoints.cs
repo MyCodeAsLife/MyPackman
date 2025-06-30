@@ -1,6 +1,6 @@
 ﻿namespace MyPacman
 {
-    public enum EntityPoints
+    public enum EdibleEntityPoints
     {
         SmallPellet = 10,
         MediumPellet = 50,
