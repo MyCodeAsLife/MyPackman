@@ -1,13 +1,11 @@
-﻿using UnityEngine;
-
-namespace MyPacman
+﻿namespace MyPacman
 {
     public class BaseGameStateCreationService
     {
         private ILevelConfig _levelConfig;
         //private EntitiesDataFactory _entitiesDataFactory;
 
-        public GameState Create(ILevelConfig leveleConfig, EntitiesDataFactory entitiesDataFactory)
+        public GameState Create(ILevelConfig leveleConfig)
         {
             _levelConfig = leveleConfig;
             //_entitiesDataFactory = entitiesDataFactory;
@@ -25,24 +23,24 @@ namespace MyPacman
             gameStateData.Map.NumberOfPellets = 0;
             gameStateData.Map.NumberOfCollectedPellets = 0;
 
-            for (int y = 0; y < _levelConfig.Map.GetLength(0); y++)
-            {
-                for (int x = 0; x < _levelConfig.Map.GetLength(1); x++)
-                {
-                    int entityNumber = _levelConfig.Map[y, x];
+            //for (int y = 0; y < _levelConfig.Map.GetLength(0); y++)
+            //{
+            //    for (int x = 0; x < _levelConfig.Map.GetLength(1); x++)
+            //    {
+            //        int entityNumber = _levelConfig.Map[y, x] - 1;
 
-                    if (entityNumber < 0)
-                    {
-                        Vector2 position = new Vector2(x, y);
-                        //EntityData entityData = CreateEntityData(gameStateData, position, (EntityType)entityNumber);
-                        EntityData entityData = entitiesDataFactory.CreateEntityData(
-                            gameStateData,
-                            position,
-                            (EntityType)entityNumber);
-                        gameStateData.Map.Entities.Add(entityData);
-                    }
-                }
-            }
+            //        if (entityNumber < 0)
+            //        {
+            //            Vector2 position = new Vector2(x, y);
+            //            //EntityData entityData = CreateEntityData(gameStateData, position, (EntityType)entityNumber);
+            //            EntityData entityData = entitiesDataFactory.CreateEntityData(
+            //                gameStateData,
+            //                position,
+            //                (EntityType)entityNumber);
+            //            gameStateData.Map.Entities.Add(entityData);
+            //        }
+            //    }
+            //}
 
             return new GameState(gameStateData);
         }

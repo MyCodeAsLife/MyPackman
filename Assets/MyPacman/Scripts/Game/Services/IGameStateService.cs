@@ -7,6 +7,7 @@ namespace MyPacman
     {
         public GameState GameState { get; }
         public GameSettingsState SettingsState { get; }
+        public bool GameStateIsLoaded { get; }
 
         // Возвращают Observable чтобы загрузку\сохранение можно было подождать.
         public Observable<GameState> LoadGameState();

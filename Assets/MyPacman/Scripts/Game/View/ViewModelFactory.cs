@@ -10,7 +10,7 @@
                     return new PacmanViewModel(entity as Pacman);
 
                 case EntityType.SmallPellet:
-                    return new SmallPelletViewModel(entity as SmallPellet);
+                    return new PelletViewModel(entity as SmallPellet);
 
                 default:
                     throw new System.Exception($"Unsuported entity type: {entity.Type}");       // Magic

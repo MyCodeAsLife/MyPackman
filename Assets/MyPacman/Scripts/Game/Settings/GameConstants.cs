@@ -19,14 +19,16 @@ namespace MyPacman
         public const int LayerMaskEverything = -1;
 
         // Paths to prefabs
-        public const string GhostFullPath = "Prefabs/Ghost";
         public const string PacmanFullPath = "Prefabs/Pacman";              // Выпилить
-        public const string PacmanTestFullPath = "Prefabs/PacmanTest";      // Выпилить
-        public const string PacmanNewFullPath = "Prefabs/NewPacman";
+        //public const string PacmanTestFullPath = "Prefabs/PacmanTest";      // Выпилить
+        //public const string PacmanNewFullPath = "Prefabs/NewPacman";
         public const string NoFrictionMaterialFullPath = "Prefabs/NoFrictionMaterial";    // Материал без трения
         public const string WallTilesFolderPath = "Assets/WallTiles/";
-        public const string FruitRuleTilesFolderPath = "Assets/FruitsRuleTiles/";
-        public const string PelletRuleTilesFolderPath = "Assets/PelletsRuleTiles/";
+        //public const string FruitRuleTilesFolderPath = "Assets/FruitsRuleTiles/";
+        //public const string PelletRuleTilesFolderPath = "Assets/PelletsRuleTiles/";
+        public const string GhostsFolderPath = "Prefabs/Ghosts/";
+        public const string PelletsFolderPath = "Prefabs/Pellets/";
+        public const string FruitsFolderPath = "Prefabs/Fruits/";
         //public const string UIRootViewFullPath = "Prefabs/UI/RootViewUI";
         //public const string UIMainMenuFullPath = "Prefabs/UI/MainMenuUI";
         //public const string UIGameplayFullPath = "Prefabs/UI/GameplayUI";

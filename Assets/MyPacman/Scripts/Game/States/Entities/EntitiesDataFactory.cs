@@ -1,14 +1,19 @@
-﻿using System;
+﻿using R3;
+using System;
 using UnityEngine;
 
 namespace MyPacman
 {
     public class EntitiesDataFactory
     {
-        private Vector2 _position;
-        private EntityData _entityData;
+        public EntityData CreateEntityData(GameState gameState, Vector2 position, EntityType entityType)
+        {
+            var entityData = CreateEntityData(entityType);
+            entityData = InitEntityData(entityData, entityType, gameState, position);
+            return entityData;
+        }
 
-        public EntityData CreateEntityData(EntityType type)
+        private EntityData CreateEntityData(EntityType type)
         {
             EntityData entityData = null;
 
@@ -18,23 +23,27 @@ namespace MyPacman
                     entityData = new PacmanData();
                     break;
 
-                case EntityType.Ghost:
+                case EntityType.SmallPellet:
+                case EntityType.MediumPellet:
+                case EntityType.LargePellet:
+                    entityData = new PelletData();
+                    break;
+
+                case EntityType.Blinky:
+                case EntityType.Pinky:
+                case EntityType.Inky:
+                case EntityType.Clyde:
                     entityData = new GhostData();
                     break;
 
-                case EntityType.SmallPellet:
-                    entityData = new SmallPelletData();
-                    break;
-
-                case EntityType.MediumPellet:
-                    entityData = new MediumPelletData();
-                    break;
-
-                case EntityType.LargePellet:
-                    entityData = new LargePelletData();
-                    break;
-
-                case EntityType.Fruit:
+                case EntityType.Chery:
+                case EntityType.Strawberry:
+                case EntityType.Orange:
+                case EntityType.Apple:
+                case EntityType.Melon:
+                case EntityType.GalaxianStarship:
+                case EntityType.Bell:
+                case EntityType.Key:
                     entityData = new FruitData();
                     break;
 
@@ -46,73 +55,117 @@ namespace MyPacman
             return entityData;
         }
 
-        public EntityData CreateEntityData(GameStateData gameStateData, Vector2 position, EntityType entityType)
+        private EntityData InitEntityData(
+            EntityData entityData,
+            EntityType entityType,
+            GameState gameState,
+            Vector2 position)
         {
-            _entityData = CreateEntityData(entityType);
-            InitEntityData();
-            _position = position;
+            entityData.PositionX = position.x;
+            entityData.PositionY = position.y;
+            entityData.UniqId = gameState.CreateEntityId();
 
             switch (entityType)
             {
                 case EntityType.Pacman:
-                    _entityData = InitPacmanData();
-                    break;
-
-                case EntityType.Ghost:
-                    _entityData = InitChostData();
+                    entityData = InitPacmanData(entityData);
                     break;
 
                 case EntityType.SmallPellet:
                 case EntityType.MediumPellet:
                 case EntityType.LargePellet:
-                    _entityData = InitPelletData(gameStateData);
+                    entityData = InitPelletData(entityData, gameState.Map.Value.NumberOfPellets);
                     break;
 
-                case EntityType.Fruit:
-                    _entityData = InitFruitData(gameStateData);
+                case EntityType.Blinky:
+                case EntityType.Pinky:
+                case EntityType.Inky:
+                case EntityType.Clyde:
+                    entityData = InitChostData(entityData);
+                    break;
+
+                case EntityType.Chery:
+                case EntityType.Strawberry:
+                case EntityType.Orange:
+                case EntityType.Apple:
+                case EntityType.Melon:
+                case EntityType.GalaxianStarship:
+                case EntityType.Bell:
+                case EntityType.Key:
+                    entityData = InitFruitData(entityData, gameState.Map.Value.NumberOfFruits);
                     break;
 
                 default:
                     throw new Exception($"Unsuported entity type{entityType}");        // Magic
             }
 
-            return _entityData;
+            return entityData;
         }
 
-        private EntityData InitPacmanData()
+        private EntityData InitPacmanData(EntityData entityData)
         {
             // Проверить соседние клетки по часовой стрелке, если такиеже тайлы то выбрать позицию между ними
-            _entityData.PrefabPath = GameConstants.PacmanNewFullPath;
-            return _entityData;
+            entityData.PrefabPath = GameConstants.PacmanFullPath;
+            return entityData;
         }
 
-        private EntityData InitChostData()
+        private EntityData InitChostData(EntityData entityData)
         {
-            // Проверить соседние клетки по часовой стрелке, если такиеже тайлы то выбрать позицию между ними
-            _entityData.PrefabPath = GameConstants.GhostFullPath;
-            return _entityData;
+            var edibleData = entityData as EdibleData;
+            edibleData.PrefabPath = GameConstants.GhostsFolderPath + edibleData.Type.ToString();
+            edibleData.Points = DefineEdibleEntityPoints(edibleData.Type);
+            return edibleData;
         }
 
-        private EntityData InitPelletData(GameStateData gameStateData)
+        private EntityData InitPelletData(EntityData entityData, ReactiveProperty<int> numberOfPellets)
         {
-            _entityData.PrefabPath = GameConstants.PelletRuleTilesFolderPath + _entityData.Type.ToString();
-            gameStateData.Map.NumberOfPellets++;
-            return _entityData;
+            var edibleData = entityData as EdibleData;
+            edibleData.PrefabPath = GameConstants.PelletsFolderPath + edibleData.Type.ToString();
+            edibleData.Points = DefineEdibleEntityPoints(edibleData.Type);
+            numberOfPellets.Value++;
+            return edibleData;
         }
 
-        private EntityData InitFruitData(GameStateData gameStateData)
+        private EntityData InitFruitData(EntityData entityData, ReactiveProperty<int> numberOfFruits)
         {
-            _entityData.PrefabPath = GameConstants.FruitRuleTilesFolderPath + EntityType.Ghost.ToString();
-            gameStateData.Map.NumberOfFruits++;
-            return _entityData;
+            var edibleData = entityData as EdibleData;
+            edibleData.PrefabPath = GameConstants.FruitsFolderPath + edibleData.Type.ToString();
+            edibleData.Points = DefineEdibleEntityPoints(edibleData.Type);
+            numberOfFruits.Value++;
+            return edibleData;
         }
 
-        private EntityData InitEntityData()
+        private EdibleEntityPoints DefineEdibleEntityPoints(EntityType entityType)
         {
-            _entityData.PositionX = _position.x;
-            _entityData.PositionY = _position.y;
-            _entityData.PrefabPath = GameConstants.PacmanNewFullPath;
-            return _entityData;
+            switch (entityType)
+            {
+                case EntityType.Chery:
+                    return EdibleEntityPoints.Cherry;
+
+                case EntityType.Strawberry:
+                    return EdibleEntityPoints.Strawberry;
+
+                case EntityType.Orange:
+                    return EdibleEntityPoints.Orange;
+
+                case EntityType.Apple:
+                    return EdibleEntityPoints.Apple;
+
+                case EntityType.Melon:
+                    return EdibleEntityPoints.Melon;
+
+                case EntityType.GalaxianStarship:
+                    return EdibleEntityPoints.GalaxianStarship;
+
+                case EntityType.Bell:
+                    return EdibleEntityPoints.Bell;
+
+                case EntityType.Key:
+                    return EdibleEntityPoints.Key;
+
+                default:
+                    throw new Exception($"Unsuported entity type{entityType}");                 // Magic
+            }
         }
     }
 }

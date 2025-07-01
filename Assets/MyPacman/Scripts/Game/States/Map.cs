@@ -11,23 +11,23 @@ namespace MyPacman
         public readonly ReactiveProperty<int> NumberOfPellets;
         public readonly ReactiveProperty<int> NumberOfCollectedPellets;
 
-        private readonly EntitiesFactory _entitiesFactory = new();       // Или вынести регистрацию в DI?
+        private readonly EntitiesFactory _entitiesFactory;
 
-        public Map(MapData mapData/*, EntitiesFactory entitiesFactory*/)
+        public Map(MapData mapData, EntitiesFactory entitiesFactory)
         {
             OriginData = mapData;
-            //_entitiesFactory = entitiesFactory;
+            _entitiesFactory = entitiesFactory;
 
             mapData.Entities.ForEach(entityData => Entities.Add(_entitiesFactory.CreateEntity(entityData)));
 
-            // При добавлении элемента в Entities текущего класса, добавится элемент в Entities класса GameState
+            // При добавлении элемента в Entities текущего класса, добавится элемент в Entities класса MapData
             Entities.ObserveAdd().Subscribe(collectionAddEvent =>
             {
                 var addedEntity = collectionAddEvent.Value;
                 mapData.Entities.Add(addedEntity.Origin);
             });
 
-            // При удалении элемента из Entities текущего класса, также удалится элемент из Entities класса GameState
+            // При удалении элемента из Entities текущего класса, также удалится элемент из Entities класса MapData
             Entities.ObserveRemove().Subscribe(collectionRemovedEvent =>
             {
                 var removedEntity = collectionRemovedEvent.Value;

@@ -4,6 +4,8 @@ namespace MyPacman
 {
     public class GameState
     {
+        public readonly EntitiesFactory EntitiesFactory;
+
         private readonly GameStateData _gameStateData;
 
         public readonly ReactiveProperty<Map> Map;
@@ -14,11 +16,12 @@ namespace MyPacman
 
         public readonly ReactiveProperty<int> CurrentMapId = new();
 
-        public GameState(GameStateData gameStateData/*, EntitiesFactory entitiesFactory*/)
+        public GameState(GameStateData gameStateData)
         {
             _gameStateData = gameStateData;
+            EntitiesFactory = new EntitiesFactory(this);
 
-            Map = new ReactiveProperty<Map>(new Map(_gameStateData.Map/*, entitiesFactory*/));
+            Map = new ReactiveProperty<Map>(new Map(_gameStateData.Map, EntitiesFactory));
             Score = new ReactiveProperty<int>(_gameStateData.Score);
             HigthScore = new ReactiveProperty<int>(_gameStateData.HigthScore);
             LifePoints = new ReactiveProperty<int>(_gameStateData.LifePoints);

@@ -1,7 +1,31 @@
-﻿namespace MyPacman
+﻿using UnityEngine;
+
+namespace MyPacman
 {
     public class EntitiesFactory
     {
+        private EntitiesDataFactory _entitiesDataFactory = new();
+        private GameState _gameState;
+
+        public EntitiesFactory(GameState gameState)
+        {
+            _gameState = gameState;
+        }
+
+        public Entity CreateEntity(EntityType entityType)
+        {
+            var entityData = _entitiesDataFactory.CreateEntityData(_gameState, Vector2.zero, entityType);
+
+            return CreateEntity(entityData);
+        }
+
+        public Entity CreateEntity(Vector2 position, EntityType entityType)
+        {
+            var entityData = _entitiesDataFactory.CreateEntityData(_gameState, position, entityType);
+
+            return CreateEntity(entityData);
+        }
+
         public Entity CreateEntity(EntityData entityData)    // Ресурсоемкие процессы, но делаются редко
         {
             switch (entityData.Type)

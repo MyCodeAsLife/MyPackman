@@ -11,6 +11,7 @@ namespace MyPacman
 
         public GameState GameState { get; private set; }
         public GameSettingsState SettingsState { get; private set; }
+        public bool GameStateIsLoaded { get; private set; } = false;
 
         private GameStateData _gameStateOrigin { get; set; }
         private GameSettingsStateData _settingsStateOrigin { get; set; }
@@ -27,9 +28,10 @@ namespace MyPacman
             if (PlayerPrefs.HasKey(GAME_STATE_KEY))
             {
                 // Загружаем
+                GameStateIsLoaded = true;
                 var json = PlayerPrefs.GetString(GAME_STATE_KEY);
                 _gameStateOrigin = JsonConvert.DeserializeObject<GameStateData>(json);
-                GameState = new GameState(_gameStateOrigin/*, _entitiesFactory*/);
+                GameState = new GameState(_gameStateOrigin);
 
                 Debug.Log("GameState loaded: " + json);                                  //++++++++++++++++++++++++++++++++
             }
@@ -126,9 +128,9 @@ namespace MyPacman
             //return new GameState(_gameStateOrigin/*, _entitiesFactory*/);
 
             ILevelConfig levelConfig = new NormalLevelConfig();
-            EntitiesDataFactory entitiesDataFactory = new EntitiesDataFactory();
+            //EntitiesDataFactory entitiesDataFactory = new EntitiesDataFactory();
             BaseGameStateCreationService baseGameStateCreationService = new BaseGameStateCreationService();
-            GameState baseState = baseGameStateCreationService.Create(levelConfig, entitiesDataFactory);
+            GameState baseState = baseGameStateCreationService.Create(levelConfig);
             return baseState;
         }
 
