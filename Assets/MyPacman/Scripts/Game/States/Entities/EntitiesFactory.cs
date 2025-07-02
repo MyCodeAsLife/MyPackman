@@ -1,27 +1,28 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 namespace MyPacman
 {
     public class EntitiesFactory
     {
         private EntitiesDataFactory _entitiesDataFactory = new();
-        private GameState _gameState;
+        private Func<int> _createEntityId;
 
-        public EntitiesFactory(GameState gameState)
+        public EntitiesFactory(Func<int> createEntityId)
         {
-            _gameState = gameState;
+            _createEntityId = createEntityId;
         }
 
         public Entity CreateEntity(EntityType entityType)
         {
-            var entityData = _entitiesDataFactory.CreateEntityData(_gameState, Vector2.zero, entityType);
+            var entityData = _entitiesDataFactory.CreateEntityData(_createEntityId, Vector2.zero, entityType);
 
             return CreateEntity(entityData);
         }
 
         public Entity CreateEntity(Vector2 position, EntityType entityType)
         {
-            var entityData = _entitiesDataFactory.CreateEntityData(_gameState, position, entityType);
+            var entityData = _entitiesDataFactory.CreateEntityData(_createEntityId, position, entityType);
 
             return CreateEntity(entityData);
         }

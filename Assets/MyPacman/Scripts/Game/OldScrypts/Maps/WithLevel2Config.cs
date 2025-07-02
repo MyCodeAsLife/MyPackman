@@ -12,6 +12,8 @@ namespace MyPacman
             }
         }
 
+        public string MapTag { get; } = "WithLevel2";               // Magic
+
         public WithLevel2Config()
         {
             _map = new int[,] {

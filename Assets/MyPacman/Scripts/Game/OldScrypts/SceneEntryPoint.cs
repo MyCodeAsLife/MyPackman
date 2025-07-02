@@ -96,8 +96,8 @@ namespace MyPacman
             sceneFrame.AddComponent<Grid>();
 
             CreateWallFrame(sceneFrame.transform);
-            CreatePelletFrame(sceneFrame.transform);
-            CreateFruitFrame(sceneFrame.transform);      // Выпилить
+            //CreatePelletFrame(sceneFrame.transform);
+            //CreateFruitFrame(sceneFrame.transform);      // Выпилить
 
             var levelConstarctor = new LevelConstructor(_sceneContainer);
             levelConstarctor.ConstructLevel();
@@ -114,28 +114,28 @@ namespace MyPacman
             var wallsCollider = walls.AddComponent<TilemapCollider2D>();
         }
 
-        private void CreatePelletFrame(Transform parent)
-        {
-            var pellets = new GameObject(GameConstants.Pellet);
-            pellets.transform.parent = parent;
-            pellets.layer = LayerMask.NameToLayer(GameConstants.Pellet);
-            var pelletsTilemap = pellets.AddComponent<Tilemap>();
-            _sceneContainer.RegisterInstance(GameConstants.Pellet, pelletsTilemap);
-            var pelletsCollider = pellets.AddComponent<TilemapCollider2D>();
-            pelletsCollider.excludeLayers = GameConstants.LayerMaskEverything;
-            pellets.AddComponent<TilemapRenderer>();
-        }
+        //private void CreatePelletFrame(Transform parent)
+        //{
+        //    var pellets = new GameObject(GameConstants.Pellet);
+        //    pellets.transform.parent = parent;
+        //    pellets.layer = LayerMask.NameToLayer(GameConstants.Pellet);
+        //    var pelletsTilemap = pellets.AddComponent<Tilemap>();
+        //    _sceneContainer.RegisterInstance(GameConstants.Pellet, pelletsTilemap);
+        //    var pelletsCollider = pellets.AddComponent<TilemapCollider2D>();
+        //    pelletsCollider.excludeLayers = GameConstants.LayerMaskEverything;
+        //    pellets.AddComponent<TilemapRenderer>();
+        //}
 
-        // Выпилить
-        private void CreateFruitFrame(Transform parent)
-        {
-            var Fruits = new GameObject(GameConstants.Fruit);
-            Fruits.transform.parent = parent;
-            Fruits.layer = LayerMask.NameToLayer(GameConstants.Fruit);
-            var FruitsTilemap = Fruits.AddComponent<Tilemap>();
-            Fruits.AddComponent<TilemapCollider2D>();
-            _sceneContainer.RegisterInstance(GameConstants.Fruit, FruitsTilemap);
-        }
+        //// Выпилить
+        //private void CreateFruitFrame(Transform parent)
+        //{
+        //    var Fruits = new GameObject(GameConstants.Fruit);
+        //    Fruits.transform.parent = parent;
+        //    Fruits.layer = LayerMask.NameToLayer(GameConstants.Fruit);
+        //    var FruitsTilemap = Fruits.AddComponent<Tilemap>();
+        //    Fruits.AddComponent<TilemapCollider2D>();
+        //    _sceneContainer.RegisterInstance(GameConstants.Fruit, FruitsTilemap);
+        //}
 
         private void InitializeCamera()
         {

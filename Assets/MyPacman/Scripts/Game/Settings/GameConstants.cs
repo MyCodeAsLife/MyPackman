@@ -12,8 +12,8 @@ namespace MyPacman
 
         // Layers and Tilemaps
         public const string Obstacle = nameof(Obstacle);
-        public const string Pellet = nameof(Pellet);
-        public const string Fruit = nameof(Fruit);
+        //public const string Pellet = nameof(Pellet);
+        //public const string Fruit = nameof(Fruit);
 
         // LayerMask
         public const int LayerMaskEverything = -1;

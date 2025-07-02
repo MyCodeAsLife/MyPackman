@@ -31,6 +31,7 @@ namespace MyPacman
                 GameStateIsLoaded = true;
                 var json = PlayerPrefs.GetString(GAME_STATE_KEY);
                 _gameStateOrigin = JsonConvert.DeserializeObject<GameStateData>(json);
+                // Загрузить ILevelConfig соответствующей карты и передать в конструктор GameState
                 GameState = new GameState(_gameStateOrigin);
 
                 Debug.Log("GameState loaded: " + json);                                  //++++++++++++++++++++++++++++++++
@@ -105,33 +106,11 @@ namespace MyPacman
         // Настройки по умолчанию загружать из выбранной карты
         private GameState CreateGameStateFromSettings()
         {
-            //_gameStateOrigin = new GameStateData();
-
-            //_gameStateOrigin.CurrentMapId = 0;                   // Правильно ли что оно тут инициализируется?      Magic
-            //_gameStateOrigin.Map = new MapData()
-            //{
-            //    Entities = new()
-            //        {
-            //            new PacmanData()
-            //            {
-            //                UniqId = _gameStateOrigin.CreateEntityId(),
-            //                Type = EntityType.Pacman,
-            //                PrefabPath = GameConstants.PacmanNewFullPath,
-            //            },
-            //        },
-            //};
-
-            //_gameStateOrigin.Score = 0;
-            //_gameStateOrigin.HigthScore = 20000;
-            //_gameStateOrigin.LifePoints = 3;
-
-            //return new GameState(_gameStateOrigin/*, _entitiesFactory*/);
-
             ILevelConfig levelConfig = new NormalLevelConfig();
-            //EntitiesDataFactory entitiesDataFactory = new EntitiesDataFactory();
             BaseGameStateCreationService baseGameStateCreationService = new BaseGameStateCreationService();
-            GameState baseState = baseGameStateCreationService.Create(levelConfig);
-            return baseState;
+            _gameStateOrigin = baseGameStateCreationService.Create(levelConfig);
+
+            return new GameState(_gameStateOrigin);
         }
 
         private GameSettingsState CreateGameSettingsStateFromSettings()

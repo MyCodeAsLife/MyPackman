@@ -2,13 +2,13 @@ namespace MyPacman
 {
     public class GameplayEnterParams : SceneEnterParams
     {
-        public GameplayEnterParams(string saveFileName, int mapId) : base(GameConstants.GameplayScene)
+        public GameplayEnterParams(string saveFileName, ILevelConfig levelConfig) : base(levelConfig)
         {
             SaveFileName = saveFileName;
-            MapId = mapId;
+            //MapId = mapId;
         }
 
         public string SaveFileName { get; }
-        public int MapId { get; }
+        //public int MapId { get; }
     }
 }

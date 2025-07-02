@@ -4,15 +4,9 @@
     {
         public GameplayRegistrations(DIContainer sceneContainer, GameplayEnterParams gameplayEnterParams)
         {
-            //sceneContainer.RegisterFactory<PlayerInputActions>(_ => new PlayerInputActions()).AsSingle();
-
             sceneContainer.RegisterFactory(_ => new EntityBinderFactory()).AsSingle();
-            sceneContainer.RegisterInstance(new LevelConstructor(sceneContainer));
-            //sceneContainer.RegisterFactory(c => c.Resolve<EntityBinderFactory>().CreatePacman(Vector3.zero)).AsSingle();               // Выпилить
-            //sceneContainer.RegisterFactory(c => c.Resolve<EntityBinderFactory>().CreatePacmanTest(Vector3.zero)).AsSingle();           // Выпилить
-            //sceneContainer.RegisterFactory(c => c.Resolve<CharacterFactory>().CreateGhost(Vector3.zero));                           // Выпилить
 
-            sceneContainer.RegisterInstance<ILevelConfig>(new NormalLevelConfig());
+            //sceneContainer.RegisterInstance<ILevelConfig>(new NormalLevelConfig());
 
             // Перед данной регистрацией нужно чтобы состояние уровня\карты уже было создано
             var gameStateService = sceneContainer.Resolve<IGameStateService>();

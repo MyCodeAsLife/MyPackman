@@ -11,7 +11,7 @@ namespace MyPacman
         private readonly Tilemap _pickablesTileMap;               // Получать через DI ?
         //private readonly Tilemap _FruitsTileMap;                 // Получать через DI ?
         private readonly Tile[] _walls;                         // Получать через DI ?
-        private readonly RuleTile[] _pelletsRuleTiles;
+        //private readonly RuleTile[] _pelletsRuleTiles;
         //private readonly RuleTile[] _FruitsRuleTiles;
         private readonly ILevelConfig _level;                   // Получать через DI ?
         private readonly IMapHandler _mapHandler;
@@ -22,7 +22,7 @@ namespace MyPacman
         {
             _sceneContainer = sceneContainer;
             _wallsTileMap = sceneContainer.Resolve<Tilemap>(GameConstants.Obstacle);
-            _pickablesTileMap = sceneContainer.Resolve<Tilemap>(GameConstants.Pellet);
+            //_pickablesTileMap = sceneContainer.Resolve<Tilemap>(GameConstants.Pellet);
             //_FruitsTileMap = sceneContainer.Resolve<Tilemap>(GameConstants.Fruit);
 
             _walls = LoadTiles(GameConstants.WallTilesFolderPath, GameConstants.NumberOfWallTiles);
@@ -57,25 +57,25 @@ namespace MyPacman
                         _wallsTileMap.SetTile(cellPosition, _walls[numTile]);
                     else if (numTile == GameConstants.EmptyTile)
                         _wallsTileMap.SetTile(cellPosition, null);
-                    else if (_level.Map[y, x] == GameConstants.PacmanSpawn)
-                        SpawnPacmanTest(x, y);
-                    else if (_level.Map[y, x] == (int)EntityType.SmallPellet)
-                    {
-                        if (_mapHandler.IsIntersactionTile(x, y))
-                        {
-                            //_FruitsTileMap.SetTile(cellPosition, _FruitRule[0]);                     // Magic
-                            int chance = Random.Range(0, 100);
+                    //else if (_level.Map[y, x] == GameConstants.PacmanSpawn)
+                    //    SpawnPacmanTest(x, y);
+                    //else if (_level.Map[y, x] == (int)EntityType.SmallPellet)
+                    //{
+                    //    if (_mapHandler.IsIntersactionTile(x, y))
+                    //    {
+                    //        //_FruitsTileMap.SetTile(cellPosition, _FruitRule[0]);                     // Magic
+                    //        int chance = Random.Range(0, 100);
 
-                            if (chance < 10)                                                       // Magic
-                                _pickablesTileMap.SetTile(cellPosition, _pelletsRuleTiles[2]);            // Magic
-                            else
-                                _pickablesTileMap.SetTile(cellPosition, _pelletsRuleTiles[1]);            // Magic
-                        }
-                        else
-                        {
-                            _pickablesTileMap.SetTile(cellPosition, _pelletsRuleTiles[0]);                // Magic
-                        }
-                    }
+                    //        if (chance < 10)                                                       // Magic
+                    //            _pickablesTileMap.SetTile(cellPosition, _pelletsRuleTiles[2]);            // Magic
+                    //        else
+                    //            _pickablesTileMap.SetTile(cellPosition, _pelletsRuleTiles[1]);            // Magic
+                    //    }
+                    //    else
+                    //    {
+                    //        _pickablesTileMap.SetTile(cellPosition, _pelletsRuleTiles[0]);                // Magic
+                    //    }
+                    //}
                 }
             }
         }

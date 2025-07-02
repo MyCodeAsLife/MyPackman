@@ -12,6 +12,8 @@ namespace MyPacman
             }
         }
 
+        public string MapTag { get; } = "WithLevel1";
+
         public WithLevel1Config()
         {
             _map = new int[,] {

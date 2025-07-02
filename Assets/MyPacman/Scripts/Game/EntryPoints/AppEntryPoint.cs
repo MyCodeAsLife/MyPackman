@@ -37,7 +37,7 @@ namespace MyPacman
 
             if (sceneName == GameConstants.GameplayScene)
             {
-                var defaultScene = new GameplayEnterParams("ddd.sv", 1);
+                var defaultScene = new GameplayEnterParams("ddd.sv", new NormalLevelConfig());
                 Coroutines.StartRoutine(LoadAndStartGameplay(defaultScene));
                 return;
             }

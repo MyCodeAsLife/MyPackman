@@ -12,6 +12,8 @@ namespace MyPacman
             }
         }
 
+        public string MapTag { get; } = "HeightLevel1";             //Magic
+
         public HeightLevel1Config()
         {
             _map = new int[,] {

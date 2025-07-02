@@ -22,8 +22,8 @@ namespace MyPacman
             //GameplayViewModelRegistartions.Register(gameplayViewModelsContainer);     // Регистрируем все ViewModel's необходимые для сцены
 
             // Old
-            InitCamera();
-            CreateScene();
+            InitCamera(gameplayEnterParams.LevelConfig);
+            CreateScene(gameplayEnterParams.LevelConfig);
 
             // New
             InitUI(gameplayViewModelsContainer);
@@ -87,17 +87,22 @@ namespace MyPacman
             //uiManager.OpenScreenGameplay();
         }
 
-        private void CreateScene()
+        private void CreateScene(ILevelConfig levelConfig)
         {
             var sceneFrame = new GameObject("Level");
             sceneFrame.AddComponent<Grid>();
 
             CreateWallFrame(sceneFrame.transform);
-            CreatePelletFrame(sceneFrame.transform);
-            CreateFruitFrame(sceneFrame.transform);      // Выпилить
 
-            var levelConstarctor = new LevelConstructor(_sceneContainer);
-            levelConstarctor.ConstructLevel();
+            var levelCreator = new LevelCreator(_sceneContainer, levelConfig);
+            _sceneContainer.RegisterInstance(levelCreator);
+            _sceneContainer.Resolve<IGameStateService>().SaveGameState();
+
+            //CreatePelletFrame(sceneFrame.transform);
+            //CreateFruitFrame(sceneFrame.transform);      // Выпилить
+
+            //var levelConstarctor = new LevelConstructor(_sceneContainer);
+            //levelConstarctor.ConstructLevel();
         }
 
         private void CreateWallFrame(Transform parent)
@@ -111,34 +116,34 @@ namespace MyPacman
             var wallsCollider = walls.AddComponent<TilemapCollider2D>();
         }
 
-        private void CreatePelletFrame(Transform parent)
-        {
-            var pellets = new GameObject(GameConstants.Pellet);
-            pellets.transform.parent = parent;
-            pellets.layer = LayerMask.NameToLayer(GameConstants.Pellet);
-            var pelletsTilemap = pellets.AddComponent<Tilemap>();
-            _sceneContainer.RegisterInstance(GameConstants.Pellet, pelletsTilemap);
-            var pelletsCollider = pellets.AddComponent<TilemapCollider2D>();
-            pelletsCollider.excludeLayers = GameConstants.LayerMaskEverything;
-            pellets.AddComponent<TilemapRenderer>();
-        }
+        //private void CreatePelletFrame(Transform parent)
+        //{
+        //    var pellets = new GameObject(GameConstants.Pellet);
+        //    pellets.transform.parent = parent;
+        //    pellets.layer = LayerMask.NameToLayer(GameConstants.Pellet);
+        //    var pelletsTilemap = pellets.AddComponent<Tilemap>();
+        //    _sceneContainer.RegisterInstance(GameConstants.Pellet, pelletsTilemap);
+        //    var pelletsCollider = pellets.AddComponent<TilemapCollider2D>();
+        //    pelletsCollider.excludeLayers = GameConstants.LayerMaskEverything;
+        //    pellets.AddComponent<TilemapRenderer>();
+        //}
 
-        // Выпилить
-        private void CreateFruitFrame(Transform parent)
-        {
-            var Fruits = new GameObject(GameConstants.Fruit);
-            Fruits.transform.parent = parent;
-            Fruits.layer = LayerMask.NameToLayer(GameConstants.Fruit);
-            var FruitsTilemap = Fruits.AddComponent<Tilemap>();
-            Fruits.AddComponent<TilemapCollider2D>();
-            _sceneContainer.RegisterInstance(GameConstants.Fruit, FruitsTilemap);
-        }
+        //// Выпилить
+        //private void CreateFruitFrame(Transform parent)
+        //{
+        //    var Fruits = new GameObject(GameConstants.Fruit);
+        //    Fruits.transform.parent = parent;
+        //    Fruits.layer = LayerMask.NameToLayer(GameConstants.Fruit);
+        //    var FruitsTilemap = Fruits.AddComponent<Tilemap>();
+        //    Fruits.AddComponent<TilemapCollider2D>();
+        //    _sceneContainer.RegisterInstance(GameConstants.Fruit, FruitsTilemap);
+        //}
 
-        private void InitCamera()
+        private void InitCamera(ILevelConfig levelConfig)
         {
             const float OffsetFromScreenAspectRatio = 16f / 9f;                 // Magic
 
-            var map = _sceneContainer.Resolve<ILevelConfig>().Map;              // Данные получать на основе GameState
+            var map = levelConfig.Map;
             float y = map.GetLength(0) * GameConstants.GridCellSize * GameConstants.Half;
             float x = map.GetLength(1) * GameConstants.GridCellSize * GameConstants.Half;
 

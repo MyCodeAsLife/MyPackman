@@ -5,10 +5,10 @@ namespace MyPacman
 {
     public class EntitiesDataFactory
     {
-        public EntityData CreateEntityData(GameState gameState, Vector2 position, EntityType entityType)
+        public EntityData CreateEntityData(Func<int> createEntityId, Vector2 position, EntityType entityType)
         {
             var entityData = CreateEntityData(entityType);
-            entityData = InitEntityData(entityData, entityType, gameState, position);
+            entityData = InitEntityData(entityData, entityType, createEntityId, position);
             return entityData;
         }
 
@@ -34,13 +34,13 @@ namespace MyPacman
         private EntityData InitEntityData(
             EntityData entityData,
             EntityType entityType,
-            GameState gameState,
+            Func<int> createEntitytId,
             Vector2 position)
         {
             string path = "";
             entityData.PositionX = position.x;
             entityData.PositionY = position.y;
-            entityData.UniqId = gameState.CreateEntityId();
+            entityData.UniqId = createEntitytId();
 
             if (entityType == EntityType.Pacman)
                 path = GameConstants.PacmanFolderPath;
@@ -68,6 +68,19 @@ namespace MyPacman
         {
             switch (entityType)
             {
+                case EntityType.SmallPellet:
+                    return EdibleEntityPoints.SmallPellet;                      // Переделать, у каждой пеллеты свои очки
+
+                case EntityType.MediumPellet:
+                case EntityType.LargePellet:
+                    return EdibleEntityPoints.MediumPellet;                      // Переделать, у каждой пеллеты свои очки
+
+                case EntityType.Blinky:
+                case EntityType.Pinky:
+                case EntityType.Inky:
+                case EntityType.Clyde:
+                    return EdibleEntityPoints.Ghost;
+
                 case EntityType.Chery:
                     return EdibleEntityPoints.Cherry;
 

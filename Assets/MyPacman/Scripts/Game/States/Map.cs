@@ -9,13 +9,13 @@ namespace MyPacman
         public readonly ReactiveProperty<int> LevelNumber;
         public readonly ReactiveProperty<int> NumberOfPellets;
         public readonly ReactiveProperty<int> NumberOfCollectedPellets;
-        //public readonly ReactiveProperty<int> NumberOfCollectedFruits;
 
         private readonly EntitiesFactory _entitiesFactory;
 
         public Map(MapData mapData, EntitiesFactory entitiesFactory)
         {
             OriginData = mapData;
+            MapTag = mapData.MapTag;
             _entitiesFactory = entitiesFactory;
 
             InitCounters();
@@ -28,6 +28,7 @@ namespace MyPacman
         }
 
         public MapData OriginData { get; }
+        public string MapTag { get; }
         public ObservableList<Entity> Entities { get; } = new();
 
         private void InitEntities(MapData mapData)
@@ -70,10 +71,6 @@ namespace MyPacman
                     NumberOfPellets.Value--;
                     NumberOfCollectedPellets.Value++;
                 }
-                //else if (removedEntity.Type <= EntityType.Chery)
-                //{
-                //    NumberOfCollectedFruits.Value++;
-                //}
             });
         }
     }

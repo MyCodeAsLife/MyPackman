@@ -2,12 +2,12 @@
 {
     public abstract class SceneEnterParams
     {
-        protected SceneEnterParams(string sceneName)
+        protected SceneEnterParams(ILevelConfig levelConfig)
         {
-            SceneName = sceneName;
+            LevelConfig = levelConfig;
         }
 
-        public string SceneName { get; }
+        public ILevelConfig LevelConfig { get; }
 
         public T As<T>() where T : SceneEnterParams
         {

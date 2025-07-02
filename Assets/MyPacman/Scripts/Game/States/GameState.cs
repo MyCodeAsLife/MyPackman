@@ -15,12 +15,10 @@ namespace MyPacman
         public readonly ReactiveProperty<int> LifePoints;
         public readonly ReactiveProperty<int> NumberOfCollectedFruits;
 
-        public readonly ReactiveProperty<int> CurrentMapId = new();
-
         public GameState(GameStateData gameStateData)
         {
             _gameStateData = gameStateData;
-            EntitiesFactory = new EntitiesFactory(this);
+            EntitiesFactory = new EntitiesFactory(gameStateData.CreateEntityId);
 
             Map = new ReactiveProperty<Map>(new Map(_gameStateData.Map, EntitiesFactory));
             Score = new ReactiveProperty<int>(_gameStateData.Score);
@@ -35,8 +33,6 @@ namespace MyPacman
                 if (removedEntity.Type <= EntityType.Chery)
                     NumberOfCollectedFruits.Value++;
             });
-
-            CurrentMapId.Subscribe(newValue => { _gameStateData.CurrentMapId = newValue; });
 
             //InitMap();
             //InitResources();
