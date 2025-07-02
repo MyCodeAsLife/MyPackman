@@ -19,7 +19,7 @@ namespace MyPacman
         public const int LayerMaskEverything = -1;
 
         // Paths to prefabs
-        public const string PacmanFullPath = "Prefabs/Pacman";              // Выпилить
+        public const string PacmanFolderPath = "Prefabs/";              // Выпилить
         //public const string PacmanTestFullPath = "Prefabs/PacmanTest";      // Выпилить
         //public const string PacmanNewFullPath = "Prefabs/NewPacman";
         public const string NoFrictionMaterialFullPath = "Prefabs/NoFrictionMaterial";    // Материал без трения
@@ -43,28 +43,20 @@ namespace MyPacman
         //public const int GridCellPixelSize = 24;
         public const int FieldsAtTheEdgesOfTheMap = 1;  // Отступы по краям карты
 
-        //// Triggers object names
-        //public const string TriggerPelletSmall = "PelletSmall(Clone)";
-        //public const string TriggerPelletMedium = "PelletMedium(Clone)";
-        //public const string TriggerPelletLarge = "PelletLarge(Clone)";
-        //public const string TriggerFruit = "Fruit(Clone)";
-
-        //// Score cost
-        //public const int CostPelletSmall = 5;
-        //public const int CostPelletMedium = 15;
-        //public const int CostPelletLarge = 50;
-
         // Gameplay settings
         public const float PlayerSpeed = 6f;
         public const int StartLifePointsAmount = 3;
         public const int StartingDifficultyLevel = 1;
+        public const int CollectedPelletsForFirstFruitSpawn = 70;
+        public const int CollectedPelletsForSecondFruitSpawn = 170;
 
         // Level Constructor - переделать в enum?
         public const int EmptyTile = 0;
-        public const int PacmanSpawn = -1;
-        public const int SmallPellet = -3;
-        public const int MediumPellet = -4;
-        public const int LargePellet = -5;
+        public const int FruitSpawn = -1;
+        public const int PacmanSpawn = -2;
+        //public const int SmallPellet = -3;
+        //public const int MediumPellet = -4;
+        //public const int LargePellet = -5;
 
         //// Errors
         //public const string PositionOnMapNotFound = "Position on map, not Found.";

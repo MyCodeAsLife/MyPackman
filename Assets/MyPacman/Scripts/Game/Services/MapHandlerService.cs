@@ -9,28 +9,32 @@ namespace MyPacman
 {
     public class MapHandlerService
     {
-        private readonly ReadOnlyReactiveProperty<Map> _map;
         private readonly ObservableList<Entity> _entities;
         private readonly Tilemap _obstaclesTileMap;
+        private readonly GameState _gameState;
 
         private readonly Vector2 _fruitSpawnPosition;
+        //private readonly FruitSpawner _fruitSpawner;
+
         // For test
         //private Vector3Int _currentCellPosition;
         //private RuleTile _testTile;
 
-        public event Action<int> EntityEated;
+        //public event Action<Edible> EntityEated;
 
         // 1. создает/удаляет фрукты.
         // 2. контролирует кол-во съедобных сущностей на карте
         // 3. проверки позиций на препятствия?
 
 
-        public MapHandlerService(ReadOnlyReactiveProperty<Map> map, Tilemap obstaclesTileMap)
+        public MapHandlerService(GameState gameState, Tilemap obstaclesTileMap, Vector2 fruitSpawnPosition)
         {
-            _map = map;
-            _entities = map.CurrentValue.Entities;
+            _gameState = gameState;
+            _entities = gameState.Map.CurrentValue.Entities;
             _obstaclesTileMap = obstaclesTileMap;
+            _fruitSpawnPosition = fruitSpawnPosition;
 
+            gameState.Map.CurrentValue.NumberOfCollectedPellets.Subscribe(OnCollectedPellet);
             // For test
             //_testTile = Resources.Load<RuleTile>("Assets/TestRuleTile");
         }
@@ -60,15 +64,7 @@ namespace MyPacman
                 {
                     _entities.Remove(entity);
                 }
-
-                int points = (int)(entity as Edible).Points;
-                EntityEated?.Invoke(points);
             }
-        }
-
-        public void SpawnFruit()
-        {
-
         }
 
         public bool IsObstacleTile(Vector2 position)
@@ -82,12 +78,30 @@ namespace MyPacman
             return false;
         }
 
-        private static Vector3Int ConvertToTilePosition(Vector2 position)      // Вынести в другой класс?
+        private Vector3Int ConvertToTilePosition(Vector2 position)      // Вынести в другой класс?
         {
             int X = (int)position.x;
             int Y = Mathf.Abs((int)(position.y - 1));
 
             return new Vector3Int(X, Y);
+        }
+
+        private void OnCollectedPellet(int numberOfCollectedPellets)
+        {
+            if (numberOfCollectedPellets == GameConstants.CollectedPelletsForFirstFruitSpawn ||
+                numberOfCollectedPellets == GameConstants.CollectedPelletsForSecondFruitSpawn)
+                SpawnFruit();
+        }
+
+        private void SpawnFruit()
+        {
+            int numFruitType = (int)EntityType.Chery - _gameState.NumberOfCollectedFruits.CurrentValue;
+
+            if (numFruitType < (int)EntityType.Key)
+                numFruitType = (int)EntityType.Key;
+
+            var entity = _gameState.EntitiesFactory.CreateEntity(_fruitSpawnPosition, (EntityType)numFruitType);
+            _gameState.Map.CurrentValue.Entities.Add(entity);
         }
 
         //public void OnPlayerTilesChanged(Vector3Int newPlayerTilePosition)      // Обработка содержимого плитки

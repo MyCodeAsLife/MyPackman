@@ -19,7 +19,7 @@
             gameStateData.Map = new MapData();
             //gameStateData.Map.Entities = new();
             gameStateData.Map.LevelNumber = GameConstants.StartingDifficultyLevel;
-            gameStateData.Map.NumberOfFruits = 0;
+            //gameStateData.Map.NumberOfCollectedFruits = 0;
             gameStateData.Map.NumberOfPellets = 0;
             gameStateData.Map.NumberOfCollectedPellets = 0;
 

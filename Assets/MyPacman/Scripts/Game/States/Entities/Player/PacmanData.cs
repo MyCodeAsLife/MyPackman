@@ -6,8 +6,8 @@ namespace MyPacman
     [Serializable]
     public class PacmanData : EntityData
     {
-        //public float PositionX { get; set; }
-        //public float PositionY { get; set; }
+        public float StartPositionX { get; set; }
+        public float StartPositionY { get; set; }
 
         public Vector2Int Direction { get; set; }
     }

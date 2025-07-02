@@ -59,7 +59,7 @@ namespace MyPacman
                         _wallsTileMap.SetTile(cellPosition, null);
                     else if (_level.Map[y, x] == GameConstants.PacmanSpawn)
                         SpawnPacmanTest(x, y);
-                    else if (_level.Map[y, x] == GameConstants.SmallPellet)
+                    else if (_level.Map[y, x] == (int)EntityType.SmallPellet)
                     {
                         if (_mapHandler.IsIntersactionTile(x, y))
                         {

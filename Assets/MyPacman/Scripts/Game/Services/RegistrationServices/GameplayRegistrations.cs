@@ -7,6 +7,7 @@
             //sceneContainer.RegisterFactory<PlayerInputActions>(_ => new PlayerInputActions()).AsSingle();
 
             sceneContainer.RegisterFactory(_ => new EntityBinderFactory()).AsSingle();
+            sceneContainer.RegisterInstance(new LevelConstructor(sceneContainer));
             //sceneContainer.RegisterFactory(c => c.Resolve<EntityBinderFactory>().CreatePacman(Vector3.zero)).AsSingle();               // Выпилить
             //sceneContainer.RegisterFactory(c => c.Resolve<EntityBinderFactory>().CreatePacmanTest(Vector3.zero)).AsSingle();           // Выпилить
             //sceneContainer.RegisterFactory(c => c.Resolve<CharacterFactory>().CreateGhost(Vector3.zero));                           // Выпилить

@@ -91,28 +91,28 @@ namespace MyPacman
             int downY = y - 1;
             int upY = y + 1;
 
-            if (leftX >= 0 && (_currentLevel.Map[y, leftX] == GameConstants.SmallPellet ||
+            if (leftX >= 0 && (_currentLevel.Map[y, leftX] == (int)EntityType.SmallPellet ||
                              _currentLevel.Map[y, leftX] == GameConstants.EmptyTile))
             {
                 numberOfPaths++;
                 vertical++;
             }
 
-            if (rigthX < maxLengthX && (_currentLevel.Map[y, rigthX] == GameConstants.SmallPellet ||
+            if (rigthX < maxLengthX && (_currentLevel.Map[y, rigthX] == (int)EntityType.SmallPellet ||
                                        _currentLevel.Map[y, rigthX] == GameConstants.EmptyTile))
             {
                 numberOfPaths++;
                 vertical--;
             }
 
-            if (downY >= 0 && (_currentLevel.Map[downY, x] == GameConstants.SmallPellet ||
+            if (downY >= 0 && (_currentLevel.Map[downY, x] == (int)EntityType.SmallPellet ||
                                _currentLevel.Map[downY, x] == GameConstants.EmptyTile))
             {
                 numberOfPaths++;
                 horizontal++;
             }
 
-            if (upY < maxLengthY && (_currentLevel.Map[upY, x] == GameConstants.SmallPellet ||
+            if (upY < maxLengthY && (_currentLevel.Map[upY, x] == (int)EntityType.SmallPellet ||
                                         _currentLevel.Map[upY, x] == GameConstants.EmptyTile))
             {
                 numberOfPaths++;
@@ -134,16 +134,16 @@ namespace MyPacman
 
                 switch (pellet)
                 {
-                    case GameConstants.SmallPellet:
-                        Debug.Log(GameConstants.SmallPellet);                         // Magic - SmallPellet RuleTile name
+                    case (int)EntityType.SmallPellet:
+                        Debug.Log(EntityType.SmallPellet);                         // Magic - SmallPellet RuleTile name
                         break;
 
-                    case GameConstants.MediumPellet:
-                        Debug.Log(GameConstants.MediumPellet);                         // Magic - MediumPellet RuleTile name
+                    case (int)EntityType.MediumPellet:
+                        Debug.Log(EntityType.MediumPellet);                         // Magic - MediumPellet RuleTile name
                         break;
 
-                    case GameConstants.LargePellet:
-                        Debug.Log(GameConstants.LargePellet);                         // Magic - LargePellet RuleTile name
+                    case (int)EntityType.LargePellet:
+                        Debug.Log(EntityType.LargePellet);                         // Magic - LargePellet RuleTile name
                         break;
 
                     default:

@@ -1,4 +1,5 @@
-﻿using R3;
+﻿using ObservableCollections;
+using R3;
 
 namespace MyPacman
 {
@@ -26,6 +27,14 @@ namespace MyPacman
             HigthScore = new ReactiveProperty<int>(_gameStateData.HigthScore);
             LifePoints = new ReactiveProperty<int>(_gameStateData.LifePoints);
             NumberOfCollectedFruits = new ReactiveProperty<int>(_gameStateData.NumberOfCollectedFruits);
+
+            Map.CurrentValue.Entities.ObserveRemove().Subscribe(collectionRemovedEvent =>
+            {
+                var removedEntity = collectionRemovedEvent.Value;
+
+                if (removedEntity.Type <= EntityType.Chery)
+                    NumberOfCollectedFruits.Value++;
+            });
 
             CurrentMapId.Subscribe(newValue => { _gameStateData.CurrentMapId = newValue; });
 
