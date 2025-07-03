@@ -8,7 +8,7 @@ namespace MyPacman
         public EntityData CreateEntityData(Func<int> createEntityId, Vector2 position, EntityType entityType)
         {
             var entityData = CreateEntityData(entityType);
-            entityData = InitEntityData(entityData, entityType, createEntityId, position);
+            entityData = InitEntityData(entityData, entityType, createEntityId, position);          // entityType - лишний, в data уже записан entityType
             return entityData;
         }
 

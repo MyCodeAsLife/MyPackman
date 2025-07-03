@@ -1,6 +1,7 @@
 ﻿using ObservableCollections;
 using R3;
 using System.Linq;
+using UnityEngine;
 
 namespace MyPacman
 {
@@ -9,6 +10,11 @@ namespace MyPacman
         public readonly ReactiveProperty<int> LevelNumber;
         public readonly ReactiveProperty<int> NumberOfPellets;
         public readonly ReactiveProperty<int> NumberOfCollectedPellets;
+        public readonly ReactiveProperty<Vector2> PacmanSpawnPos;
+        public readonly ReactiveProperty<Vector2> BlinkySpawnPos;
+        public readonly ReactiveProperty<Vector2> PinkySpawnPos;
+        public readonly ReactiveProperty<Vector2> InkySpawnPos;
+        public readonly ReactiveProperty<Vector2> ClydeSpawnPos;
 
         private readonly EntitiesFactory _entitiesFactory;
 
@@ -20,16 +26,56 @@ namespace MyPacman
 
             InitCounters();
             InitEntities(mapData);
+            PacmanSpawnPos = InitPacmanSpawnPos();
+            BlinkySpawnPos = InitBlinkySpawnPos();
+            PinkySpawnPos = InitPinkySpawnPos();
+            InkySpawnPos = InitInkySpawnPos();
+            ClydeSpawnPos = InitClydeSpawnPos();
 
             LevelNumber = new ReactiveProperty<int>(mapData.LevelNumber);
             NumberOfPellets = new ReactiveProperty<int>(mapData.NumberOfPellets);
             NumberOfCollectedPellets = new ReactiveProperty<int>(mapData.NumberOfCollectedPellets);
-            //NumberOfCollectedFruits = new ReactiveProperty<int>(mapData.NumberOfCollectedFruits);
+        }
+
+        private ReactiveProperty<Vector2> InitPacmanSpawnPos()
+        {
+            var pacmanSpawnPos = new ReactiveProperty<Vector2>(new Vector2(
+                OriginData.PacmanSpawnPosX,
+                OriginData.PacmanSpawnPosY));
+            pacmanSpawnPos.Subscribe(newPos =>
+            {
+                OriginData.PacmanSpawnPosX = newPos.x;
+                OriginData.PacmanSpawnPosY = newPos.y;
+            });
+
+            return pacmanSpawnPos;
         }
 
         public MapData OriginData { get; }
         public string MapTag { get; }
         public ObservableList<Entity> Entities { get; } = new();
+
+        private void InitCounters()
+        {
+            Entities.ObserveAdd().Subscribe(collectionAddEvent =>
+            {
+                var addedEntity = collectionAddEvent.Value;
+
+                if (addedEntity.Type <= EntityType.SmallPellet && addedEntity.Type >= EntityType.LargePellet)
+                    NumberOfPellets.Value++;
+            });
+
+            Entities.ObserveRemove().Subscribe(collectionRemovedEvent =>
+            {
+                var removedEntity = collectionRemovedEvent.Value;
+
+                if (removedEntity.Type <= EntityType.SmallPellet && removedEntity.Type >= EntityType.LargePellet)
+                {
+                    NumberOfPellets.Value--;
+                    NumberOfCollectedPellets.Value++;
+                }
+            });
+        }
 
         private void InitEntities(MapData mapData)
         {
@@ -52,26 +98,60 @@ namespace MyPacman
             });
         }
 
-        private void InitCounters()
+        private ReactiveProperty<Vector2> InitBlinkySpawnPos()
         {
-            Entities.ObserveAdd().Subscribe(collectionAddEvent =>
+            var blinkySpawnPos = new ReactiveProperty<Vector2>(new Vector2(
+            OriginData.BlinkySpawnPosX,
+                OriginData.BlinkySpawnPosY));
+            blinkySpawnPos.Subscribe(newPos =>
             {
-                var addedEntity = collectionAddEvent.Value;
-
-                if (addedEntity.Type <= EntityType.SmallPellet && addedEntity.Type >= EntityType.LargePellet)
-                    NumberOfPellets.Value++;
+                OriginData.BlinkySpawnPosX = newPos.x;
+                OriginData.BlinkySpawnPosY = newPos.y;
             });
 
-            Entities.ObserveRemove().Subscribe(collectionRemovedEvent =>
-            {
-                var removedEntity = collectionRemovedEvent.Value;
+            return blinkySpawnPos;
+        }
 
-                if (removedEntity.Type <= EntityType.SmallPellet && removedEntity.Type >= EntityType.LargePellet)
-                {
-                    NumberOfPellets.Value--;
-                    NumberOfCollectedPellets.Value++;
-                }
+        private ReactiveProperty<Vector2> InitPinkySpawnPos()
+        {
+            var pinkySpawnPos = new ReactiveProperty<Vector2>(new Vector2(
+                OriginData.PinkySpawnPosX,
+                OriginData.PinkySpawnPosY));
+            pinkySpawnPos.Subscribe(newPos =>
+            {
+                OriginData.PinkySpawnPosX = newPos.x;
+                OriginData.PinkySpawnPosY = newPos.y;
             });
+
+            return pinkySpawnPos;
+        }
+
+        private ReactiveProperty<Vector2> InitInkySpawnPos()
+        {
+            var inkySpawnPos = new ReactiveProperty<Vector2>(new Vector2(
+                OriginData.InkySpawnPosX,
+                OriginData.InkySpawnPosY));
+            inkySpawnPos.Subscribe(newPos =>
+            {
+                OriginData.InkySpawnPosX = newPos.x;
+                OriginData.InkySpawnPosY = newPos.y;
+            });
+
+            return inkySpawnPos;
+        }
+
+        private ReactiveProperty<Vector2> InitClydeSpawnPos()
+        {
+            var clydeSpawnPos = new ReactiveProperty<Vector2>(new Vector2(
+                OriginData.ClydeSpawnPosX,
+                OriginData.ClydeSpawnPosY));
+            clydeSpawnPos.Subscribe(newPos =>
+            {
+                OriginData.ClydeSpawnPosX = newPos.x;
+                OriginData.ClydeSpawnPosY = newPos.y;
+            });
+
+            return clydeSpawnPos;
         }
     }
 }

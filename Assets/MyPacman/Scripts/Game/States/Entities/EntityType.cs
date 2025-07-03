@@ -1,10 +1,11 @@
 ﻿public enum EntityType
 {
-    Pacman = -2,
     //Ghost = -3,
     SmallPellet = -3,       // Тот ресурс что валяется на сцене
     MediumPellet = -4,      // Тот ресурс что валяется на сцене
     LargePellet = -5,       // Тот ресурс что валяется на сцене
+
+    Pacman = -6,
     Blinky = -7,
     Pinky = -8,
     Inky = -9,

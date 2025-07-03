@@ -50,7 +50,6 @@ namespace MyPacman
             string prefabBuildingPath = entityViewModel.PrefabPath;
             var prefabBuilding = Resources.Load<EntityBinder>(prefabBuildingPath);
             var createdBuilding = Instantiate(prefabBuilding);     // Создаем View объекта
-
             createdBuilding.Bind(entityViewModel);                // Объеденяем его с ViewModel
 
             // По хорошему, создаваемые View нужно кэшировать, чтобы проще было их удалять

@@ -34,15 +34,6 @@ namespace MyPacman
                 case EntityType.Pacman:
                     return new Pacman(entityData as PacmanData);
 
-                //case EntityType.SmallPellet:                                    // Оптимизировать до PelletData?
-                //    return new SmallPellet(entityData as SmallPelletData);
-
-                //case EntityType.MediumPellet:                                   // Оптимизировать до PelletData?
-                //    return new MediumPellet(entityData as MediumPelletData);
-
-                //case EntityType.LargePellet:                                    // Оптимизировать до PelletData?
-                //    return new LargePellet(entityData as LargePelletData);
-
                 case EntityType.SmallPellet:
                 case EntityType.MediumPellet:
                 case EntityType.LargePellet:

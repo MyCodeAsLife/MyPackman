@@ -27,14 +27,14 @@ namespace MyPacman
             foreach (var entity in entities)
             {
                 //if (entity is BuildingEntity buildingEntity)
-                CreateBuildingViewModel(entity);
+                CreateEntityViewModel(entity);
             }
 
             // Подписываем создание новых ViewModel для новодобовляющихся состояний
             entities.ObserveAdd().Subscribe(e =>
             {
                 //if (e.Value is BuildingEntity buildingEntity)
-                CreateBuildingViewModel(e.Value);
+                CreateEntityViewModel(e.Value);
             });
 
             // Подписываем удаление текущих ViewModel при удалении их состояний
@@ -47,7 +47,7 @@ namespace MyPacman
 
         public IObservableCollection<EntityViewModel> AllEntities => _allEntities;
 
-        private void CreateBuildingViewModel(Entity entity)     // Создание ViewModel'ей нужно прогонять через фабрику
+        private void CreateEntityViewModel(Entity entity)     // Создание ViewModel'ей нужно прогонять через фабрику
         {
             //var buildingSettings = _buildingsSettingsMap[entity.ConfigId];
             var factory = new ViewModelFactory();

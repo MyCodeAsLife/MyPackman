@@ -14,8 +14,10 @@ namespace MyPacman
 
         public override void Bind(EntityViewModel viewModel)
         {
+            base.Bind(viewModel);
             var pacmanViewModel = viewModel as PacmanViewModel;
-            // Функция/лямбда(подписка) на поворот в сторону движения.
+
+            // Добавить функцию/лямбду(подписка) на поворот в сторону движения.
 
             pacmanViewModel.Position.Subscribe(nextPosition => _rigidbody.position = nextPosition); // Функция/лямбда(подписка) на движение/смену позиции.
             pacmanViewModel.PassPositionRequestFunction(GetCurrentPosition);

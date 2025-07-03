@@ -19,7 +19,7 @@ namespace MyPacman
         public const int LayerMaskEverything = -1;
 
         // Paths to prefabs
-        public const string PacmanFolderPath = "Prefabs/";              // Выпилить
+        public const string PacmanFolderPath = "Prefabs/";
         //public const string PacmanTestFullPath = "Prefabs/PacmanTest";      // Выпилить
         //public const string PacmanNewFullPath = "Prefabs/NewPacman";
         public const string NoFrictionMaterialFullPath = "Prefabs/NoFrictionMaterial";    // Материал без трения
@@ -36,12 +36,12 @@ namespace MyPacman
         // Number of tiles along the specified path
         public const int NumberOfWallTiles = 38;
         public const int NumberOfPelletTiles = 3;
-        public const int NumberOfFruitTiles = 1;         // Количество подбираемых вещей в папке Prefabs(apple, key и т.д.)
+        //public const int NumberOfFruitTiles = 1;         // Количество подбираемых вещей в папке Prefabs(apple, key и т.д.)
 
         // Map settings
         public const float GridCellSize = 1f;
         //public const int GridCellPixelSize = 24;
-        public const int FieldsAtTheEdgesOfTheMap = 1;  // Отступы по краям карты
+        //public const int FieldsAtTheEdgesOfTheMap = 1;  // Отступы по краям карты
 
         // Gameplay settings
         public const float PlayerSpeed = 6f;
@@ -53,7 +53,11 @@ namespace MyPacman
         // Level Constructor - переделать в enum?
         public const int EmptyTile = 0;
         public const int FruitSpawn = -1;
-        public const int PacmanSpawn = -2;
+        public const int PacmanSpawn = (int)EntityType.Pacman;
+        public const int BlinkySpawn = (int)EntityType.Blinky;
+        public const int PinkySpawn = (int)EntityType.Pinky;
+        public const int InkySpawn = (int)EntityType.Inky;
+        public const int Clyde = (int)EntityType.Clyde;
         //public const int SmallPellet = -3;
         //public const int MediumPellet = -4;
         //public const int LargePellet = -5;

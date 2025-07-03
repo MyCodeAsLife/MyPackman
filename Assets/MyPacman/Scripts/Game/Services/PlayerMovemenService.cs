@@ -8,6 +8,7 @@ namespace MyPacman
     {
         private PlayerInputActions _inputActions;
         private Pacman _entity;
+        private TimeService _timeService;
 
         private IGameStateService _gameStateService;            //For save
         private float _timer;                                   //For save
@@ -24,26 +25,31 @@ namespace MyPacman
             _inputActions.Disable();
             _inputActions.Keyboard.Movement.performed -= OnMoveStarted;
             _inputActions.Keyboard.Movement.canceled -= OnMoveCanceled;
+
+            _timeService.TimeHasTicked -= Tick;
         }
 
-        public void Bind(Pacman entity,
-            PlayerInputActions inputActions,            // Нужно передавать или создать здесь?
+        public void Run(Pacman entity,
+            //PlayerInputActions inputActions,            // Нужно передавать или создать здесь?
             IGameStateService gameStateService,
-            IMapHandler mapHandler,
+            ILevelConfig levelConfig,
+            MapHandlerService mapHandler,
             TimeService timeService)
         {
             _entity = entity;
             _gameStateService = gameStateService;
+            _timeService = timeService;
 
-            var mapSize = new Vector2(mapHandler.Map.GetLength(1), -mapHandler.Map.GetLength(0));
-            TileChanged += mapHandler.OnPlayerTilesChanged;         // Вынести в отдельный инициализатор?
+            //_mapSize = new Vector2(mapHandler.Map.GetLength(1), -mapHandler.Map.GetLength(0));
+            _mapSize = new Vector2(levelConfig.Map.GetLength(1), -levelConfig.Map.GetLength(0));
+            //TileChanged += mapHandler.OnPlayerTilesChanged;         // Вынести в отдельный инициализатор?
 
-            _inputActions = inputActions;
+            _inputActions = new PlayerInputActions();
             _inputActions.Enable();
             _inputActions.Keyboard.Movement.started += OnMoveStarted;
             _inputActions.Keyboard.Movement.canceled += OnMoveCanceled;
 
-            timeService.TimeHasTicked += Tick;
+            _timeService.TimeHasTicked += Tick;
         }
 
         private void Tick()
@@ -71,7 +77,7 @@ namespace MyPacman
             nextPosY = RepeatInRange(nextPosY, _mapSize.y + 2, 0);
 
             var nextPosition = new Vector2(nextPosX, nextPosY);
-            var newTilePosition = MapHandler.ConvertToTilePosition(nextPosition);
+            var newTilePosition = MapHandler.ConvertToTilePosition(nextPosition);               // Метод вынести в утилиты как статик
 
             if (_currentTilePosition != newTilePosition)
             {
@@ -86,8 +92,6 @@ namespace MyPacman
 
         private void OnMoveStarted(InputAction.CallbackContext context) => Moved += Move;
         private void OnMoveCanceled(InputAction.CallbackContext context) => Moved -= Move;
-        //private void StartMoving() => Moved += Move;
-        //private void StopMoving() => Moved -= Move;
 
         private float RepeatInRange(float value, float min, float max)
         {
