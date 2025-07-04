@@ -69,7 +69,7 @@ namespace MyPacman
             return false;
         }
 
-        public static Vector3Int ConvertToTilePosition(Vector2 position)      // Вынести в другой класс?
+        public Vector3Int ConvertToTilePosition(Vector2 position)      // Вынести в другой класс?
         {
             int X = (int)position.x;
             int Y = Mathf.Abs((int)(position.y - 1));

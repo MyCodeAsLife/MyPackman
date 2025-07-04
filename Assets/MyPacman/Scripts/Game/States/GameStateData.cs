@@ -8,7 +8,6 @@ namespace MyPacman
         public int GlobalEntityId { get; set; }                  // Счетчик для ID создаваемых сущностей.
         public MapData Map { get; set; }
         public int Score { get; set; }
-        public int HigthScore { get; set; }
         public int LifePoints { get; set; }
         public int NumberOfCollectedFruits { get; set; }
 

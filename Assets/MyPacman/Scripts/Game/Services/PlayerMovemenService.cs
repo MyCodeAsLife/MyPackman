@@ -1,4 +1,5 @@
-﻿using System;
+﻿using R3;
+using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -6,17 +7,16 @@ namespace MyPacman
 {
     public class PlayerMovemenService
     {
-        private PlayerInputActions _inputActions;
-        private Pacman _entity;
-        private TimeService _timeService;
+        public readonly ReactiveProperty<Vector3Int> PlayerTilePosition = new();
 
-        private IGameStateService _gameStateService;            //For save
+        private readonly PlayerInputActions _inputActions = new();
+        private readonly TimeService _timeService;
+        private readonly Pacman _entity;
+
+        private readonly IGameStateService _gameStateService;            //For save
         private float _timer;                                   //For save
 
-        private Vector3Int _currentTilePosition;
         private Vector2 _mapSize;
-
-        public event Action<Vector3Int> TileChanged;
 
         private event Action Moved;
 
@@ -29,27 +29,49 @@ namespace MyPacman
             _timeService.TimeHasTicked -= Tick;
         }
 
-        public void Run(Pacman entity,
+        public PlayerMovemenService(
+            Pacman entity,
             //PlayerInputActions inputActions,            // Нужно передавать или создать здесь?
             IGameStateService gameStateService,
             ILevelConfig levelConfig,
-            MapHandlerService mapHandler,
+            //MapHandlerService mapHandler,
             TimeService timeService)
         {
             _entity = entity;
             _gameStateService = gameStateService;
             _timeService = timeService;
+            _timeService.TimeHasTicked += Tick;
 
-            //_mapSize = new Vector2(mapHandler.Map.GetLength(1), -mapHandler.Map.GetLength(0));
             _mapSize = new Vector2(levelConfig.Map.GetLength(1), -levelConfig.Map.GetLength(0));
-            //TileChanged += mapHandler.OnPlayerTilesChanged;         // Вынести в отдельный инициализатор?
+            PlayerTilePosition.OnNext(Convert.ToTilePosition(_entity.Position.Value));
 
-            _inputActions = new PlayerInputActions();
+            InitPlayerControl();
+        }
+
+        //public void Run(Pacman entity,
+        //    //PlayerInputActions inputActions,            // Нужно передавать или создать здесь?
+        //    IGameStateService gameStateService,
+        //    ILevelConfig levelConfig,
+        //    //MapHandlerService mapHandler,
+        //    TimeService timeService)
+        //{
+        //    _entity = entity;
+        //    _gameStateService = gameStateService;
+        //    _timeService = timeService;
+        //    _timeService.TimeHasTicked += Tick;
+
+        //    _mapSize = new Vector2(levelConfig.Map.GetLength(1), -levelConfig.Map.GetLength(0));
+        //    PlayerTilePosition.OnNext(Convert.ToTilePosition(_entity.Position.Value));
+
+        //    InitPlayerControl();
+        //}
+
+        private void InitPlayerControl()
+        {
+            //_inputActions = new PlayerInputActions();
             _inputActions.Enable();
             _inputActions.Keyboard.Movement.started += OnMoveStarted;
             _inputActions.Keyboard.Movement.canceled += OnMoveCanceled;
-
-            _timeService.TimeHasTicked += Tick;
         }
 
         private void Tick()
@@ -77,14 +99,10 @@ namespace MyPacman
             nextPosY = RepeatInRange(nextPosY, _mapSize.y + 2, 0);
 
             var nextPosition = new Vector2(nextPosX, nextPosY);
-            var newTilePosition = MapHandler.ConvertToTilePosition(nextPosition);               // Метод вынести в утилиты как статик
+            var newTilePosition = Convert.ToTilePosition(nextPosition);               // Метод вынести в утилиты как статик
 
-            if (_currentTilePosition != newTilePosition)
-            {
-                _currentTilePosition = newTilePosition;
-                //_entity.TilePosition.OnNext(newTilePosition);
-                TileChanged?.Invoke(newTilePosition);
-            }
+            if (PlayerTilePosition.Value != newTilePosition)
+                PlayerTilePosition.Value = newTilePosition;
 
             _entity.Position.OnNext(nextPosition);
             _entity.Direction.OnNext(currentDirection);

@@ -1,7 +1,7 @@
 ﻿using ObservableCollections;
 using R3;
 using System;
-using System.Linq;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
@@ -13,63 +13,52 @@ namespace MyPacman
         private readonly Tilemap _obstaclesTileMap;
         private readonly GameState _gameState;
 
-        private readonly Vector2 _fruitSpawnPosition;
-        //private readonly FruitSpawner _fruitSpawner;
+        private Vector2 _fruitSpawnPosition;
+        private readonly Dictionary<Vector3Int, Entity> _edibleEntityMap = new();
 
-        // For test
-        //private Vector3Int _currentCellPosition;
-        //private RuleTile _testTile;
-
-        //public event Action<Edible> EntityEated;
-
-        // 1. создает/удаляет фрукты.
-        // 2. контролирует кол-во съедобных сущностей на карте
+        public event Action<EdibleEntityPoints> EntityEaten;
         // 3. проверки позиций на препятствия?
 
-
-        public MapHandlerService(GameState gameState, Tilemap obstaclesTileMap, Vector2 fruitSpawnPosition)
+        public MapHandlerService(GameState gameState, Tilemap obstaclesTileMap, PlayerMovemenService player)
         {
             _gameState = gameState;
             _entities = gameState.Map.CurrentValue.Entities;
             _obstaclesTileMap = obstaclesTileMap;
-            _fruitSpawnPosition = fruitSpawnPosition;
+
+            //_fruitSpawnPosition = _gameState.Map.Value.FruitSpawnPos.Value;           // Это лишнее, при подписке должно подтянутся значение
+            _gameState.Map.Value.FruitSpawnPos.Subscribe(position => _fruitSpawnPosition = position);
+            player.PlayerTilePosition.Subscribe(PlayerTileChanged);
 
             gameState.Map.CurrentValue.NumberOfCollectedPellets.Subscribe(OnCollectedPellet);
-            // For test
-            //_testTile = Resources.Load<RuleTile>("Assets/TestRuleTile");
+
+            InitEdibleEntityMap();
         }
 
-        public void PlayerTileChanged(Vector2 position)
+        private void PlayerTileChanged(Vector3Int position)
         {
-            var playerTilePosition = ConvertToTilePosition(position);
-            // Оптимизировать (выдать всем позицию их тайла?)
-            var entity = _entities.FirstOrDefault(entity =>
+            //var position = Convert.ToTilePosition(position);
+
+            if (_edibleEntityMap.TryGetValue(position, out Entity entity))
             {
-                var entityPosition = ConvertToTilePosition(entity.Position.Value);
+                var edibleEntity = entity as Edible;
 
-                if (entityPosition.x == playerTilePosition.x && entityPosition.y == playerTilePosition.y)
-                    return true;
-
-                return false;
-            });
-
-            if (entity != null && entity is Edible)
-            {
-                if (entity is Ghost)
+                if (edibleEntity.Type <= EntityType.Blinky && edibleEntity.Type >= EntityType.Clyde)
                 {
-                    // Проверять режим призрака
+                    // Проверять возможность съесть призрака
+                    // Отправлять запрос в CharactersStateHandler
                     // если проверка не пройденна return
                 }
                 else
                 {
-                    _entities.Remove(entity);
+                    _entities.Remove(edibleEntity);
+                    EntityEaten?.Invoke(edibleEntity.Points);
                 }
             }
         }
 
-        public bool IsObstacleTile(Vector2 position)
+        public bool CheckForObstacles(Vector2 position)
         {
-            var tilePosition = ConvertToTilePosition(position);
+            var tilePosition = Convert.ToTilePosition(position);
             var tile = _obstaclesTileMap.GetTile(tilePosition);
 
             if (tile != null && int.Parse(tile.name) > 0)
@@ -78,12 +67,36 @@ namespace MyPacman
             return false;
         }
 
-        private Vector3Int ConvertToTilePosition(Vector2 position)      // Вынести в другой класс?
+        private void InitEdibleEntityMap()
         {
-            int X = (int)position.x;
-            int Y = Mathf.Abs((int)(position.y - 1));
+            foreach (var entity in _entities)
+                if (entity.Type != EntityType.Pacman)
+                    AddEntity(entity);
 
-            return new Vector3Int(X, Y);
+
+            _entities.ObserveAdd().Subscribe(e =>
+            {
+                if (e.Value.Type != EntityType.Pacman)
+                    AddEntity(e.Value);
+            });
+
+            _entities.ObserveRemove().Subscribe(e =>
+            {
+                if (e.Value.Type != EntityType.Pacman)
+                    RemoveEntity(e.Value);
+            });
+        }
+
+        private void RemoveEntity(Entity entity)
+        {
+            var position = Convert.ToTilePosition(entity.Position.Value);
+            _edibleEntityMap.Remove(position);
+        }
+
+        private void AddEntity(Entity entity)
+        {
+            var position = Convert.ToTilePosition(entity.Position.Value);
+            _edibleEntityMap[position] = entity;
         }
 
         private void OnCollectedPellet(int numberOfCollectedPellets)
@@ -103,37 +116,6 @@ namespace MyPacman
             var entity = _gameState.EntitiesFactory.CreateEntity(_fruitSpawnPosition, (EntityType)numFruitType);
             _gameState.Map.CurrentValue.Entities.Add(entity);
         }
-
-        //public void OnPlayerTilesChanged(Vector3Int newPlayerTilePosition)      // Обработка содержимого плитки
-        //{
-        //    //
-        //    var tile = _ediblesTilemap.GetTile(new Vector3Int(newPlayerTilePosition.x, -newPlayerTilePosition.y));
-
-        //    if (tile != null)
-        //    {
-        //        //ChangeTile(newPlayerTilePosition, 0);
-        //        int pellet = int.Parse(tile.name);
-
-        //        switch (pellet)
-        //        {
-        //            case GameConstants.SmallPellet:
-        //                Debug.Log(GameConstants.SmallPellet);                         // Magic - SmallPellet RuleTile name
-        //                break;
-
-        //            case GameConstants.MediumPellet:
-        //                Debug.Log(GameConstants.MediumPellet);                         // Magic - MediumPellet RuleTile name
-        //                break;
-
-        //            case GameConstants.LargePellet:
-        //                Debug.Log(GameConstants.LargePellet);                         // Magic - LargePellet RuleTile name
-        //                break;
-
-        //            default:
-        //                throw new System.Exception($"Undefined tile type: {tile.name}");        // Вынести в константы
-        //        }
-
-        //    }
-        //}
 
         //public bool IsIntersactionTile(int x, int y)       // Проверка на перекресток
         //{
@@ -179,13 +161,6 @@ namespace MyPacman
         //    return numberOfPaths > 2 || horizontal != 0 || vertical != 0 ? true : false;                                    //Magic
         //}
 
-        //public void ChangeObstacleTile(Vector2 position, int tileNumber)    // Только для конструткора уровня
-        //{
-        //    var tilePosition = ConvertToTilePosition(position);
-
-        //    _obstaclesTileMap.SetTile(new Vector3Int(tilePosition.x, -tilePosition.y), null);
-        //}
-
         //private void ChangeTile(Vector3Int tilePosition, int objectNumber)
         //{
         //    //var handlePosition = ConvertToCellPosition(position);
@@ -200,48 +175,6 @@ namespace MyPacman
         //    {
         //        _ediblesTilemap.SetTile(new Vector3Int(tilePosition.x, -tilePosition.y), null);
         //    }
-        //}
-
-        //private Tile[] LoadObstaclesTiles()
-        //{
-        //    Tile[] tiles = new Tile[GameConstants.NumberOfWallTiles];
-
-        //    for (int tileName = 0; tileName < GameConstants.NumberOfWallTiles; tileName++)
-        //        tiles[tileName] = Resources.Load<Tile>($"{GameConstants.WallTilesFolderPath}{tileName}");
-
-        //    return tiles;
-        //}
-
-        //private void LoadEdiblesTiles(string folderPath)
-        //{
-        //    RuleTile[] ruleTiles = Resources.LoadAll<RuleTile>(folderPath);
-
-        //    for (int i = 0; i < ruleTiles.Length; i++)
-        //    {
-        //        int tileKey = int.Parse(ruleTiles[i].name);
-        //        _edibleTiles[tileKey] = ruleTiles[i];
-        //    }
-        //}
-
-        //// For test
-        //private IEnumerator FleakerTile(Vector3Int position, RuleTile tile)
-        //{
-        //    float timer = 0.8f;
-        //    float delay = 0.2f;
-
-        //    Vector3Int correctPosition = new Vector3Int(position.x, -position.y);
-
-        //    while (timer > 0)
-        //    {
-        //        _pelletsTilemap.SetTile(correctPosition, tile);
-        //        yield return new WaitForSeconds(delay);
-        //        _pelletsTilemap.SetTile(correctPosition, null);
-        //        timer -= delay;
-        //        yield return new WaitForSeconds(delay);
-        //        timer -= delay;
-        //    }
-
-        //    _pelletsTilemap.SetTile(correctPosition, null);
         //}
     }
 }

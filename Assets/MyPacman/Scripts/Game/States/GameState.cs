@@ -8,10 +8,8 @@ namespace MyPacman
         public readonly EntitiesFactory EntitiesFactory;
 
         private readonly GameStateData _gameStateData;
-
         public readonly ReactiveProperty<Map> Map;
         public readonly ReactiveProperty<int> Score;
-        public readonly ReactiveProperty<int> HigthScore;
         public readonly ReactiveProperty<int> LifePoints;
         public readonly ReactiveProperty<int> NumberOfCollectedFruits;
 
@@ -22,10 +20,17 @@ namespace MyPacman
 
             Map = new ReactiveProperty<Map>(new Map(_gameStateData.Map, EntitiesFactory));
             Score = new ReactiveProperty<int>(_gameStateData.Score);
-            HigthScore = new ReactiveProperty<int>(_gameStateData.HigthScore);
             LifePoints = new ReactiveProperty<int>(_gameStateData.LifePoints);
             NumberOfCollectedFruits = new ReactiveProperty<int>(_gameStateData.NumberOfCollectedFruits);
 
+            InitMap();
+            //InitResources();
+        }
+
+        public int CreateEntityId() => _gameStateData.CreateEntityId();
+
+        private void InitMap()
+        {
             Map.CurrentValue.Entities.ObserveRemove().Subscribe(collectionRemovedEvent =>
             {
                 var removedEntity = collectionRemovedEvent.Value;
@@ -34,34 +39,10 @@ namespace MyPacman
                     NumberOfCollectedFruits.Value++;
             });
 
-            //InitMap();
-            //InitResources();
+            Score.Subscribe(value => _gameStateData.Score = value);
+            LifePoints.Subscribe(value => _gameStateData.LifePoints = value);
+            NumberOfCollectedFruits.Subscribe(value => _gameStateData.NumberOfCollectedFruits = value);
         }
-
-        public int CreateEntityId() => _gameStateData.CreateEntityId();
-
-        //private void InitMap()
-        //{
-        //    _gameStateData.Maps.ForEach(mapStateData => Maps.Add(new Map(mapStateData)));
-
-        //    // При добавлении элемента в Maps текущего класса, добавится элемент в Maps класса GameStateData
-        //    Maps.ObserveAdd().Subscribe(collectionAddEvent =>
-        //    {
-        //        var addedMap = collectionAddEvent.Value;
-        //        _gameStateData.Maps.Add(addedMap.Origin);
-        //    });
-
-        //    // При удалении элемента из Maps текущего класса, также удалится элемент из Maps класса GameStateData
-        //    Maps.ObserveRemove().Subscribe(collectionRemovedEvent =>
-        //    {
-        //        var removedMap = collectionRemovedEvent.Value;
-        //        var removedMapStateData = _gameStateData.Maps.FirstOrDefault(mapStateData =>
-        //                                                        mapStateData.Id == removedMap.Id);
-        //        _gameStateData.Maps.Remove(removedMapStateData);
-        //    });
-
-        //    CurrentMapId.Subscribe(newValue => { _gameStateData.CurrentMapId = newValue; });
-        //}
 
         //private void InitResources()
         //{

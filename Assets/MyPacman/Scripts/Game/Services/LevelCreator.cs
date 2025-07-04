@@ -11,11 +11,9 @@ namespace MyPacman
         private readonly int[,] _map;                              // Получать через DI ?
 
         private readonly GameState _gameState;
-        private readonly EntitiesFactory _entitiesFactory;          // Получать через DI
+        private readonly EntitiesFactory _entitiesFactory;          // Получать через DI ?
 
         private readonly bool _isLoaded = false;
-
-        private Vector2 _fruitSpawnPosition;
 
         public LevelCreator(DIContainer sceneContainer, ILevelConfig levelConfig)
         {
@@ -24,7 +22,7 @@ namespace MyPacman
             var gameStateService = sceneContainer.Resolve<IGameStateService>();
             _map = levelConfig.Map;
             _gameState = gameStateService.GameState;
-            _entitiesFactory = _gameState.EntitiesFactory;                                  // Получать через DI
+            _entitiesFactory = _gameState.EntitiesFactory;
             _isLoaded = gameStateService.GameStateIsLoaded;
 
             ConstructLevel();
@@ -35,8 +33,9 @@ namespace MyPacman
 
         private void Registrations(DIContainer sceneContainer)
         {
-            var mapHandler = new MapHandlerService(_gameState, _obstacleTileMap, _fruitSpawnPosition);
-            sceneContainer.RegisterInstance(mapHandler);                                                  // Необходимо?
+            //var mapHandler = new MapHandlerService(_gameState, _obstacleTileMap);
+            //new MapHandlerService(sceneContainer.Resolve<IGameStateService>().GameState, sceneContainer.Resolve<Tilemap>(GameConstants.Obstacle));
+            //sceneContainer.RegisterInstance(mapHandler);                                                  // Необходимо?
 
             var entities = _gameState.Map.Value.Entities
                 .Where(entity => entity.Type <= EntityType.Pacman && entity.Type >= EntityType.Clyde).ToList();
@@ -45,7 +44,7 @@ namespace MyPacman
                 sceneContainer.RegisterInstance(entity.Type.ToString(), entity);
         }
 
-        private void ConstructLevel()               // Передавать команды в MapHendler, чтобы только он менял Tilemap?
+        private void ConstructLevel()
         {
             _obstacleTileMap.ClearAllTiles();
 
@@ -57,11 +56,20 @@ namespace MyPacman
                     numTile = numTile > 0 ? numTile - 1 : numTile + 1;
 
                     if (numTile >= 0)
+                    {
                         CreateObstacle(numTile, x, y);
-                    else if (numTile == GameConstants.FruitSpawn)
-                        _fruitSpawnPosition = CalculateCorrectSpawnPosition(numTile, x, y);
-                    else if (_isLoaded == false)
-                        CreateEntity(x, y, (EntityType)numTile);
+                    }
+                    else
+                    {
+                        if (numTile <= (int)EntityType.Pacman)
+                        {
+                            var position = CalculateCorrectSpawnPosition(numTile, x, y);
+                            SetSpawnPosition((EntityType)numTile, position);
+                        }
+
+                        if (_isLoaded == false)
+                            CreateEntity(x, y, (EntityType)numTile);
+                    }
                 }
             }
         }
@@ -90,9 +98,6 @@ namespace MyPacman
 
             if (entityType <= EntityType.Pacman)
             {
-                pos = CalculateCorrectSpawnPosition((int)entityType, x, y);
-                SetCharacterSpawnPosition(entityType, pos);
-
                 entity = _gameState.Map.Value.Entities.FirstOrDefault(entity => entity.Type == entityType);
             }
 
@@ -119,7 +124,7 @@ namespace MyPacman
             return position;
         }
 
-        private void SetCharacterSpawnPosition(EntityType entityType, Vector2 spawnPosition)
+        private void SetSpawnPosition(EntityType entityType, Vector2 spawnPosition)
         {
             switch (entityType)
             {
@@ -141,6 +146,10 @@ namespace MyPacman
 
                 case EntityType.Clyde:
                     _gameState.Map.CurrentValue.ClydeSpawnPos.Value = spawnPosition;
+                    break;
+
+                case EntityType.Fruit:
+                    _gameState.Map.CurrentValue.FruitSpawnPos.Value = spawnPosition;
                     break;
             }
         }

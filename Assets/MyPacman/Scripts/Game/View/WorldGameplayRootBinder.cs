@@ -15,7 +15,7 @@ namespace MyPacman
         // И они при своем удалении будут пытатся обрашатся к данному объекту на удаление View
         private readonly CompositeDisposable _disposables = new();
 
-        private WorldGameplayRootViewModel _viewModel;
+        //private WorldGameplayRootViewModel _viewModel;
 
         private void OnDestroy()
         {
@@ -24,7 +24,7 @@ namespace MyPacman
 
         public void Bind(WorldGameplayRootViewModel rootViewModel)
         {
-            _viewModel = rootViewModel; // For Tests
+            //_viewModel = rootViewModel; // For Tests
 
             foreach (var viewModel in rootViewModel.AllEntities)
             {
@@ -45,8 +45,6 @@ namespace MyPacman
 
         private void CreateEntityView(EntityViewModel entityViewModel)
         {
-            //int buildingLevel = entityViewModel.Level.CurrentValue;
-            //string buildingTypeId = entityViewModel.ConfigId;
             string prefabBuildingPath = entityViewModel.PrefabPath;
             var prefabBuilding = Resources.Load<EntityBinder>(prefabBuildingPath);
             var createdBuilding = Instantiate(prefabBuilding);     // Создаем View объекта

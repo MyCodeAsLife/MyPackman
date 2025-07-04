@@ -38,7 +38,7 @@ namespace MyPacman
             nextPosY = RepeatInRange(nextPosY, _mapSize.y + 2, 0);
 
             var newPosition = new Vector2(nextPosX, nextPosY);
-            var newTilePosition = MapHandler.ConvertToTilePosition(newPosition);
+            var newTilePosition = Convert.ToTilePosition(newPosition);
 
             if (_currentTilePosition != newTilePosition)
             {

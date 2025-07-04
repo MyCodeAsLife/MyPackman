@@ -49,15 +49,16 @@ namespace MyPacman
         public const int StartingDifficultyLevel = 1;
         public const int CollectedPelletsForFirstFruitSpawn = 70;
         public const int CollectedPelletsForSecondFruitSpawn = 170;
+        public const int PriceLifePoint = 10000;
 
         // Level Constructor - переделать в enum?
         public const int EmptyTile = 0;
-        public const int FruitSpawn = -1;
         public const int PacmanSpawn = (int)EntityType.Pacman;
         public const int BlinkySpawn = (int)EntityType.Blinky;
         public const int PinkySpawn = (int)EntityType.Pinky;
         public const int InkySpawn = (int)EntityType.Inky;
         public const int Clyde = (int)EntityType.Clyde;
+        public const int FruitSpawn = (int)EntityType.Fruit;
         //public const int SmallPellet = -3;
         //public const int MediumPellet = -4;
         //public const int LargePellet = -5;

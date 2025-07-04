@@ -21,5 +21,7 @@ namespace MyPacman
         public float InkySpawnPosY { get; set; }
         public float ClydeSpawnPosX { get; set; }
         public float ClydeSpawnPosY { get; set; }
+        public float FruitSpawnPosX { get; set; }
+        public float FruitSpawnPosY { get; set; }
     }
 }

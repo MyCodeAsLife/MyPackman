@@ -15,6 +15,7 @@ namespace MyPacman
         public readonly ReactiveProperty<Vector2> PinkySpawnPos;
         public readonly ReactiveProperty<Vector2> InkySpawnPos;
         public readonly ReactiveProperty<Vector2> ClydeSpawnPos;
+        public readonly ReactiveProperty<Vector2> FruitSpawnPos;
 
         private readonly EntitiesFactory _entitiesFactory;
 
@@ -26,11 +27,13 @@ namespace MyPacman
 
             InitCounters();
             InitEntities(mapData);
+
             PacmanSpawnPos = InitPacmanSpawnPos();
             BlinkySpawnPos = InitBlinkySpawnPos();
             PinkySpawnPos = InitPinkySpawnPos();
             InkySpawnPos = InitInkySpawnPos();
             ClydeSpawnPos = InitClydeSpawnPos();
+            FruitSpawnPos = InitFruitSpawnPos();
 
             LevelNumber = new ReactiveProperty<int>(mapData.LevelNumber);
             NumberOfPellets = new ReactiveProperty<int>(mapData.NumberOfPellets);
@@ -149,6 +152,21 @@ namespace MyPacman
             {
                 OriginData.ClydeSpawnPosX = newPos.x;
                 OriginData.ClydeSpawnPosY = newPos.y;
+            });
+
+            return clydeSpawnPos;
+        }
+
+        private ReactiveProperty<Vector2> InitFruitSpawnPos()
+        {
+            var clydeSpawnPos = new ReactiveProperty<Vector2>(new Vector2(
+                OriginData.FruitSpawnPosX,
+                OriginData.FruitSpawnPosY));
+
+            clydeSpawnPos.Subscribe(newPos =>
+            {
+                OriginData.FruitSpawnPosX = newPos.x;
+                OriginData.FruitSpawnPosY = newPos.y;
             });
 
             return clydeSpawnPos;

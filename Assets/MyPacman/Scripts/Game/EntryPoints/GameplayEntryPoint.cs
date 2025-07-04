@@ -70,25 +70,10 @@ namespace MyPacman
 
         private void InitWorld(DIContainer viewsContainer)
         {
-            //// Перед данной регистрацией нужно чтобы состояние уровня\карты уже было создано
-            //var gameStateService = _sceneContainer.Resolve<IGameStateService>();
-            //var entities = gameStateService.GameState.Map.Value.Entities;
-            //_sceneContainer.RegisterFactory(_ => new WorldGameplayRootViewModel(entities)).AsSingle();      // Регистрацию вынести?
-
-            //_worldGameplayRootBinder = gameObject.AddComponent<WorldGameplayRootBinder>();
-            //_worldGameplayRootBinder.Bind(viewsContainer.Resolve<WorldGameplayRootViewModel>());
-
-            CreateViewRootBinder(viewsContainer);
-            var playerControl = new PlayerMovemenService();
-
-            // Это все впихнуть в вызов playerControl.Run
-            var pacman = _sceneContainer.Resolve<Entity>(EntityType.Pacman.ToString());
-            var gameStateService = _sceneContainer.Resolve<IGameStateService>();
-            var levelConfig = _sceneContainer.Resolve<ILevelConfig>();
             var mapHandler = _sceneContainer.Resolve<MapHandlerService>();
-            var timeService = _sceneContainer.Resolve<TimeService>();
-
-            playerControl.Run(pacman as Pacman, gameStateService, levelConfig, mapHandler, timeService);
+            CreateViewRootBinder(viewsContainer);
+            var player = _sceneContainer.Resolve<PlayerMovemenService>();
+            var scoringService = _sceneContainer.Resolve<ScoringService>();
         }
 
         private void InitUI(DIContainer viewsContainer)
@@ -106,17 +91,12 @@ namespace MyPacman
 
         private void CreateScene(ILevelConfig levelConfig)
         {
-            var sceneFrame = new GameObject("Level");
+            var sceneFrame = new GameObject("Level");                               // Magic
             sceneFrame.AddComponent<Grid>();
 
             CreateWallFrame(sceneFrame.transform);
-            _sceneContainer.RegisterInstance(new LevelCreator(_sceneContainer, levelConfig));
 
-            //CreatePelletFrame(sceneFrame.transform);
-            //CreateFruitFrame(sceneFrame.transform);      // Выпилить
-
-            //var levelConstarctor = new LevelConstructor(_sceneContainer);
-            //levelConstarctor.ConstructLevel();
+            var levelCreator = _sceneContainer.Resolve<LevelCreator>();
         }
 
         private void CreateWallFrame(Transform parent)
@@ -129,29 +109,6 @@ namespace MyPacman
             walls.AddComponent<TilemapRenderer>();
             var wallsCollider = walls.AddComponent<TilemapCollider2D>();
         }
-
-        //private void CreatePelletFrame(Transform parent)
-        //{
-        //    var pellets = new GameObject(GameConstants.Pellet);
-        //    pellets.transform.parent = parent;
-        //    pellets.layer = LayerMask.NameToLayer(GameConstants.Pellet);
-        //    var pelletsTilemap = pellets.AddComponent<Tilemap>();
-        //    _sceneContainer.RegisterInstance(GameConstants.Pellet, pelletsTilemap);
-        //    var pelletsCollider = pellets.AddComponent<TilemapCollider2D>();
-        //    pelletsCollider.excludeLayers = GameConstants.LayerMaskEverything;
-        //    pellets.AddComponent<TilemapRenderer>();
-        //}
-
-        //// Выпилить
-        //private void CreateFruitFrame(Transform parent)
-        //{
-        //    var Fruits = new GameObject(GameConstants.Fruit);
-        //    Fruits.transform.parent = parent;
-        //    Fruits.layer = LayerMask.NameToLayer(GameConstants.Fruit);
-        //    var FruitsTilemap = Fruits.AddComponent<Tilemap>();
-        //    Fruits.AddComponent<TilemapCollider2D>();
-        //    _sceneContainer.RegisterInstance(GameConstants.Fruit, FruitsTilemap);
-        //}
 
         private void InitCamera(int[,] map)
         {

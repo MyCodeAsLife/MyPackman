@@ -6,7 +6,6 @@
         {
             var gameStateData = new GameStateData();
             gameStateData.Score = 0;
-            gameStateData.HigthScore = 0;                                       // Подгружать из сохранения
             gameStateData.LifePoints = GameConstants.StartLifePointsAmount;
             gameStateData.NumberOfCollectedFruits = 0;
 
