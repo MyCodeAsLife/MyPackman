@@ -41,7 +41,7 @@ namespace MyPacman
             _mapHandler = mapHandler;
             var mapSize = new Vector2(_mapHandler.Map.GetLength(1), -_mapHandler.Map.GetLength(0));
 
-            _playerMoveHandler.Initialyze(() => _inputActions.Keyboard.Movement.ReadValue<Vector2>(), mapSize);
+            //_playerMoveHandler.Initialyze(() => _inputActions.Keyboard.Movement.ReadValue<Vector2>(), mapSize);
             _playerMoveHandler.TileChanged += _mapHandler.OnPlayerTilesChanged;         // Вынести в отдельный инициализатор
 
             _inputActions = inputActions;

@@ -1,12 +1,10 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace MyPacman
 {
-    [Serializable]
-    public class PacmanData : EntityData, IMovableData
+    public class GhostData : EdibleData, IMovableData
     {
-        public PacmanData()
+        public GhostData()
         {
             IsMoving = false;
         }

@@ -33,10 +33,6 @@ namespace MyPacman
 
         private void Registrations(DIContainer sceneContainer)
         {
-            //var mapHandler = new MapHandlerService(_gameState, _obstacleTileMap);
-            //new MapHandlerService(sceneContainer.Resolve<IGameStateService>().GameState, sceneContainer.Resolve<Tilemap>(GameConstants.Obstacle));
-            //sceneContainer.RegisterInstance(mapHandler);                                                  // Необходимо?
-
             var entities = _gameState.Map.Value.Entities
                 .Where(entity => entity.Type <= EntityType.Pacman && entity.Type >= EntityType.Clyde).ToList();
 
@@ -99,6 +95,7 @@ namespace MyPacman
             if (entityType <= EntityType.Pacman)
             {
                 entity = _gameState.Map.Value.Entities.FirstOrDefault(entity => entity.Type == entityType);
+                pos = GetSpawnPosition(entityType);
             }
 
             if (entity == null)
@@ -151,6 +148,33 @@ namespace MyPacman
                 case EntityType.Fruit:
                     _gameState.Map.CurrentValue.FruitSpawnPos.Value = spawnPosition;
                     break;
+            }
+        }
+
+        private Vector2 GetSpawnPosition(EntityType entityType)
+        {
+            switch (entityType)
+            {
+                case EntityType.Pacman:
+                    return _gameState.Map.CurrentValue.PacmanSpawnPos.Value;
+
+                case EntityType.Blinky:
+                    return _gameState.Map.CurrentValue.BlinkySpawnPos.Value;
+
+                case EntityType.Pinky:
+                    return _gameState.Map.CurrentValue.PinkySpawnPos.Value;
+
+                case EntityType.Inky:
+                    return _gameState.Map.CurrentValue.InkySpawnPos.Value;
+
+                case EntityType.Clyde:
+                    return _gameState.Map.CurrentValue.ClydeSpawnPos.Value;
+
+                case EntityType.Fruit:
+                    return _gameState.Map.CurrentValue.FruitSpawnPos.Value;
+
+                default:
+                    throw new System.Exception($"Undefined type: {entityType}");
             }
         }
     }

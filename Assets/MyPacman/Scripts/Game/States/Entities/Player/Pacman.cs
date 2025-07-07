@@ -4,36 +4,21 @@ using UnityEngine;
 
 namespace MyPacman
 {
-    public class Pacman : Entity
+    public class Pacman : Entity, IMovable
     {
-        //public ReactiveProperty<float> StartPositionX;
-        //public ReactiveProperty<float> StartPositionY;
-        public ReactiveProperty<Vector2> Direction;     // Добавить промежуточный класс для персонажей и вынести туда
-
-        //private float _startPositionX;                  // Это уже есть в GameState.Map.PacmanSpawnPosition
-        //private float _startPositionY;                  // Это уже есть в GameState.Map.PacmanSpawnPosition
-
-        public Func<Vector2> GetCurrentPosition;        // Вынести в Entity?
+        public Func<Vector2> GetCurrentPosition;
 
         public Pacman(PacmanData pacmanData) : base(pacmanData)
         {
-            //_startPositionX = pacmanData.StartPositionX;
-            ////StartPositionX.Subscribe(newPosition => pacmanData.StartPositionX = newPosition);
-
-            //_startPositionY = pacmanData.StartPositionY;
-            ////StartPositionY.Subscribe(newPosition => pacmanData.PositionY = newPosition);
-
+            IsMoving = new ReactiveProperty<bool>(pacmanData.IsMoving);
+            IsMoving.Subscribe(isMoving => pacmanData.IsMoving = isMoving);
             Direction = new ReactiveProperty<Vector2>(pacmanData.Direction);
             Direction.Subscribe(direction => pacmanData.Direction = new Vector2Int((int)direction.x, (int)direction.y));
         }
 
-        //public Vector2 StartPosition
-        //{
-        //    get
-        //    {
-        //        return new Vector2(_startPositionX, _startPositionY);
-        //    }
-        //}
+        public ReactiveProperty<bool> IsMoving { get; private set; }
+
+        public ReactiveProperty<Vector2> Direction { get; private set; }
 
         public void PassPositionRequestFunction(Func<Vector2> getCurrentPosition)
         {

@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace MyPacman
 {
-    public class PacmanViewModel : EntityViewModel
+    public class PacmanViewModel : MovableEntityViewModel
     {
         public PacmanViewModel(Pacman Pacman) : base(Pacman) { }
 

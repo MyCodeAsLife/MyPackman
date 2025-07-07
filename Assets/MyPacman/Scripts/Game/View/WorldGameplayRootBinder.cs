@@ -45,14 +45,21 @@ namespace MyPacman
 
         private void CreateEntityView(EntityViewModel entityViewModel)
         {
-            string prefabBuildingPath = entityViewModel.PrefabPath;
-            var prefabBuilding = Resources.Load<EntityBinder>(prefabBuildingPath);
-            var createdBuilding = Instantiate(prefabBuilding);     // Создаем View объекта
-            createdBuilding.Bind(entityViewModel);                // Объеденяем его с ViewModel
+            try              // Подчистить
+            {
+                string prefabBuildingPath = entityViewModel.PrefabPath;
+                var prefabBuilding = Resources.Load<EntityBinder>(prefabBuildingPath);
+                var createdBuilding = Instantiate(prefabBuilding);     // Создаем View объекта
+                createdBuilding.Bind(entityViewModel);                // Объеденяем его с ViewModel
 
-            // По хорошему, создаваемые View нужно кэшировать, чтобы проще было их удалять
-            // Или переложить ответственность на их удаление на сам объект (тоесть подписать функцию удаление на евент удаления)
-            _viewEntitiesMap[entityViewModel.EntityId] = createdBuilding;
+                // По хорошему, создаваемые View нужно кэшировать, чтобы проще было их удалять
+                // Или переложить ответственность на их удаление на сам объект (тоесть подписать функцию удаление на евент удаления)
+                _viewEntitiesMap[entityViewModel.EntityId] = createdBuilding;
+            }
+            catch
+            {
+                Debug.Log($"ID: {entityViewModel.EntityId}. Prefab path:{entityViewModel.PrefabPath}");
+            }
         }
 
         private void DestroyEntityView(EntityViewModel entityViewModel)

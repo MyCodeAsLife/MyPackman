@@ -7,9 +7,9 @@ namespace MyPacman
     {
         public event Action<Vector3Int> TileChanged;
         public void Tick();             // Сделать общий Update через R3?
-        public void Move();
+        public void Movement();
         public void StartMoving();
         public void StopMoving();
-        public void Initialyze(Func<Vector2> getDirection, Vector2 mapSize);
+        //public void Initialyze(Func<Vector2> getDirection, Vector2 mapSize);
     }
 }
