@@ -117,6 +117,39 @@ namespace MyPacman
             _gameState.Map.CurrentValue.Entities.Add(entity);
         }
 
+        public List<Vector2> GetAvailableMovementPoints(Vector2 position)
+        {
+            var tilePosition = Convert.ToTilePosition(position);
+            List<Vector2> points = new List<Vector2>();
+
+            for (int x = -1; x < 2; x += 2)
+            {
+                var checkPosition = new Vector3Int(tilePosition.y + x, tilePosition.y, tilePosition.z);
+                TryAddAvailablePoint(checkPosition, points);
+            }
+
+            for (int y = -1; y < 2; y += 2)
+            {
+                var checkPosition = new Vector3Int(tilePosition.x, tilePosition.y - y, tilePosition.z);
+                TryAddAvailablePoint(checkPosition, points);
+            }
+
+            return points;
+        }
+
+        private void TryAddAvailablePoint(Vector3Int checkPosition, List<Vector2> points)
+        {
+            var tile = _obstaclesTileMap.GetTile(checkPosition);
+
+            if (tile != null)
+            {
+                var availablePosition = new Vector2(
+                    checkPosition.x + GameConstants.Half,
+                    checkPosition.y - GameConstants.Half);
+                points.Add(availablePosition);
+            }
+        }
+
         //public bool IsIntersactionTile(int x, int y)       // Проверка на перекресток
         //{
         //    int numberOfPaths = 0;
@@ -159,22 +192,6 @@ namespace MyPacman
         //    }
 
         //    return numberOfPaths > 2 || horizontal != 0 || vertical != 0 ? true : false;                                    //Magic
-        //}
-
-        //private void ChangeTile(Vector3Int tilePosition, int objectNumber)
-        //{
-        //    //var handlePosition = ConvertToCellPosition(position);
-
-        //    _currentLevel.Map[tilePosition.y, tilePosition.x] = objectNumber;                       // Изменяет Модель
-
-        //    if (objectNumber > 0)
-        //    {
-        //        _obstaclesTileMap.SetTile(new Vector3Int(tilePosition.x, -tilePosition.y), null);        // Изменяет Presenter
-        //    }
-        //    else
-        //    {
-        //        _ediblesTilemap.SetTile(new Vector3Int(tilePosition.x, -tilePosition.y), null);
-        //    }
         //}
     }
 }
