@@ -137,6 +137,43 @@ namespace MyPacman
             return points;
         }
 
+        public List<Vector2> GetDirectionsWithoutObstacles(Vector2 position)
+        {
+            var tilePosition = Convert.ToTilePosition(position);
+            List<Vector2> directions = new();
+
+            if (CheckTileOnObstacle(tilePosition + Vector3Int.left) == false)
+                directions.Add(Vector2.left);
+
+            if (CheckTileOnObstacle(tilePosition + Vector3Int.right) == false)
+                directions.Add(Vector2.right);
+
+            if (CheckTileOnObstacle(tilePosition + Vector3Int.up) == false)
+                directions.Add(Vector2.up);
+
+            if (CheckTileOnObstacle(tilePosition + Vector3Int.down) == false)
+                directions.Add(Vector2.down);
+
+            return directions;
+        }
+
+        public bool IsCenterTail(Vector2 position)
+        {
+            var valueX = position.x - Mathf.Floor(position.x);
+            var valueY = position.y - Mathf.Floor(position.y);
+
+            if (Mathf.Approximately(valueX, GameConstants.Half) && Mathf.Approximately(valueY, GameConstants.Half))
+                return true;
+
+            return false;
+        }
+
+        private bool CheckTileOnObstacle(Vector3Int tilePos)
+        {
+            var tile = _obstaclesTileMap.GetTile(tilePos);
+            return tile != null;
+        }
+
         private void TryAddAvailablePoint(Vector3Int checkPosition, List<Vector2> points)
         {
             var tile = _obstaclesTileMap.GetTile(checkPosition);
@@ -149,6 +186,8 @@ namespace MyPacman
                 points.Add(availablePosition);
             }
         }
+
+
 
         //public bool IsIntersactionTile(int x, int y)       // Проверка на перекресток
         //{

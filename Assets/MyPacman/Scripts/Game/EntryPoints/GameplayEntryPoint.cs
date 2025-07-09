@@ -74,6 +74,7 @@ namespace MyPacman
             CreateViewRootBinder(viewsContainer);
             var player = _sceneContainer.Resolve<PlayerMovemenService>();
             var scoringService = _sceneContainer.Resolve<ScoringService>();
+            var ghostsStateHandler = _sceneContainer.Resolve<GhostsStateHandler>();
         }
 
         private void InitUI(DIContainer viewsContainer)

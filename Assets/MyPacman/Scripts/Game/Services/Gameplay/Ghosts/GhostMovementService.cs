@@ -7,16 +7,18 @@ namespace MyPacman
     public class GhostMovementService
     {
         private Ghost _entity;
+        private Pacman _enemy;
+        private Coroutine _moving;
         private TimeService _timeService;
         private IGhostBehaviorMode _behaviorMode;
-        private Coroutine _moving;
 
         private event Action Moved;
 
-        public GhostMovementService(TimeService timeService, Ghost entity)
+        public GhostMovementService(Ghost entity, Pacman pacman, TimeService timeService)
         {
-            _timeService = timeService;
             _entity = entity;
+            _enemy = pacman;
+            _timeService = timeService;
 
             _timeService.TimeHasTicked += Tick;
         }
@@ -49,19 +51,38 @@ namespace MyPacman
         {
             Moved -= Move;
 
-            var target = _behaviorMode.CalculatePointOfMovement();
-            _moving = Coroutines.StartRoutine(Moving(target));
+            var selfPosition = _entity.Position.Value;
+            var selfDirection = _entity.Direction.Value;
+            var enemyPosition = _enemy.Position.Value;
+            _entity.Direction.Value =
+                _behaviorMode.CalculateDirectionOfMovement(selfPosition, selfDirection, enemyPosition);
+            _moving = Coroutines.StartRoutine(Moving());
         }
 
-        private IEnumerator Moving(Vector2 targetPosition)
+        private IEnumerator Moving()
         {
             bool IsMoving = true;
+            Vector2 targetPosition = _entity.Position.Value + _entity.Direction.Value.Half();
 
             while (IsMoving)
             {
                 Vector2 currentPosition = _entity.Position.Value;
-                Vector2 nextPosition = Vector3.MoveTowards(currentPosition, targetPosition, GameConstants.PlayerSpeed);
+                float speed = GameConstants.PlayerSpeed * Time.deltaTime;
+                Vector2 nextPosition = Vector3.MoveTowards(currentPosition, targetPosition, speed);
                 _entity.Position.OnNext(nextPosition);
+
+                //------------------------------------------------
+                float nextPosX = MoveOnAxis(currentPosition.x, currentDirection.x);
+                float nextPosY = MoveOnAxis(currentPosition.y, currentDirection.y);
+
+                nextPosX = RepeatInRange(nextPosX, 1, _mapSize.x - 1);
+                nextPosY = RepeatInRange(nextPosY, _mapSize.y + 2, 0);
+
+                var nextPosition = new Vector2(nextPosX, nextPosY);
+                //var newTilePosition = Convert.ToTilePosition(nextPosition);
+
+                _entity.Position.OnNext(nextPosition);
+                //-------------------------------------------------------------
 
                 if (currentPosition == targetPosition)
                     IsMoving = false;

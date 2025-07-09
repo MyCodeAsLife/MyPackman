@@ -12,6 +12,7 @@ namespace MyPacman
             // Перед данной регистрацией нужно чтобы состояние уровня\карты уже было создано
             var gameStateService = sceneContainer.Resolve<IGameStateService>();
             var entities = gameStateService.GameState.Map.Value.Entities;
+
             sceneContainer.RegisterFactory(_ => new WorldGameplayRootViewModel(entities)).AsSingle();      // Регистрацию вынести?
 
             sceneContainer.RegisterFactory(_ => new LevelCreator(sceneContainer, gameplayEnterParams.LevelConfig)).AsSingle();
@@ -30,8 +31,15 @@ namespace MyPacman
                 )).AsSingle();
 
             sceneContainer.RegisterFactory(_ => new ScoringService(
-                gameStateService.GameState,
-                sceneContainer.Resolve<MapHandlerService>()
+                    gameStateService.GameState,
+                    sceneContainer.Resolve<MapHandlerService>()
+                )).AsSingle();
+
+            sceneContainer.RegisterFactory(_ => new GhostsStateHandler(
+                    entities,
+                    sceneContainer.Resolve<Entity>(EntityType.Pacman.ToString()) as Pacman,
+                    sceneContainer.Resolve<TimeService>(),
+                    sceneContainer.Resolve<MapHandlerService>()
                 )).AsSingle();
         }
     }

@@ -14,7 +14,6 @@ namespace MyPacman
         }
 
         public ReactiveProperty<bool> IsMoving { get; private set; }
-
         public ReactiveProperty<Vector2> Direction { get; private set; }
     }
 }

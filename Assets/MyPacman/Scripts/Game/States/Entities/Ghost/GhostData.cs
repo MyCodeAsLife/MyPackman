@@ -10,6 +10,6 @@ namespace MyPacman
         }
 
         public bool IsMoving { get; set; }
-        public Vector2Int Direction { get; set; }
+        public Vector2Int Direction { get; set; } = Vector2Int.right;       // Start direction movement
     }
 }

@@ -32,15 +32,9 @@ namespace MyPacman
             }
 
             // Подписываем создание View, на появление новых ViewModel
-            _disposables.Add(rootViewModel.AllEntities.ObserveAdd().Subscribe(/*(System.Action<CollectionAddEvent<EntityViewModel>>)*/(e =>
-            {
-                CreateEntityView(e.Value);
-            })));
+            _disposables.Add(rootViewModel.AllEntities.ObserveAdd().Subscribe(e => CreateEntityView(e.Value)));
             // Подписываем удаление View, на удаление ViewModel
-            _disposables.Add(rootViewModel.AllEntities.ObserveRemove().Subscribe(/*(System.Action<CollectionRemoveEvent<EntityViewModel>>)*/(e =>
-            {
-                DestroyEntityView(e.Value);
-            })));
+            _disposables.Add(rootViewModel.AllEntities.ObserveRemove().Subscribe(e => DestroyEntityView(e.Value)));
         }
 
         private void CreateEntityView(EntityViewModel entityViewModel)

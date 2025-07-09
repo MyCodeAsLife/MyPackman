@@ -13,6 +13,11 @@ namespace MyPacman
         {
             return start.SqrDistance(end) <= distance * distance;
         }
+
+        public static Vector2 Half(this Vector2 value)
+        {
+            return value / 2f;
+        }
     }
 
 }
