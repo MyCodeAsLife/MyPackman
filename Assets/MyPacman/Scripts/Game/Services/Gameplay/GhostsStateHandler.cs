@@ -16,9 +16,10 @@ namespace MyPacman
             IObservableCollection<Entity> entities,
             Pacman pacman,
             TimeService timeService,
-            MapHandlerService mapHandlerService)
+            MapHandlerService mapHandlerService,
+            ILevelConfig levelConfig)
         {
-            InitGhostsMap(entities, pacman, timeService);
+            InitGhostsMap(entities, pacman, timeService, levelConfig);
             InitGhostBehaviorModeMap(mapHandlerService);
 
             // For test
@@ -33,20 +34,28 @@ namespace MyPacman
             _ghostBehaviorModeMap.Add(GhostBehaviorModeType.Frightened, new BehaviourModeFrightened(mapHandlerService));
         }
 
-        private void InitGhostsMap(IObservableCollection<Entity> entities, Pacman pacman, TimeService timeService)
+        private void InitGhostsMap(
+            IObservableCollection<Entity> entities,
+            Pacman pacman,
+            TimeService timeService,
+            ILevelConfig levelConfig)
         {
             foreach (var entity in entities)
-                TryCreateMovementService(entity, pacman, timeService);
+                TryCreateMovementService(entity, pacman, timeService, levelConfig);
 
-            entities.ObserveAdd().Subscribe(e => TryCreateMovementService(e.Value, pacman, timeService));
+            entities.ObserveAdd().Subscribe(e => TryCreateMovementService(e.Value, pacman, timeService, levelConfig));
             entities.ObserveRemove().Subscribe(e => TryDestroyMovementService(e.Value.Type));
         }
 
-        private bool TryCreateMovementService(Entity entity, Pacman pacman, TimeService timeService)
+        private bool TryCreateMovementService(
+            Entity entity,
+            Pacman pacman,
+            TimeService timeService,
+            ILevelConfig levelConfig)
         {
             if (CheckEntityOnGhost(entity))
             {
-                _ghostsMap.Add(entity.Type, new GhostMovementService(entity as Ghost, pacman, timeService));
+                _ghostsMap.Add(entity.Type, new GhostMovementService(entity as Ghost, pacman, timeService, levelConfig));
                 return true;
             }
 

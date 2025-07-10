@@ -11,14 +11,16 @@ namespace MyPacman
         private Coroutine _moving;
         private TimeService _timeService;
         private IGhostBehaviorMode _behaviorMode;
+        private Vector2 _mapSize;
 
         private event Action Moved;
 
-        public GhostMovementService(Ghost entity, Pacman pacman, TimeService timeService)
+        public GhostMovementService(Ghost entity, Pacman pacman, TimeService timeService, ILevelConfig levelConfig)
         {
             _entity = entity;
             _enemy = pacman;
             _timeService = timeService;
+            _mapSize = new Vector2(levelConfig.Map.GetLength(1), -levelConfig.Map.GetLength(0));
 
             _timeService.TimeHasTicked += Tick;
         }
@@ -75,8 +77,8 @@ namespace MyPacman
                 float nextPosX = MoveOnAxis(currentPosition.x, currentDirection.x);
                 float nextPosY = MoveOnAxis(currentPosition.y, currentDirection.y);
 
-                nextPosX = RepeatInRange(nextPosX, 1, _mapSize.x - 1);
-                nextPosY = RepeatInRange(nextPosY, _mapSize.y + 2, 0);
+                nextPosX = Utility.RepeatInRange(nextPosX, 1, _mapSize.x - 1);
+                nextPosY = Utility.RepeatInRange(nextPosY, _mapSize.y + 2, 0);
 
                 var nextPosition = new Vector2(nextPosX, nextPosY);
                 //var newTilePosition = Convert.ToTilePosition(nextPosition);

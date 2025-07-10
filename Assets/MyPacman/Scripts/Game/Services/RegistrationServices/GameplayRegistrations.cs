@@ -39,7 +39,8 @@ namespace MyPacman
                     entities,
                     sceneContainer.Resolve<Entity>(EntityType.Pacman.ToString()) as Pacman,
                     sceneContainer.Resolve<TimeService>(),
-                    sceneContainer.Resolve<MapHandlerService>()
+                    sceneContainer.Resolve<MapHandlerService>(),
+                    sceneContainer.Resolve<ILevelConfig>()
                 )).AsSingle();
         }
     }

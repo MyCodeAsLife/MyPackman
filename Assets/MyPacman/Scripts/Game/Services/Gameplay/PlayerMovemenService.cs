@@ -124,8 +124,8 @@ namespace MyPacman
             float nextPosX = MoveOnAxis(currentPosition.x, currentDirection.x);
             float nextPosY = MoveOnAxis(currentPosition.y, currentDirection.y);
 
-            nextPosX = RepeatInRange(nextPosX, 1, _mapSize.x - 1);
-            nextPosY = RepeatInRange(nextPosY, _mapSize.y + 2, 0);
+            nextPosX = Utility.RepeatInRange(nextPosX, 1, _mapSize.x - 1);
+            nextPosY = Utility.RepeatInRange(nextPosY, _mapSize.y + 2, 0);
 
             var nextPosition = new Vector2(nextPosX, nextPosY);
             var newTilePosition = Convert.ToTilePosition(nextPosition);
@@ -134,16 +134,6 @@ namespace MyPacman
                 PlayerTilePosition.Value = newTilePosition;
 
             _entity.Position.OnNext(nextPosition);
-        }
-
-        private float RepeatInRange(float value, float min, float max)
-        {
-            if (value < min)
-                return max;
-            else if (value > max)
-                return min;
-
-            return value;
         }
 
         private float MoveOnAxis(float currentPositionOnAxis, float direction)
