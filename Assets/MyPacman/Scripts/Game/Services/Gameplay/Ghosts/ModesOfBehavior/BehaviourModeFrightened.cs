@@ -9,6 +9,7 @@ namespace MyPacman
         private readonly MapHandlerService _mapHandlerService;
 
         private Vector2 _selfPosition;
+        //private Vector2 _selfDirection;
         private Vector2 _enemyPosition;
 
         public BehaviourModeFrightened(MapHandlerService mapHandlerService)
@@ -22,6 +23,7 @@ namespace MyPacman
         {
             _selfPosition = selfPosition;
             _enemyPosition = enemyPosition;
+            //_selfDirection = selfDirection;
 
             if (_mapHandlerService.IsCenterTail(_selfPosition) == false)
                 return selfDirection;
