@@ -9,7 +9,7 @@ namespace MyPacman
         private readonly MapHandlerService _mapHandlerService;
 
         private Vector2 _selfPosition;
-        //private Vector2 _selfDirection;
+        private Vector2 _selfDirection;
         private Vector2 _enemyPosition;
 
         public BehaviourModeFrightened(MapHandlerService mapHandlerService)
@@ -21,12 +21,12 @@ namespace MyPacman
 
         public Vector2 CalculateDirectionOfMovement(Vector2 selfPosition, Vector2 selfDirection, Vector2 enemyPosition)
         {
+            if (_mapHandlerService.IsCenterTail(selfPosition) == false)
+                return selfDirection;
+
             _selfPosition = selfPosition;
             _enemyPosition = enemyPosition;
-            //_selfDirection = selfDirection;
-
-            if (_mapHandlerService.IsCenterTail(_selfPosition) == false)
-                return selfDirection;
+            _selfDirection = selfDirection;
 
             return CalculateDirection();
         }
@@ -36,7 +36,9 @@ namespace MyPacman
             var availableDirections = _mapHandlerService.GetDirectionsWithoutObstacles(_selfPosition);
 
             if (availableDirections.Count == 1)
-                return availableDirections[0];
+                return -_selfDirection;
+            else if (availableDirections.Count == 2)
+                return availableDirections.First(value => value != -_selfDirection);
 
             Dictionary<float, Vector2> directionsMap = CreateDirectionsMap(availableDirections);
             return SelectRandomDirection(directionsMap);
@@ -49,6 +51,9 @@ namespace MyPacman
 
             foreach (var direction in availableDirections)
             {
+                if (direction == -_selfDirection)
+                    continue;
+
                 float distance = _enemyPosition.SqrDistance(_selfPosition + direction);
                 directionsMap[distance] = direction;
 
@@ -69,7 +74,10 @@ namespace MyPacman
             foreach (var selectDirection in directionsMap)
             {
                 if (rand == counter)
+                {
                     direction = selectDirection.Value;
+                    break;
+                }
 
                 counter++;
             }

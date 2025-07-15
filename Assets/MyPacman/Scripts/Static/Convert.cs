@@ -9,7 +9,7 @@ namespace MyPacman
             int X = (int)position.x;
             int Y = Mathf.Abs((int)(position.y - 1));
 
-            return new Vector3Int(X, Y);
+            return new Vector3Int(X, -Y);
         }
     }
 }

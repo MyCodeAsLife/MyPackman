@@ -13,18 +13,14 @@ namespace MyPacman
         private IGhostBehaviorMode _behaviorMode;
         private Vector2 _mapSize;
 
-        private UnityEngine.Object _testPrefab;
-
         private event Action Moved;
 
         public GhostMovementService(Ghost entity, Pacman pacman, TimeService timeService, ILevelConfig levelConfig)
         {
-            _testPrefab = Resources.Load("Prefabs/Test");
-
             _entity = entity;
             _enemy = pacman;
             _timeService = timeService;
-            _mapSize = new Vector2(levelConfig.Map.GetLength(1), -levelConfig.Map.GetLength(0));
+            _mapSize = new Vector2(levelConfig.Map.GetLength(1), -levelConfig.Map.GetLength(0));    //Передать сюда только вектор с размером карты
 
             _timeService.TimeHasTicked += Tick;
         }
@@ -60,8 +56,10 @@ namespace MyPacman
             var selfPosition = _entity.Position.Value;
             var selfDirection = _entity.Direction.Value;
             var enemyPosition = _enemy.Position.Value;
+
             _entity.Direction.Value =
                 _behaviorMode.CalculateDirectionOfMovement(selfPosition, selfDirection, enemyPosition);
+
             _moving = Coroutines.StartRoutine(Moving());
         }
 
@@ -74,24 +72,13 @@ namespace MyPacman
             {
                 Vector2 currentPosition = _entity.Position.Value;
                 float speed = GameConstants.PlayerSpeed * Time.deltaTime;
-                Vector2 nextPosition = Vector3.MoveTowards(currentPosition, targetPosition, speed);
+                Vector2 newPosition = Vector3.MoveTowards(currentPosition, targetPosition, speed);
+                float nextPosX = Utility.RepeatInRange(newPosition.x, 1, _mapSize.x - 1);
+                float nextPosY = Utility.RepeatInRange(newPosition.y, _mapSize.y + 2, 0);
+                var nextPosition = new Vector2(nextPosX, nextPosY);
                 _entity.Position.OnNext(nextPosition);
 
-                Coroutines.StartRoutine(Test(nextPosition));                //+++++++++++++++++++++++++++++++++++++++++++
-                //------------------------------------------------
-                //float nextPosX = MoveOnAxis(currentPosition.x, currentDirection.x);
-                //float nextPosY = MoveOnAxis(currentPosition.y, currentDirection.y);
-
-                //nextPosX = Utility.RepeatInRange(nextPosX, 1, _mapSize.x - 1);
-                //nextPosY = Utility.RepeatInRange(nextPosY, _mapSize.y + 2, 0);
-
-                //var nextPosition = new Vector2(nextPosX, nextPosY);
-                ////var newTilePosition = Convert.ToTilePosition(nextPosition);
-
-                //_entity.Position.OnNext(nextPosition);
-                //-------------------------------------------------------------
-
-                if (currentPosition == targetPosition)
+                if (currentPosition == targetPosition || nextPosX != newPosition.x || nextPosY != newPosition.y)
                     IsMoving = false;
 
                 yield return null;
@@ -99,24 +86,6 @@ namespace MyPacman
 
             _moving = null;
             Moved += Move;
-        }
-
-        private IEnumerator Test(Vector3 position)
-        {
-            float counter = 0;
-            var testObject = GameObject.Instantiate(_testPrefab, position, Quaternion.identity) as GameObject;
-
-            while (counter < 2f)
-            {
-                testObject.SetActive(true);
-                yield return new WaitForSeconds(0.3f);
-                testObject.SetActive(false);
-                yield return new WaitForSeconds(0.3f);
-
-                counter += Time.deltaTime;
-            }
-
-            GameObject.Destroy(testObject);
         }
     }
 }
