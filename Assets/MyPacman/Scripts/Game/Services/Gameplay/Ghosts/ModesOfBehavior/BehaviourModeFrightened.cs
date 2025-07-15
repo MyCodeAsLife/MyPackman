@@ -4,34 +4,12 @@ using UnityEngine;
 
 namespace MyPacman
 {
-    public class BehaviourModeFrightened : IGhostBehaviorMode
+    public class BehaviourModeFrightened : GhostBehaviorMode
     {
-        private readonly MapHandlerService _mapHandlerService;
-
-        private Vector2 _selfPosition;
-        private Vector2 _selfDirection;
-        private Vector2 _enemyPosition;
-
         public BehaviourModeFrightened(MapHandlerService mapHandlerService)
-        {
-            _mapHandlerService = mapHandlerService;
-        }
+            : base(mapHandlerService, GhostBehaviorModeType.Frightened) { }
 
-        public GhostBehaviorModeType BehaviorType { get; private set; } = GhostBehaviorModeType.Frightened;
-
-        public Vector2 CalculateDirectionOfMovement(Vector2 selfPosition, Vector2 selfDirection, Vector2 enemyPosition)
-        {
-            if (_mapHandlerService.IsCenterTail(selfPosition) == false)
-                return selfDirection;
-
-            _selfPosition = selfPosition;
-            _enemyPosition = enemyPosition;
-            _selfDirection = selfDirection;
-
-            return CalculateDirection();
-        }
-
-        private Vector2 CalculateDirection()
+        protected override Vector2 CalculateDirection()
         {
             var availableDirections = _mapHandlerService.GetDirectionsWithoutObstacles(_selfPosition);
 
@@ -63,26 +41,6 @@ namespace MyPacman
 
             directionsMap.Remove(directionsMap.First(value => value.Key == minDistance).Key);
             return directionsMap;
-        }
-
-        private Vector2 SelectRandomDirection(Dictionary<float, Vector2> directionsMap)
-        {
-            Vector2 direction = Vector2.zero;
-            int rand = Random.Range(0, directionsMap.Count);
-            int counter = 0;
-
-            foreach (var selectDirection in directionsMap)
-            {
-                if (rand == counter)
-                {
-                    direction = selectDirection.Value;
-                    break;
-                }
-
-                counter++;
-            }
-
-            return direction;
         }
     }
 }

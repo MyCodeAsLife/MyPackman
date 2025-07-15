@@ -10,7 +10,7 @@ namespace MyPacman
     public class GhostsStateHandler
     {
         private readonly Dictionary<EntityType, GhostMovementService> _ghostsMap = new();           // Тут должны быть службы управляющие персонажами
-        private readonly Dictionary<GhostBehaviorModeType, IGhostBehaviorMode> _ghostBehaviorModeMap = new();
+        private readonly Dictionary<GhostBehaviorModeType, GhostBehaviorMode> _ghostBehaviorModeMap = new();
 
         public GhostsStateHandler(
             IObservableCollection<Entity> entities,

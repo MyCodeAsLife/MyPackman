@@ -10,7 +10,7 @@ namespace MyPacman
         private Pacman _enemy;
         private Coroutine _moving;
         private TimeService _timeService;
-        private IGhostBehaviorMode _behaviorMode;
+        private GhostBehaviorMode _behaviorMode;
         private Vector2 _mapSize;
 
         private event Action Moved;
@@ -36,7 +36,7 @@ namespace MyPacman
             Moved?.Invoke();
         }
 
-        public void BindBehaviorMode(IGhostBehaviorMode behaviorMode)
+        public void BindBehaviorMode(GhostBehaviorMode behaviorMode)
         {
             if (_behaviorMode == null)
             {
