@@ -55,8 +55,8 @@ namespace MyPacman
                     int numTile = _level.Map[y, x] - 1;
                     if (numTile > 0)                                                              // Magic
                         _wallsTileMap.SetTile(cellPosition, _walls[numTile]);
-                    else if (numTile == GameConstants.EmptyTile)
-                        _wallsTileMap.SetTile(cellPosition, null);
+                    //else if (numTile == GameConstants.EmptyTile)
+                    //    _wallsTileMap.SetTile(cellPosition, null);
                     //else if (_level.Map[y, x] == GameConstants.PacmanSpawn)
                     //    SpawnPacmanTest(x, y);
                     //else if (_level.Map[y, x] == (int)EntityType.SmallPellet)

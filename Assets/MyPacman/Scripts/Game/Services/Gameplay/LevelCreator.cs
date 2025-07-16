@@ -49,13 +49,12 @@ namespace MyPacman
                 for (int x = 0; x < _map.GetLength(1); x++)
                 {
                     int numTile = _map[y, x];
-                    numTile = numTile > 0 ? numTile - 1 : numTile + 1;
 
                     if (numTile >= 0)
                     {
                         CreateObstacle(numTile, x, y);
                     }
-                    else
+                    else if(numTile <= (int)EntityType.SmallPellet)
                     {
                         if (numTile <= (int)EntityType.Pacman)
                         {
@@ -83,7 +82,7 @@ namespace MyPacman
         private void CreateObstacle(int numTile, int x, int y)
         {
             var tilePos = new Vector3Int(x, -y);
-            var tile = numTile > 0 ? _obstacleTiles[numTile] : null;
+            var tile = numTile >= 0 ? _obstacleTiles[numTile] : null;
             _obstacleTileMap.SetTile(tilePos, tile);
         }
 
@@ -109,13 +108,13 @@ namespace MyPacman
         {
             var position = new Vector2(x + GameConstants.Half, -y + GameConstants.Half);
 
-            if ((_map[y + 1, x] + 1) == numTile)
+            if (_map[y + 1, x] == numTile)
                 position.y -= GameConstants.Half;
-            else if ((_map[y - 1, x] + 1) == numTile)
+            else if (_map[y - 1, x] == numTile)
                 position.y += GameConstants.Half;
-            else if ((_map[y, x + 1] + 1) == numTile)
+            else if (_map[y, x + 1] == numTile)
                 position.x += GameConstants.Half;
-            else if ((_map[y, x - 1] + 1) == numTile)
+            else if (_map[y, x - 1] == numTile)
                 position.x -= GameConstants.Half;
 
             return position;

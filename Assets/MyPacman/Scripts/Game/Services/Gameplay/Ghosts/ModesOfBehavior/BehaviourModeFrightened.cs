@@ -4,25 +4,20 @@ using UnityEngine;
 
 namespace MyPacman
 {
+    // Режим страха
     public class BehaviourModeFrightened : GhostBehaviorMode
     {
         public BehaviourModeFrightened(MapHandlerService mapHandlerService)
             : base(mapHandlerService, GhostBehaviorModeType.Frightened) { }
 
-        protected override Vector2 CalculateDirection()
+        protected override Vector2 CalculateDirectionInSelectedMode(List<Vector2> availableDirections)  // Похожа на такуюже в BehaviourModeScatter
         {
-            var availableDirections = _mapHandlerService.GetDirectionsWithoutObstacles(_selfPosition);
-
-            if (availableDirections.Count == 1)
-                return -_selfDirection;
-            else if (availableDirections.Count == 2)
-                return availableDirections.First(value => value != -_selfDirection);
-
-            Dictionary<float, Vector2> directionsMap = CreateDirectionsMap(availableDirections);
-            return SelectRandomDirection(directionsMap);
+            Dictionary<float, Vector2> directionsMap = CalculateDirectionsInFrightenedMode(availableDirections);
+            Vector2 direction = SelectRandomDirection(directionsMap);
+            return direction;
         }
 
-        private Dictionary<float, Vector2> CreateDirectionsMap(List<Vector2> availableDirections)
+        private Dictionary<float, Vector2> CalculateDirectionsInFrightenedMode(List<Vector2> availableDirections)
         {
             float minDistance = float.MaxValue;
             Dictionary<float, Vector2> directionsMap = new();
@@ -32,7 +27,7 @@ namespace MyPacman
                 if (direction == -_selfDirection)
                     continue;
 
-                float distance = _enemyPosition.SqrDistance(_selfPosition + direction);
+                float distance = _targetPosition.SqrDistance(_selfPosition + direction);
                 directionsMap[distance] = direction;
 
                 if (distance < minDistance)

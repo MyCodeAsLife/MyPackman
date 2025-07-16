@@ -91,33 +91,33 @@ namespace MyPacman
             int downY = y - 1;
             int upY = y + 1;
 
-            if (leftX >= 0 && (_currentLevel.Map[y, leftX] == (int)EntityType.SmallPellet ||
-                             _currentLevel.Map[y, leftX] == GameConstants.EmptyTile))
-            {
-                numberOfPaths++;
-                vertical++;
-            }
+            //if (leftX >= 0 && (_currentLevel.Map[y, leftX] == (int)EntityType.SmallPellet ||
+            //                 _currentLevel.Map[y, leftX] == GameConstants.EmptyTile))
+            //{
+            //    numberOfPaths++;
+            //    vertical++;
+            //}
 
-            if (rigthX < maxLengthX && (_currentLevel.Map[y, rigthX] == (int)EntityType.SmallPellet ||
-                                       _currentLevel.Map[y, rigthX] == GameConstants.EmptyTile))
-            {
-                numberOfPaths++;
-                vertical--;
-            }
+            //if (rigthX < maxLengthX && (_currentLevel.Map[y, rigthX] == (int)EntityType.SmallPellet ||
+            //                           _currentLevel.Map[y, rigthX] == GameConstants.EmptyTile))
+            //{
+            //    numberOfPaths++;
+            //    vertical--;
+            //}
 
-            if (downY >= 0 && (_currentLevel.Map[downY, x] == (int)EntityType.SmallPellet ||
-                               _currentLevel.Map[downY, x] == GameConstants.EmptyTile))
-            {
-                numberOfPaths++;
-                horizontal++;
-            }
+            //if (downY >= 0 && (_currentLevel.Map[downY, x] == (int)EntityType.SmallPellet ||
+            //                   _currentLevel.Map[downY, x] == GameConstants.EmptyTile))
+            //{
+            //    numberOfPaths++;
+            //    horizontal++;
+            //}
 
-            if (upY < maxLengthY && (_currentLevel.Map[upY, x] == (int)EntityType.SmallPellet ||
-                                        _currentLevel.Map[upY, x] == GameConstants.EmptyTile))
-            {
-                numberOfPaths++;
-                horizontal--;
-            }
+            //if (upY < maxLengthY && (_currentLevel.Map[upY, x] == (int)EntityType.SmallPellet ||
+            //                            _currentLevel.Map[upY, x] == GameConstants.EmptyTile))
+            //{
+            //    numberOfPaths++;
+            //    horizontal--;
+            //}
 
             return numberOfPaths > 2 || horizontal != 0 || vertical != 0 ? true : false;                                    //Magic
         }

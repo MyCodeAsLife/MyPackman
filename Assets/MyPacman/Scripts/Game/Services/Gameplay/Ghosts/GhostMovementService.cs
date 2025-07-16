@@ -11,7 +11,11 @@ namespace MyPacman
         private Coroutine _moving;
         private TimeService _timeService;
         private GhostBehaviorMode _behaviorMode;
+
+        private Vector2 _targetPosition;
         private Vector2 _mapSize;
+
+        public event Action<GhostMovementService> TargetReached;
 
         private event Action Moved;
 
@@ -31,34 +35,37 @@ namespace MyPacman
             Coroutines.StopRoutine(_moving);
         }
 
+        public GhostBehaviorModeType BehaviorModeType => _behaviorMode.Type;
+
+        public void BindBehaviorMode(GhostBehaviorMode behaviorMode)
+        {
+            if (_behaviorMode == null)
+                Moved += Move;
+
+            _behaviorMode = behaviorMode;
+        }
+
         private void Tick()
         {
             Moved?.Invoke();
         }
 
-        public void BindBehaviorMode(GhostBehaviorMode behaviorMode)
-        {
-            if (_behaviorMode == null)
-            {
-                _behaviorMode = behaviorMode;
-                Moved += Move;
-            }
-            else
-            {
-                _behaviorMode = behaviorMode;
-            }
-        }
-
         private void Move()
         {
             Moved -= Move;
+            //----------------------------------------------------------------------------------------------------------
+            Vector2 selfPosition = _entity.Position.Value;
+            Vector2 selfDirection = _entity.Direction.Value;
 
-            var selfPosition = _entity.Position.Value;
-            var selfDirection = _entity.Direction.Value;
-            var enemyPosition = _enemy.Position.Value;
-
+            // Добавить функцию подбора модификатора смещения для расчета целевой точки в зависимости от типа призрака.
+            // Смещение передовать в GhostBehaviorMode при передаче его в призрака
+            if (_behaviorMode.Type == GhostBehaviorModeType.Scatter)
+                _targetPosition = new Vector2(29f, 0f);
+            else
+                _targetPosition = _enemy.Position.Value;
+            //----------------------------------------------------------------------------------------------------------
             _entity.Direction.Value =
-                _behaviorMode.CalculateDirectionOfMovement(selfPosition, selfDirection, enemyPosition);
+                    _behaviorMode.CalculateDirectionOfMovement(selfPosition, selfDirection, _targetPosition);
 
             _moving = Coroutines.StartRoutine(Moving());
         }
@@ -66,23 +73,25 @@ namespace MyPacman
         private IEnumerator Moving()
         {
             bool IsMoving = true;
-            Vector2 targetPosition = _entity.Position.Value + _entity.Direction.Value.Half();
+            Vector2 nextPosition = _entity.Position.Value + _entity.Direction.Value.Half();
 
             while (IsMoving)
             {
                 Vector2 currentPosition = _entity.Position.Value;
                 float speed = GameConstants.PlayerSpeed * Time.deltaTime;
-                Vector2 newPosition = Vector3.MoveTowards(currentPosition, targetPosition, speed);
-                float nextPosX = Utility.RepeatInRange(newPosition.x, 1, _mapSize.x - 1);
-                float nextPosY = Utility.RepeatInRange(newPosition.y, _mapSize.y + 2, 0);
-                var nextPosition = new Vector2(nextPosX, nextPosY);
-                _entity.Position.OnNext(nextPosition);
+                Vector2 tempPosition = Vector3.MoveTowards(currentPosition, nextPosition, speed);
+                float nextPosX = Utility.RepeatInRange(tempPosition.x, 1, _mapSize.x - 1);
+                float nextPosY = Utility.RepeatInRange(tempPosition.y, _mapSize.y + 2, 0);
+                _entity.Position.OnNext(new Vector2(nextPosX, nextPosY));
 
-                if (currentPosition == targetPosition || nextPosX != newPosition.x || nextPosY != newPosition.y)
+                if (currentPosition == nextPosition || nextPosX != tempPosition.x || nextPosY != tempPosition.y)
                     IsMoving = false;
 
                 yield return null;
             }
+
+            if (_entity.Position.Value == _targetPosition)
+                TargetReached?.Invoke(this);
 
             _moving = null;
             Moved += Move;

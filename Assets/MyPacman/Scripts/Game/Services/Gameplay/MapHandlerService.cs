@@ -14,10 +14,11 @@ namespace MyPacman
         private readonly GameState _gameState;
 
         private Vector2 _fruitSpawnPosition;
-        private readonly Dictionary<Vector3Int, Entity> _edibleEntityMap = new();
+
+        // Добавить подписку на изменение данного массива, при изменении позиции призраков
+        private readonly Dictionary<Vector3Int, Entity> _edibleEntityMap = new();       // Призраки не меняют свою позицию
 
         public event Action<EdibleEntityPoints> EntityEaten;
-        // 3. проверки позиций на препятствия?
 
         public MapHandlerService(GameState gameState, Tilemap obstaclesTileMap, PlayerMovemenService player)
         {
@@ -56,15 +57,10 @@ namespace MyPacman
             }
         }
 
-        public bool CheckForObstacles(Vector2 position)
+        public bool CheckTileForObstacle(Vector2 position)
         {
             var tilePosition = Convert.ToTilePosition(position);
-            var tile = _obstaclesTileMap.GetTile(tilePosition);
-
-            if (tile != null && int.Parse(tile.name) > 0)
-                return true;
-
-            return false;
+            return CheckTileForObstacle(tilePosition);
         }
 
         private void InitEdibleEntityMap()
@@ -117,41 +113,41 @@ namespace MyPacman
             _gameState.Map.CurrentValue.Entities.Add(entity);
         }
 
-        public List<Vector2> GetAvailableMovementPoints(Vector2 position)
-        {
-            var tilePosition = Convert.ToTilePosition(position);
-            List<Vector2> points = new List<Vector2>();
-
-            for (int x = -1; x < 2; x += 2)
-            {
-                var checkPosition = new Vector3Int(tilePosition.y + x, tilePosition.y, tilePosition.z);
-                TryAddAvailablePoint(checkPosition, points);
-            }
-
-            for (int y = -1; y < 2; y += 2)
-            {
-                var checkPosition = new Vector3Int(tilePosition.x, tilePosition.y - y, tilePosition.z);
-                TryAddAvailablePoint(checkPosition, points);
-            }
-
-            return points;
-        }
-
         public List<Vector2> GetDirectionsWithoutObstacles(Vector2 position)
         {
             var tilePosition = Convert.ToTilePosition(position);
             List<Vector2> directions = new();
 
-            if (CheckTileOnObstacle(tilePosition + Vector3Int.left) == false)
+            if (CheckTileForObstacle(tilePosition + Vector3Int.left) == false)
                 directions.Add(Vector2.left);
 
-            if (CheckTileOnObstacle(tilePosition + Vector3Int.right) == false)
+            if (CheckTileForObstacle(tilePosition + Vector3Int.right) == false)
                 directions.Add(Vector2.right);
 
-            if (CheckTileOnObstacle(tilePosition + Vector3Int.up) == false)
+            if (CheckTileForObstacle(tilePosition + Vector3Int.up) == false)
                 directions.Add(Vector2.up);
 
-            if (CheckTileOnObstacle(tilePosition + Vector3Int.down) == false)
+            if (CheckTileForObstacle(tilePosition + Vector3Int.down) == false)
+                directions.Add(Vector2.down);
+
+            return directions;
+        }
+
+        public List<Vector2> GetDirectionsWithoutWalls(Vector2 position)
+        {
+            var tilePosition = Convert.ToTilePosition(position);
+            List<Vector2> directions = GetDirectionsWithoutObstacles(position);
+
+            if (CheckTileForType(tilePosition + Vector3Int.left, GameConstants.GateTile))
+                directions.Add(Vector2.left);
+
+            if (CheckTileForType(tilePosition + Vector3Int.right, GameConstants.GateTile))
+                directions.Add(Vector2.right);
+
+            if (CheckTileForType(tilePosition + Vector3Int.up, GameConstants.GateTile))
+                directions.Add(Vector2.up);
+
+            if (CheckTileForType(tilePosition + Vector3Int.down, GameConstants.GateTile))
                 directions.Add(Vector2.down);
 
             return directions;
@@ -168,26 +164,57 @@ namespace MyPacman
             return false;
         }
 
-        private bool CheckTileOnObstacle(Vector3Int tilePos)
+        private bool CheckTileForObstacle(Vector3Int tilePos)
         {
             var tile = _obstaclesTileMap.GetTile(tilePos);
             return tile != null;
         }
 
-        private void TryAddAvailablePoint(Vector3Int checkPosition, List<Vector2> points)
+        private bool CheckTileForType(Vector3Int tilePos, int tileType)
         {
-            var tile = _obstaclesTileMap.GetTile(checkPosition);
+            var tile = _obstaclesTileMap.GetTile(tilePos);
 
             if (tile != null)
             {
-                var availablePosition = new Vector2(
-                    checkPosition.x + GameConstants.Half,
-                    checkPosition.y - GameConstants.Half);
-                points.Add(availablePosition);
+                int numType = int.Parse(tile.name);
+                return numType == tileType;
             }
+
+            return false;
         }
 
+        //public List<Vector2> GetAvailableMovementPoints(Vector2 position)
+        //{
+        //    var tilePosition = Convert.ToTilePosition(position);
+        //    List<Vector2> points = new List<Vector2>();
 
+        //    for (int x = -1; x < 2; x += 2)
+        //    {
+        //        var checkPosition = new Vector3Int(tilePosition.y + x, tilePosition.y, tilePosition.z);
+        //        TryAddAvailablePoint(checkPosition, points);
+        //    }
+
+        //    for (int y = -1; y < 2; y += 2)
+        //    {
+        //        var checkPosition = new Vector3Int(tilePosition.x, tilePosition.y - y, tilePosition.z);
+        //        TryAddAvailablePoint(checkPosition, points);
+        //    }
+
+        //    return points;
+        //}
+
+        //private void TryAddAvailablePoint(Vector3Int checkPosition, List<Vector2> points)
+        //{
+        //    var tile = _obstaclesTileMap.GetTile(checkPosition);
+
+        //    if (tile != null)
+        //    {
+        //        var availablePosition = new Vector2(
+        //            checkPosition.x + GameConstants.Half,
+        //            checkPosition.y - GameConstants.Half);
+        //        points.Add(availablePosition);
+        //    }
+        //}
 
         //public bool IsIntersactionTile(int x, int y)       // Проверка на перекресток
         //{
