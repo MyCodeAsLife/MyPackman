@@ -51,5 +51,26 @@ namespace MyPacman
             directionsMap.Remove(directionsMap.First(value => value.Key == maxDistance).Key);
             return directionsMap;
         }
+
+        private Vector2 GetScatterPosition(EntityType entityType)
+        {
+            switch (entityType)
+            {
+                case EntityType.Blinky:
+                    return Vector2.zero;                                    // Magic
+
+                case EntityType.Pinky:
+                    return new Vector2(29f, 0f);                            // Magic
+
+                case EntityType.Inky:
+                    return new Vector2(0f, -33f);                           // Magic
+
+                case EntityType.Clyde:
+                    return new Vector2(29f, -33f);                          // Magic
+
+                default:
+                    throw new System.Exception($"There is no implementation for this type: {entityType}");      // Magic
+            }
+        }
     }
 }

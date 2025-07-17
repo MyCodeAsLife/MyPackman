@@ -36,6 +36,7 @@ namespace MyPacman
         }
 
         public GhostBehaviorModeType BehaviorModeType => _behaviorMode.Type;
+        public EntityType EntityType => _entity.Type;
 
         public void BindBehaviorMode(GhostBehaviorMode behaviorMode)
         {
@@ -84,7 +85,10 @@ namespace MyPacman
                 float nextPosY = Utility.RepeatInRange(tempPosition.y, _mapSize.y + 2, 0);
                 _entity.Position.OnNext(new Vector2(nextPosX, nextPosY));
 
-                if (currentPosition == nextPosition || nextPosX != tempPosition.x || nextPosY != tempPosition.y)
+                if (/*currentPosition == nextPosition*/GreaterThanOrEqual(currentPosition, nextPosition, _entity.Direction.Value)
+                    || nextPosX != tempPosition.x
+                    || nextPosY != tempPosition.y
+                    )
                     IsMoving = false;
 
                 yield return null;
@@ -95,6 +99,33 @@ namespace MyPacman
 
             _moving = null;
             Moved += Move;
+        }
+
+        private bool GreaterThanOrEqual(Vector2 firstPos, Vector2 secondPos, Vector2 direction)
+        {
+            if (firstPos == secondPos)
+                return true;
+
+            if (direction.x != 0)
+            {
+                if (direction.x > 0)
+                    return firstPos.x > secondPos.x;
+                else
+                    return firstPos.x < secondPos.x;
+            }
+            else if (direction.y != 0)
+            {
+                if (direction.y > 0)
+                    return firstPos.y > secondPos.y;
+                else
+                    return firstPos.y < secondPos.y;
+            }
+
+            throw new Exception(
+                $"Unknown error." +
+                $"First pos: {firstPos}." +
+                $"Second pos: {secondPos}." +
+                $"Direction: {direction}");
         }
     }
 }

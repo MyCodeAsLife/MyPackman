@@ -11,7 +11,7 @@ namespace MyPacman
     public class GhostsStateHandler
     {
         private readonly Dictionary<EntityType, GhostMovementService> _ghostsMap = new();           // Тут должны быть службы управляющие персонажами
-        private readonly Dictionary<GhostBehaviorModeType, GhostBehaviorMode> _ghostBehaviorModeMap = new();    // Чуш, нужно создавать новую а не раздавать всем одну и туже.
+        private readonly BehaviourModesFactory _behaviourModesFactory;
 
         public GhostsStateHandler(
             IObservableCollection<Entity> entities,
@@ -21,25 +21,26 @@ namespace MyPacman
             ILevelConfig levelConfig)
         {
             InitGhostsMap(entities, pacman, timeService, levelConfig);
-            InitGhostBehaviorModeMap(mapHandlerService);
+            _behaviourModesFactory = new BehaviourModesFactory(mapHandlerService);
 
             // For test
+            SetBehaviourMode(GhostBehaviorModeType.Scatter);
+        }
+
+        private void SetBehaviourMode(GhostBehaviorModeType behaviorModeType)
+        {
             foreach (var ghost in _ghostsMap)
             {
-                ghost.Value.BindBehaviorMode(_ghostBehaviorModeMap[GhostBehaviorModeType.Scatter]);     // Чуш, нужно создавать новую а не раздавать всем одну и туже.
-                ghost.Value.TargetReached += OnTargetReached;
+                var behaviourMode = _behaviourModesFactory.CreateMode(behaviorModeType);
+                ghost.Value.BindBehaviorMode(behaviourMode);
+
+                ghost.Value.TargetReached += OnTargetReached;           // Это должно производится однократно
 
                 if (ghost.Key != EntityType.Blinky)
                 {
                     gh
                 }
             }
-        }
-
-        private void InitGhostBehaviorModeMap(MapHandlerService mapHandlerService)
-        {
-            _ghostBehaviorModeMap.Add(GhostBehaviorModeType.Frightened, new BehaviourModeFrightened(mapHandlerService));
-            _ghostBehaviorModeMap.Add(GhostBehaviorModeType.Scatter, new BehaviourModeScatter(mapHandlerService));
         }
 
         private void InitGhostsMap(
@@ -89,31 +90,31 @@ namespace MyPacman
         // For test
         private void OnTargetReached(GhostMovementService ghostMovement)
         {
-            if (ghostMovement.BehaviorModeType == GhostBehaviorModeType.Scatter)
+            if (ghostMovement.BehaviorModeType == GhostBehaviorModeType.Scatter)    // Смена целевой точки при выходе из загона
             {
-                int rand = Random.Range(0, 4);
-                var position = GetScatterPosition(rand);
+                var position = GetScatterPosition(ghostMovement.EntityType);
+                ghostMovement.      // Сменить целевую точку для данного призрака
             }
         }
 
-        private Vector2 GetScatterPosition(int numPosition)
+        private Vector2 GetScatterPosition(EntityType entityType)
         {
-            switch (numPosition)
+            switch (entityType)
             {
-                case 0:
-                    return Vector2.zero;
+                case EntityType.Blinky:
+                    return Vector2.zero;                                    // Magic
 
-                case 1:
-                    return new Vector2(29f, 0f);
+                case EntityType.Pinky:
+                    return new Vector2(29f, 0f);                            // Magic
 
-                case 2:
-                    return new Vector2(0f, -33f);
+                case EntityType.Inky:
+                    return new Vector2(0f, -33f);                           // Magic
 
-                case 3:
-                    return new Vector2(29f, -33f);
+                case EntityType.Clyde:
+                    return new Vector2(29f, -33f);                          // Magic
 
                 default:
-                    throw new System.Exception($"Unknown num of position: {numPosition}");
+                    throw new System.Exception($"There is no implementation for this type: {entityType}");      // Magic
             }
         }
     }
