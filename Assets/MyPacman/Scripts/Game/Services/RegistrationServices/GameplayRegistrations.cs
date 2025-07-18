@@ -19,6 +19,7 @@ namespace MyPacman
 
             sceneContainer.RegisterFactory(_ => new MapHandlerService(
                     gameStateService.GameState,
+                    sceneContainer.Resolve<ILevelConfig>(),
                     sceneContainer.Resolve<Tilemap>(GameConstants.Obstacle),
                     sceneContainer.Resolve<PlayerMovemenService>()
                 )).AsSingle();

@@ -10,8 +10,9 @@ namespace MyPacman
     public class MapHandlerService
     {
         private readonly ObservableList<Entity> _entities;
-        private readonly Tilemap _obstaclesTileMap;
         private readonly GameState _gameState;
+
+        private readonly TilemapHandler _tilemapHandler;
 
         private Vector2 _fruitSpawnPosition;
 
@@ -20,20 +21,25 @@ namespace MyPacman
 
         public event Action<EdibleEntityPoints> EntityEaten;
 
-        public MapHandlerService(GameState gameState, Tilemap obstaclesTileMap, PlayerMovemenService player)
+        public MapHandlerService(GameState gameState, ILevelConfig levelConfig, Tilemap obstaclesTileMap, PlayerMovemenService player)
         {
             _gameState = gameState;
             _entities = gameState.Map.CurrentValue.Entities;
-            _obstaclesTileMap = obstaclesTileMap;
 
-            //_fruitSpawnPosition = _gameState.Map.Value.FruitSpawnPos.Value;           // Это лишнее, при подписке должно подтянутся значение
+            _tilemapHandler = new TilemapHandler(obstaclesTileMap, levelConfig);
             _gameState.Map.Value.FruitSpawnPos.Subscribe(position => _fruitSpawnPosition = position);
             player.PlayerTilePosition.Subscribe(PlayerTileChanged);
-
             gameState.Map.CurrentValue.NumberOfCollectedPellets.Subscribe(OnCollectedPellet);
 
             InitEdibleEntityMap();
         }
+
+        public bool CheckTileForObstacle(Vector2 position) => _tilemapHandler.CheckTileForObstacle(position);
+        public List<Vector2> GetDirectionsWithoutObstacles(Vector2 position) => _tilemapHandler.GetDirectionsWithoutObstacles(position);
+        public List<Vector2> GetDirectionsWithoutWalls(Vector2 position) => _tilemapHandler.GetDirectionsWithoutWalls(position);
+        public bool IsCenterTail(Vector2 position) => _tilemapHandler.IsCenterTail(position);
+        public List<Vector2> GetTilePositions(int gateTile) => _tilemapHandler.GetTilePositions(gateTile);
+        public bool CheckTile(Vector2 position, int numTile) => _tilemapHandler.CheckTile(position, numTile);
 
         private void PlayerTileChanged(Vector3Int position)
         {
@@ -55,12 +61,6 @@ namespace MyPacman
                     EntityEaten?.Invoke(edibleEntity.Points);
                 }
             }
-        }
-
-        public bool CheckTileForObstacle(Vector2 position)
-        {
-            var tilePosition = Convert.ToTilePosition(position);
-            return CheckTileForObstacle(tilePosition);
         }
 
         private void InitEdibleEntityMap()
@@ -113,75 +113,88 @@ namespace MyPacman
             _gameState.Map.CurrentValue.Entities.Add(entity);
         }
 
-        public List<Vector2> GetDirectionsWithoutObstacles(Vector2 position)
-        {
-            var tilePosition = Convert.ToTilePosition(position);
-            List<Vector2> directions = new();
+        //public bool CheckTileForObstacle(Vector2 position)                          // Map
+        //{
+        //    var tilePosition = Convert.ToTilePosition(position);
+        //    return CheckTileForObstacle(tilePosition);
+        //}
 
-            if (CheckTileForObstacle(tilePosition + Vector3Int.left) == false)
-                directions.Add(Vector2.left);
+        //public List<Vector2> GetDirectionsWithoutObstacles(Vector2 position)        // Map
+        //{
+        //    var tilePosition = Convert.ToTilePosition(position);
+        //    List<Vector2> directions = new();
 
-            if (CheckTileForObstacle(tilePosition + Vector3Int.right) == false)
-                directions.Add(Vector2.right);
+        //    if (CheckTileForObstacle(tilePosition + Vector3Int.left) == false)
+        //        directions.Add(Vector2.left);
 
-            if (CheckTileForObstacle(tilePosition + Vector3Int.up) == false)
-                directions.Add(Vector2.up);
+        //    if (CheckTileForObstacle(tilePosition + Vector3Int.right) == false)
+        //        directions.Add(Vector2.right);
 
-            if (CheckTileForObstacle(tilePosition + Vector3Int.down) == false)
-                directions.Add(Vector2.down);
+        //    if (CheckTileForObstacle(tilePosition + Vector3Int.up) == false)
+        //        directions.Add(Vector2.up);
 
-            return directions;
-        }
+        //    if (CheckTileForObstacle(tilePosition + Vector3Int.down) == false)
+        //        directions.Add(Vector2.down);
 
-        public List<Vector2> GetDirectionsWithoutWalls(Vector2 position)
-        {
-            var tilePosition = Convert.ToTilePosition(position);
-            List<Vector2> directions = GetDirectionsWithoutObstacles(position);
+        //    return directions;
+        //}
 
-            if (CheckTileForType(tilePosition + Vector3Int.left, GameConstants.GateTile))
-                directions.Add(Vector2.left);
+        //public List<Vector2> GetDirectionsWithoutWalls(Vector2 position)        // Map
+        //{
+        //    var tilePosition = Convert.ToTilePosition(position);
+        //    List<Vector2> directions = GetDirectionsWithoutObstacles(position);
 
-            if (CheckTileForType(tilePosition + Vector3Int.right, GameConstants.GateTile))
-                directions.Add(Vector2.right);
+        //    if (CheckTileForType(tilePosition + Vector3Int.left, GameConstants.GateTile))
+        //        directions.Add(Vector2.left);
 
-            if (CheckTileForType(tilePosition + Vector3Int.up, GameConstants.GateTile))
-                directions.Add(Vector2.up);
+        //    if (CheckTileForType(tilePosition + Vector3Int.right, GameConstants.GateTile))
+        //        directions.Add(Vector2.right);
 
-            if (CheckTileForType(tilePosition + Vector3Int.down, GameConstants.GateTile))
-                directions.Add(Vector2.down);
+        //    if (CheckTileForType(tilePosition + Vector3Int.up, GameConstants.GateTile))
+        //        directions.Add(Vector2.up);
 
-            return directions;
-        }
+        //    if (CheckTileForType(tilePosition + Vector3Int.down, GameConstants.GateTile))
+        //        directions.Add(Vector2.down);
 
-        public bool IsCenterTail(Vector2 position)
-        {
-            var valueX = position.x - Mathf.Floor(position.x);
-            var valueY = position.y - Mathf.Floor(position.y);
+        //    return directions;
+        //}
 
-            if (Mathf.Approximately(valueX, GameConstants.Half) && Mathf.Approximately(valueY, GameConstants.Half))
-                return true;
+        //public bool IsCenterTail(Vector2 position)                          // Map
+        //{
+        //    var valueX = position.x - Mathf.Floor(position.x);
+        //    var valueY = position.y - Mathf.Floor(position.y);
 
-            return false;
-        }
+        //    if (Mathf.Approximately(valueX, GameConstants.Half) && Mathf.Approximately(valueY, GameConstants.Half))
+        //        return true;
 
-        private bool CheckTileForObstacle(Vector3Int tilePos)
-        {
-            var tile = _obstaclesTileMap.GetTile(tilePos);
-            return tile != null;
-        }
+        //    return false;
+        //}
 
-        private bool CheckTileForType(Vector3Int tilePos, int tileType)
-        {
-            var tile = _obstaclesTileMap.GetTile(tilePos);
+        //public Vector2 GetTilePosition(int gateTile)                            // Map
+        //{
+        //    throw new NotImplementedException();
+        //}
 
-            if (tile != null)
-            {
-                int numType = int.Parse(tile.name);
-                return numType == tileType;
-            }
+        //private bool CheckTileForObstacle(Vector3Int tilePos)                   // Map
+        //{
+        //    var tile = _obstaclesTileMap.GetTile(tilePos);
+        //    return tile != null;
+        //}
 
-            return false;
-        }
+        //private bool CheckTileForType(Vector3Int tilePos, int tileType)         // Map
+        //{
+        //    var tile = _obstaclesTileMap.GetTile(tilePos);
+
+        //    if (tile != null)
+        //    {
+        //        int numType = int.Parse(tile.name);
+        //        return numType == tileType;
+        //    }
+
+        //    return false;
+        //}
+
+        //-------------------------------------------------------------------------------------------------
 
         //public List<Vector2> GetAvailableMovementPoints(Vector2 position)
         //{

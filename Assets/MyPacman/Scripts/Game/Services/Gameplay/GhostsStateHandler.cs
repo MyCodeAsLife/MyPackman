@@ -20,8 +20,10 @@ namespace MyPacman
             MapHandlerService mapHandlerService,
             ILevelConfig levelConfig)
         {
+            Vector2 mapSize = new Vector2(levelConfig.Map.GetLength(1), -levelConfig.Map.GetLength(0));
+
             InitGhostsMap(entities, pacman, timeService, levelConfig);
-            _behaviourModesFactory = new BehaviourModesFactory(mapHandlerService);
+            _behaviourModesFactory = new BehaviourModesFactory(mapHandlerService,pacman, mapSize,);     // Добавить homePosition
 
             // For test
             SetBehaviourMode(GhostBehaviorModeType.Scatter);
@@ -31,7 +33,7 @@ namespace MyPacman
         {
             foreach (var ghost in _ghostsMap)
             {
-                var behaviourMode = _behaviourModesFactory.CreateMode(behaviorModeType);
+                var behaviourMode = _behaviourModesFactory.CreateMode(behaviorModeType, ghost.Key);
                 ghost.Value.BindBehaviorMode(behaviourMode);
 
                 ghost.Value.TargetReached += OnTargetReached;           // Это должно производится однократно
@@ -94,27 +96,6 @@ namespace MyPacman
             {
                 var position = GetScatterPosition(ghostMovement.EntityType);
                 ghostMovement.      // Сменить целевую точку для данного призрака
-            }
-        }
-
-        private Vector2 GetScatterPosition(EntityType entityType)
-        {
-            switch (entityType)
-            {
-                case EntityType.Blinky:
-                    return Vector2.zero;                                    // Magic
-
-                case EntityType.Pinky:
-                    return new Vector2(29f, 0f);                            // Magic
-
-                case EntityType.Inky:
-                    return new Vector2(0f, -33f);                           // Magic
-
-                case EntityType.Clyde:
-                    return new Vector2(29f, -33f);                          // Magic
-
-                default:
-                    throw new System.Exception($"There is no implementation for this type: {entityType}");      // Magic
             }
         }
     }

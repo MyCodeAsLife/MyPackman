@@ -7,27 +7,30 @@ namespace MyPacman
     public abstract class GhostBehaviorMode
     {
         protected readonly MapHandlerService _mapHandlerService;
+        protected readonly Ghost _self;
 
         protected Vector2 _selfPosition;
         protected Vector2 _targetPosition;
         protected Vector2 _selfDirection;
 
-        public GhostBehaviorMode(MapHandlerService mapHandlerService, GhostBehaviorModeType behaviorModeType)
+        public GhostBehaviorMode(MapHandlerService mapHandlerService, Ghost self, GhostBehaviorModeType behaviorModeType)
         {
             _mapHandlerService = mapHandlerService;
+            _self = self;
             Type = behaviorModeType;
         }
 
         public GhostBehaviorModeType Type { get; private set; }
 
-        public Vector2 CalculateDirectionOfMovement(Vector2 selfPosition, Vector2 selfDirection, Vector2 enemyPosition)
+        public Vector2 CalculateDirectionOfMovement(/*Vector2 selfPosition, Vector2 selfDirection, Vector2 enemyPosition*/)
         {
             if (_mapHandlerService.IsCenterTail(selfPosition) == false)
                 return selfDirection;
 
-            _selfPosition = selfPosition;
+            _selfPosition = _self.Position.Value;
+            _selfDirection = _self.Direction.Value;
+
             _targetPosition = enemyPosition;
-            _selfDirection = selfDirection;
 
             return CalculateDirection();
         }

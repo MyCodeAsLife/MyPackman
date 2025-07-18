@@ -7,8 +7,13 @@ namespace MyPacman
     // Режим страха
     public class BehaviourModeFrightened : GhostBehaviorMode
     {
-        public BehaviourModeFrightened(MapHandlerService mapHandlerService)
-            : base(mapHandlerService, GhostBehaviorModeType.Frightened) { }
+        private Entity _pacman;
+
+        public BehaviourModeFrightened(MapHandlerService mapHandlerService, Ghost self, Entity pacman)
+            : base(mapHandlerService, self, GhostBehaviorModeType.Frightened)
+        {
+            _pacman = pacman;
+        }
 
         protected override Vector2 CalculateDirectionInSelectedMode(List<Vector2> availableDirections)  // Похожа на такуюже в BehaviourModeScatter
         {
