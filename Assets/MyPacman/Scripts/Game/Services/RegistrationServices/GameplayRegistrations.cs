@@ -41,7 +41,8 @@ namespace MyPacman
                     sceneContainer.Resolve<Entity>(EntityType.Pacman.ToString()) as Pacman,
                     sceneContainer.Resolve<TimeService>(),
                     sceneContainer.Resolve<MapHandlerService>(),
-                    sceneContainer.Resolve<ILevelConfig>()
+                    sceneContainer.Resolve<ILevelConfig>(),
+                    sceneContainer.Resolve<IGameStateService>().GameState.Map.Value.InkySpawnPos   // Временное решение?
                 )).AsSingle();
         }
     }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using R3;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace MyPacman
@@ -7,18 +8,18 @@ namespace MyPacman
     {
         private readonly MapHandlerService _mapHandlerService;
         private readonly Dictionary<EntityType, Vector2> _scatterPositions = new();
-        private readonly Vector2 _homePosition;
-        private readonly Entity _pacman;
+        private readonly ReadOnlyReactiveProperty<Vector2> _homePosition;
+        private readonly ReadOnlyReactiveProperty<Vector2> _pacmanPosition;
 
         public BehaviourModesFactory(
             MapHandlerService mapHandlerService,
-            Entity pacman,
+            ReadOnlyReactiveProperty<Vector2> pacman,
             Vector2 mapSize,
-            Vector2 homePosition)
+            ReadOnlyReactiveProperty<Vector2> homePosition)
         {
             _mapHandlerService = mapHandlerService;
             _homePosition = homePosition;
-            _pacman = pacman;
+            _pacmanPosition = pacman;
             InitScatterPositions(mapSize);
         }
 
@@ -27,16 +28,16 @@ namespace MyPacman
             switch (behaviorModeType)
             {
                 case GhostBehaviorModeType.Chase:
-                    return new BehaviourModeChase(_mapHandlerService, self, _pacman);
+                    return new BehaviourModeChase(_mapHandlerService, self, _pacmanPosition); // Передавать не self а ReadOnlyReactiveProperty конкретных параметров
 
                 case GhostBehaviorModeType.Scatter:
                     return new BehaviourModeScatter(_mapHandlerService, self, _scatterPositions[self.Type]);
 
                 case GhostBehaviorModeType.Frightened:
-                    return new BehaviourModeFrightened(_mapHandlerService, self, _pacman);
+                    return new BehaviourModeFrightened(_mapHandlerService, self, _pacmanPosition);
 
                 case GhostBehaviorModeType.Homecomming:
-                    return new BehaviourModeHomecomming(_mapHandlerService, self, _homePosition);
+                    return new BehaviourModeHomecomming(_mapHandlerService, self, _homePosition.CurrentValue);
 
                 default:
                     throw new System.Exception($"Unknown ghost behavior mode type: {behaviorModeType}");

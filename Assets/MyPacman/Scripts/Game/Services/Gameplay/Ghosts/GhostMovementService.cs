@@ -1,4 +1,5 @@
-﻿using System;
+﻿using R3;
+using System;
 using System.Collections;
 using UnityEngine;
 
@@ -7,7 +8,7 @@ namespace MyPacman
     public class GhostMovementService
     {
         private Ghost _entity;
-        private Pacman _enemy;
+        //private Vector2 _pacmanPosition;
         private Coroutine _moving;
         private TimeService _timeService;
         private GhostBehaviorMode _behaviorMode;
@@ -15,14 +16,15 @@ namespace MyPacman
         private Vector2 _targetPosition;
         private Vector2 _mapSize;
 
-        public event Action<GhostMovementService> TargetReached;
+        public event Action<EntityType> TargetReached;
 
         private event Action Moved;
 
-        public GhostMovementService(Ghost entity, Pacman pacman, TimeService timeService, ILevelConfig levelConfig)
+        public GhostMovementService(Ghost entity, ReadOnlyReactiveProperty<Vector2> pacmanPosition, TimeService timeService, ILevelConfig levelConfig)
         {
+            //pacmanPosition.Subscribe(newPos => _pacmanPosition = newPos); // Будет ли ошибка если этот класс удалится а данная лямбда останется подписанна?
             _entity = entity;
-            _enemy = pacman;
+            //_pacmanPosition = pacmanPosition;
             _timeService = timeService;
             _mapSize = new Vector2(levelConfig.Map.GetLength(1), -levelConfig.Map.GetLength(0));    //Передать сюда только вектор с размером карты
 
@@ -44,6 +46,7 @@ namespace MyPacman
                 Moved += Move;
 
             _behaviorMode = behaviorMode;
+            _behaviorMode._targetPosition.Subscribe(newPos => _targetPosition = newPos);
         }
 
         private void Tick()
@@ -55,18 +58,18 @@ namespace MyPacman
         {
             Moved -= Move;
             //----------------------------------------------------------------------------------------------------------
-            Vector2 selfPosition = _entity.Position.Value;
-            Vector2 selfDirection = _entity.Direction.Value;
+            //Vector2 selfPosition = _entity.Position.Value;
+            //Vector2 selfDirection = _entity.Direction.Value;
 
             // Добавить функцию подбора модификатора смещения для расчета целевой точки в зависимости от типа призрака.
             // Смещение передовать в GhostBehaviorMode при передаче его в призрака
-            if (_behaviorMode.Type == GhostBehaviorModeType.Scatter)
-                _targetPosition = new Vector2(29f, 0f);
-            else
-                _targetPosition = _enemy.Position.Value;
+            //if (_behaviorMode.Type == GhostBehaviorModeType.Scatter)
+            //    _targetPosition = new Vector2(29f, 0f);
+            //else
+            //    _targetPosition = _pacmanPosition;
             //----------------------------------------------------------------------------------------------------------
             _entity.Direction.Value =
-                    _behaviorMode.CalculateDirectionOfMovement(selfPosition, selfDirection, _targetPosition);
+                    _behaviorMode.CalculateDirectionOfMovement(/*selfPosition, selfDirection, _targetPosition*/);
 
             _moving = Coroutines.StartRoutine(Moving());
         }
@@ -95,7 +98,7 @@ namespace MyPacman
             }
 
             if (_entity.Position.Value == _targetPosition)
-                TargetReached?.Invoke(this);
+                TargetReached?.Invoke(_entity.Type);
 
             _moving = null;
             Moved += Move;

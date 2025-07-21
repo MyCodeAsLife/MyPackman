@@ -1,6 +1,7 @@
 ﻿using ObservableCollections;
 using R3;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace MyPacman
@@ -10,7 +11,8 @@ namespace MyPacman
     // Спавнит персонажа при смерти или вызывает завершение игры при недостатке очков жизни
     public class GhostsStateHandler
     {
-        private readonly Dictionary<EntityType, GhostMovementService> _ghostsMap = new();           // Тут должны быть службы управляющие персонажами
+        private readonly Dictionary<EntityType, GhostMovementService> _ghostMovementServicesMap = new();// Тут должны быть службы управляющие персонажами
+        private readonly Dictionary<EntityType, Ghost> _ghostsMap = new();
         private readonly BehaviourModesFactory _behaviourModesFactory;
 
         public GhostsStateHandler(
@@ -18,55 +20,81 @@ namespace MyPacman
             Pacman pacman,
             TimeService timeService,
             MapHandlerService mapHandlerService,
-            ILevelConfig levelConfig)
+            ILevelConfig levelConfig,
+            ReadOnlyReactiveProperty<Vector2> homePosition) // Или выбирать homePosition для каждого призрака отдельно?
         {
             Vector2 mapSize = new Vector2(levelConfig.Map.GetLength(1), -levelConfig.Map.GetLength(0));
 
-            InitGhostsMap(entities, pacman, timeService, levelConfig);
-            _behaviourModesFactory = new BehaviourModesFactory(mapHandlerService,pacman, mapSize,);     // Добавить homePosition
+            InitGhostsMap(entities);
+            InitGhostMovementServicesMap(entities, pacman.Position, timeService, levelConfig);
+            _behaviourModesFactory = new BehaviourModesFactory(mapHandlerService, pacman.Position, mapSize, homePosition);
 
             // For test
-            SetBehaviourMode(GhostBehaviorModeType.Scatter);
+            SetBehaviourModes(GhostBehaviorModeType.Scatter);
         }
 
-        private void SetBehaviourMode(GhostBehaviorModeType behaviorModeType)
+        ~GhostsStateHandler()
         {
-            foreach (var ghost in _ghostsMap)
+            foreach (var movementService in _ghostMovementServicesMap.Values)
+                movementService.TargetReached -= OnTargetReached;
+        }
+
+        private void SetBehaviourModes(GhostBehaviorModeType behaviorModeType)
+        {
+            foreach (var ghostMovementService in _ghostMovementServicesMap)
             {
-                var behaviourMode = _behaviourModesFactory.CreateMode(behaviorModeType, ghost.Key);
-                ghost.Value.BindBehaviorMode(behaviourMode);
-
-                ghost.Value.TargetReached += OnTargetReached;           // Это должно производится однократно
-
-                if (ghost.Key != EntityType.Blinky)
-                {
-                    gh
-                }
+                var ghost = _ghostsMap.First(ghost => ghost.Key == ghostMovementService.Key).Value;
+                var behaviourMode = _behaviourModesFactory.CreateMode(behaviorModeType, ghost);
+                ghostMovementService.Value.BindBehaviorMode(behaviourMode);
             }
         }
 
-        private void InitGhostsMap(
+        private void InitGhostMovementServicesMap(
             IObservableCollection<Entity> entities,
-            Pacman pacman,
+            ReadOnlyReactiveProperty<Vector2> pacmanPosition,
             TimeService timeService,
             ILevelConfig levelConfig)
         {
             foreach (var entity in entities)
-                TryCreateMovementService(entity, pacman, timeService, levelConfig);
+                TryCreateMovementService(entity, pacmanPosition, timeService, levelConfig);
 
-            entities.ObserveAdd().Subscribe(e => TryCreateMovementService(e.Value, pacman, timeService, levelConfig));
+            entities.ObserveAdd().Subscribe(e => TryCreateMovementService(e.Value,
+                pacmanPosition,
+                timeService,
+                levelConfig));
             entities.ObserveRemove().Subscribe(e => TryDestroyMovementService(e.Value.Type));
+        }
+
+        private void InitGhostsMap(IObservableCollection<Entity> entities)
+        {
+            foreach (var entity in entities)
+                if (CheckEntityOnGhost(entity))
+                    _ghostsMap.Add(entity.Type, entity as Ghost);
+
+            entities.ObserveAdd().Subscribe(e =>
+            {
+                if (CheckEntityOnGhost(e.Value))
+                    _ghostsMap.Add(e.Value.Type, e.Value as Ghost);
+            });
+
+            entities.ObserveRemove().Subscribe(e => _ghostsMap.First(value => value.Key == e.Value.Type));
         }
 
         private bool TryCreateMovementService(
             Entity entity,
-            Pacman pacman,
+            ReadOnlyReactiveProperty<Vector2> pacmanPosition,
             TimeService timeService,
             ILevelConfig levelConfig)
         {
             if (CheckEntityOnGhost(entity))
             {
-                _ghostsMap.Add(entity.Type, new GhostMovementService(entity as Ghost, pacman, timeService, levelConfig));
+                var ghostMovementService = new GhostMovementService(
+                    entity as Ghost,
+                    pacmanPosition,
+                    timeService,
+                    levelConfig);
+                _ghostMovementServicesMap.Add(entity.Type, ghostMovementService);
+                ghostMovementService.TargetReached += OnTargetReached;
                 return true;
             }
 
@@ -75,9 +103,9 @@ namespace MyPacman
 
         private object TryDestroyMovementService(EntityType entityType)
         {
-            if (_ghostsMap.ContainsKey(entityType))
+            if (_ghostMovementServicesMap.ContainsKey(entityType))
             {
-                _ghostsMap.Remove(entityType);
+                _ghostMovementServicesMap.Remove(entityType);
                 return true;
             }
 
@@ -90,13 +118,26 @@ namespace MyPacman
         }
 
         // For test
-        private void OnTargetReached(GhostMovementService ghostMovement)
+        private void OnTargetReached(EntityType entityType)     // Добавить логики вызывающие этот метод при (разбегании, преследовании, страхе, +возврате)
         {
-            if (ghostMovement.BehaviorModeType == GhostBehaviorModeType.Scatter)    // Смена целевой точки при выходе из загона
+            // 1. Преследование
+            // Проверять дистаницию до цели, если достигнута то пакман съеден
+            // 2. Страх
+            // Проверять дистаницию до цели, если достигнута то призрак съеден
+            // +3. Возврат
+            // 4. Разбегание
+            // Либо запускать таймер, либо при выходе из загона(как реализовать выход из загона?)
+            var movementService = _ghostMovementServicesMap[entityType];
+            var behaviourModeType = movementService.BehaviorModeType;
+
+            if (behaviourModeType == GhostBehaviorModeType.Homecomming)  // Смена поведения при возврате в загон
             {
-                var position = GetScatterPosition(ghostMovement.EntityType);
-                ghostMovement.      // Сменить целевую точку для данного призрака
+                var entity = _ghostsMap[entityType];
+                var behaviourMode = _behaviourModesFactory.CreateMode(GhostBehaviorModeType.Scatter, entity);
+                movementService.BindBehaviorMode(behaviourMode);
             }
+
+            // Нужно добавить (таймер?) на переключение поведения при выходе из загона.
         }
     }
 }

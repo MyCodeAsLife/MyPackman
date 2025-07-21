@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using R3;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
@@ -9,8 +10,7 @@ namespace MyPacman
         protected readonly MapHandlerService _mapHandlerService;
         protected readonly Ghost _self;
 
-        protected Vector2 _selfPosition;
-        protected Vector2 _targetPosition;
+        protected Vector2 _selfPosition;                // Для кеширования _self.Position?
         protected Vector2 _selfDirection;
 
         public GhostBehaviorMode(MapHandlerService mapHandlerService, Ghost self, GhostBehaviorModeType behaviorModeType)
@@ -20,17 +20,16 @@ namespace MyPacman
             Type = behaviorModeType;
         }
 
+        public ReactiveProperty<Vector2> _targetPosition { get; protected set; } = new();
         public GhostBehaviorModeType Type { get; private set; }
 
-        public Vector2 CalculateDirectionOfMovement(/*Vector2 selfPosition, Vector2 selfDirection, Vector2 enemyPosition*/)
+        public Vector2 CalculateDirectionOfMovement()
         {
-            if (_mapHandlerService.IsCenterTail(selfPosition) == false)
-                return selfDirection;
-
             _selfPosition = _self.Position.Value;
             _selfDirection = _self.Direction.Value;
 
-            _targetPosition = enemyPosition;
+            if (_mapHandlerService.IsCenterTail(_selfPosition) == false)
+                return _selfDirection;
 
             return CalculateDirection();
         }

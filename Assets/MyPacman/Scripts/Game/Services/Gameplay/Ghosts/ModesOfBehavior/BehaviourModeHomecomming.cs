@@ -9,7 +9,7 @@ namespace MyPacman
         public BehaviourModeHomecomming(MapHandlerService mapHandlerService, Ghost self, Vector2 targetPosition)
             : base(mapHandlerService, self, GhostBehaviorModeType.Homecomming)
         {
-            _targetPosition = targetPosition;
+            _targetPosition.OnNext(targetPosition);
         }
 
         protected override Vector2 CalculateDirectionInSelectedMode(List<Vector2> availableDirections)

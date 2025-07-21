@@ -104,7 +104,7 @@ namespace MyPacman
         private ReactiveProperty<Vector2> InitBlinkySpawnPos()
         {
             var blinkySpawnPos = new ReactiveProperty<Vector2>(new Vector2(
-            OriginData.BlinkySpawnPosX,
+                OriginData.BlinkySpawnPosX,
                 OriginData.BlinkySpawnPosY));
             blinkySpawnPos.Subscribe(newPos =>
             {

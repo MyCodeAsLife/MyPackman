@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using R3;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
@@ -7,12 +8,13 @@ namespace MyPacman
     // Режим страха
     public class BehaviourModeFrightened : GhostBehaviorMode
     {
-        private Entity _pacman;
+        private ReadOnlyReactiveProperty<Vector2> _pacmanPosition;     // Это нужно?
 
-        public BehaviourModeFrightened(MapHandlerService mapHandlerService, Ghost self, Entity pacman)
+        public BehaviourModeFrightened(MapHandlerService mapHandlerService, Ghost self, ReadOnlyReactiveProperty<Vector2> pacmanPosition)
             : base(mapHandlerService, self, GhostBehaviorModeType.Frightened)
         {
-            _pacman = pacman;
+            _pacmanPosition = pacmanPosition;
+            pacmanPosition.Subscribe(newPos => _targetPosition.OnNext(newPos)); // Будет ли ошибка если этот класс удалится а данная лямбда останется подписанна?
         }
 
         protected override Vector2 CalculateDirectionInSelectedMode(List<Vector2> availableDirections)  // Похожа на такуюже в BehaviourModeScatter
@@ -32,7 +34,7 @@ namespace MyPacman
                 if (direction == -_selfDirection)
                     continue;
 
-                float distance = _targetPosition.SqrDistance(_selfPosition + direction);
+                float distance = _targetPosition.Value.SqrDistance(_selfPosition + direction);
                 directionsMap[distance] = direction;
 
                 if (distance < minDistance)

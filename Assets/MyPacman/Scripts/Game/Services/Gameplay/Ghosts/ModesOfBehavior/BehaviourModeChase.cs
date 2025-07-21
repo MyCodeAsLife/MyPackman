@@ -1,4 +1,5 @@
-﻿using System;
+﻿using R3;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -9,12 +10,13 @@ namespace MyPacman
     {
         // Смещение для расчета целевой точки, для каждого призрака свое.
         private Vector2 _targetPointOffset;
-        private Entity _pacman;
+        private ReadOnlyReactiveProperty<Vector2> _pacmanPosition;      // Это нужно?
 
-        public BehaviourModeChase(MapHandlerService mapHandlerService, Ghost self, Entity pacman)
+        public BehaviourModeChase(MapHandlerService mapHandlerService, Ghost self, ReadOnlyReactiveProperty<Vector2> pacmanPosition)
             : base(mapHandlerService, self, GhostBehaviorModeType.Chase)
         {
-            _pacman = pacman;
+            _pacmanPosition = pacmanPosition;
+            pacmanPosition.Subscribe(newPos => _targetPosition.OnNext(newPos)); // Будет ли ошибка если этот класс удалится а данная лямбда останется подписанна?
         }
 
         protected override Vector2 CalculateDirectionInSelectedMode(List<Vector2> availableDirections)
