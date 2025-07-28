@@ -31,13 +31,14 @@ namespace MyPacman
                     return new BehaviourModeChase(_mapHandlerService, self, _pacmanPosition); // Передавать не self а ReadOnlyReactiveProperty конкретных параметров
 
                 case GhostBehaviorModeType.Scatter:
-                    return new BehaviourModeScatter(_mapHandlerService, self, _scatterPositions[self.Type]);
+                    return new BehaviourModeScatter(_mapHandlerService, self, _scatterPositions[self.Type], behaviorModeType);
 
                 case GhostBehaviorModeType.Frightened:
                     return new BehaviourModeFrightened(_mapHandlerService, self, _pacmanPosition);
 
                 case GhostBehaviorModeType.Homecomming:
-                    return new BehaviourModeHomecomming(_mapHandlerService, self, _homePosition.CurrentValue);
+                    return new BehaviourModeScatter(_mapHandlerService, self, _homePosition.CurrentValue, behaviorModeType);
+                //return new BehaviourModeHomecomming(_mapHandlerService, self, _homePosition.CurrentValue);
 
                 default:
                     throw new System.Exception($"Unknown ghost behavior mode type: {behaviorModeType}");

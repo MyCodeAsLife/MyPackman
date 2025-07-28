@@ -12,8 +12,12 @@ namespace MyPacman
 
         private Func<List<Vector2>, Dictionary<float, Vector2>> CalculateDirections;
 
-        public BehaviourModeScatter(MapHandlerService mapHandlerService, Ghost self, Vector2 targetPosition)
-            : base(mapHandlerService, self, GhostBehaviorModeType.Scatter)
+        public BehaviourModeScatter(
+            MapHandlerService mapHandlerService,
+            Ghost self,
+            Vector2 targetPosition,
+            GhostBehaviorModeType behaviorModeType)
+            : base(mapHandlerService, self, behaviorModeType)
         {
             _targetPosition.OnNext(targetPosition);
             _gatePositions = mapHandlerService.GetTilePositions(GameConstants.GateTile);  // Таким же макаром получать позицию своего спавна?

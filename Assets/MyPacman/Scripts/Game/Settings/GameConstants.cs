@@ -45,6 +45,8 @@ namespace MyPacman
 
         // Gameplay settings
         public const float PlayerSpeed = 6f;
+        public const float ScatterTimer = 6f;
+        public const float ChaseTimer = 6f;
         public const int StartLifePointsAmount = 3;
         public const int StartingDifficultyLevel = 1;
         public const int CollectedPelletsForFirstFruitSpawn = 70;
@@ -72,5 +74,8 @@ namespace MyPacman
 
         // Signal Tag
         //public const string ExitSceneRequestTag = nameof(ExitSceneRequestTag);
+
+        // Errors
+        public const string NoSwitchingDefined = "There is no switching defined for this behavior. Behavior: ";
     }
 }

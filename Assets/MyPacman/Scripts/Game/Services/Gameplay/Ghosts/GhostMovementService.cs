@@ -97,6 +97,7 @@ namespace MyPacman
                 yield return null;
             }
 
+            //if (_entity.Position.Value.SqrDistance(_targetPosition) < 1f)       // Если расстояние до цели меньше размера тайла
             if (_entity.Position.Value == _targetPosition)
                 TargetReached?.Invoke(_entity.Type);
 

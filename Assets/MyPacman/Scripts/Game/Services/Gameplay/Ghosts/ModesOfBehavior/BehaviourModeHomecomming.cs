@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace MyPacman
 {
-    public class BehaviourModeHomecomming : GhostBehaviorMode
+    public class BehaviourModeHomecomming : GhostBehaviorMode       // Вроде как ненужен этот класс
     {
         public BehaviourModeHomecomming(MapHandlerService mapHandlerService, Ghost self, Vector2 targetPosition)
             : base(mapHandlerService, self, GhostBehaviorModeType.Homecomming)

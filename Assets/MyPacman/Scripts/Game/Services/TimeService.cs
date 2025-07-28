@@ -6,8 +6,7 @@ namespace MyPacman
     public class TimeService : MonoBehaviour
     {
         public bool IsTimeRun { get; private set; } = true;
-
-        public float DeltaTime { get; private set; }
+        public float DeltaTime { get; private set; }        // Зачем это? к томуж привязанное к фиксированному времени
 
         public event Action TimeHasTicked;
 
