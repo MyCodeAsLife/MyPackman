@@ -7,9 +7,6 @@ using UnityEngine;
 
 namespace MyPacman
 {
-    // Обрабатывает состояния персонажей
-    // Переключает режимы призраков
-    // Спавнит персонажа при смерти или вызывает завершение игры при недостатке очков жизни
     public class GhostsStateHandler
     {
         private readonly Dictionary<EntityType, GhostMovementService> _ghostMovementServicesMap = new();// Тут должны быть службы управляющие персонажами
@@ -34,11 +31,19 @@ namespace MyPacman
         {
             Vector2 mapSize = new Vector2(levelConfig.Map.GetLength(1), -levelConfig.Map.GetLength(0));
             _timeService = timeService;
-            _behaviourModesFactory = new BehaviourModesFactory(mapHandlerService, pacman.Position, mapSize, homePosition);
             _timeService.TimeHasTicked += Tick;
+            var blinkyPosition = entities.First(e => e.Type == EntityType.Blinky).Position;
+            _behaviourModesFactory = new BehaviourModesFactory(
+                mapHandlerService,
+                blinkyPosition,
+                pacman.Position,
+                pacman.Direction,
+                mapSize,
+                homePosition);
 
             InitGhostsMap(entities);
             InitGhostMovementServicesMap(entities, pacman.Position, levelConfig);
+
             SwitchBehaviorModes(GhostBehaviorModeType.Scatter);
         }
 
@@ -52,7 +57,7 @@ namespace MyPacman
 
         private void Tick()
         {
-            _levelTimeHasPassed += Time.fixedDeltaTime;
+            _levelTimeHasPassed += Time.deltaTime;
             Timer?.Invoke();
         }
 
@@ -81,7 +86,7 @@ namespace MyPacman
                 switch (_globalStateOfGhosts)        // У каждого призрака может быть свое состояние
                 {
                     case GhostBehaviorModeType.Scatter:
-                        SwitchBehaviorModes(GhostBehaviorModeType.Homecomming);
+                        SwitchBehaviorModes(GhostBehaviorModeType.Chase);
                         break;
 
                     case GhostBehaviorModeType.Chase:
@@ -187,7 +192,7 @@ namespace MyPacman
             return (entity.Type <= EntityType.Blinky && entity.Type >= EntityType.Clyde);
         }
 
-        private void OnTargetReached(EntityType entityType)     // Не срабатывает при Homecomming так как целевая точка находится между тайлами
+        private void OnTargetReached(EntityType entityType)
         {
             // 1. Преследование
             // Проверять дистаницию до цели, если достигнута то пакман съеден

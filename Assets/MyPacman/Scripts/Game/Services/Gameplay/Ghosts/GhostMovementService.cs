@@ -8,7 +8,6 @@ namespace MyPacman
     public class GhostMovementService
     {
         private Ghost _entity;
-        //private Vector2 _pacmanPosition;
         private Coroutine _moving;
         private TimeService _timeService;
         private GhostBehaviorMode _behaviorMode;
@@ -22,9 +21,7 @@ namespace MyPacman
 
         public GhostMovementService(Ghost entity, ReadOnlyReactiveProperty<Vector2> pacmanPosition, TimeService timeService, ILevelConfig levelConfig)
         {
-            //pacmanPosition.Subscribe(newPos => _pacmanPosition = newPos); // Будет ли ошибка если этот класс удалится а данная лямбда останется подписанна?
             _entity = entity;
-            //_pacmanPosition = pacmanPosition;
             _timeService = timeService;
             _mapSize = new Vector2(levelConfig.Map.GetLength(1), -levelConfig.Map.GetLength(0));    //Передать сюда только вектор с размером карты
 
@@ -57,20 +54,7 @@ namespace MyPacman
         private void Move()
         {
             Moved -= Move;
-            //----------------------------------------------------------------------------------------------------------
-            //Vector2 selfPosition = _entity.Position.Value;
-            //Vector2 selfDirection = _entity.Direction.Value;
-
-            // Добавить функцию подбора модификатора смещения для расчета целевой точки в зависимости от типа призрака.
-            // Смещение передовать в GhostBehaviorMode при передаче его в призрака
-            //if (_behaviorMode.Type == GhostBehaviorModeType.Scatter)
-            //    _targetPosition = new Vector2(29f, 0f);
-            //else
-            //    _targetPosition = _pacmanPosition;
-            //----------------------------------------------------------------------------------------------------------
-            _entity.Direction.Value =
-                    _behaviorMode.CalculateDirectionOfMovement(/*selfPosition, selfDirection, _targetPosition*/);
-
+            _entity.Direction.Value = _behaviorMode.CalculateDirectionOfMovement();
             _moving = Coroutines.StartRoutine(Moving());
         }
 
@@ -88,7 +72,7 @@ namespace MyPacman
                 float nextPosY = Utility.RepeatInRange(tempPosition.y, _mapSize.y + 2, 0);
                 _entity.Position.OnNext(new Vector2(nextPosX, nextPosY));
 
-                if (/*currentPosition == nextPosition*/GreaterThanOrEqual(currentPosition, nextPosition, _entity.Direction.Value)
+                if (GreaterThanOrEqual(currentPosition, nextPosition, _entity.Direction.Value)
                     || nextPosX != tempPosition.x
                     || nextPosY != tempPosition.y
                     )

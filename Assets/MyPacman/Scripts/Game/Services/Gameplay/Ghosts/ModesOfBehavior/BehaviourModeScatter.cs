@@ -24,39 +24,40 @@ namespace MyPacman
             CalculateDirections = CalculateDirectionsToGatePosition;
         }
 
-        protected override Vector2 CalculateDirection()
+        protected override Vector2 CalculateDirection(List<Vector2> availableDirections = null)     // Похожа на себя в классе GhostBehaviorMode
         {
-            var availableDirections = _mapHandlerService.GetDirectionsWithoutWalls(_selfPosition);
+            if (availableDirections == null)
+                availableDirections = _mapHandlerService.GetDirectionsWithoutWalls(_selfPosition);
 
-            if (availableDirections.Count == 1)
-                return -_selfDirection;
-            else if (availableDirections.Count == 2)
-                return availableDirections.First(value => value != -_selfDirection);
-            else if (_mapHandlerService.CheckTileForObstacle(_selfPosition))
-                return _selfDirection;
+            //if (availableDirections.Count == 1)
+            //    return -_selfDirection;
+            //else if (availableDirections.Count == 2)
+            //    return availableDirections.First(value => value != -_selfDirection);
+            //else if (_mapHandlerService.CheckTileForObstacle(_selfPosition))
+            //    return _selfDirection;
 
-            return CalculateDirectionInSelectedMode(availableDirections);
+            //return CalculateDirectionInSelectedMode(availableDirections);
+            return base.CalculateDirection(availableDirections);
         }
 
         protected override Vector2 CalculateDirectionInSelectedMode(List<Vector2> availableDirections)  // Похожа на такуюже в BehaviourModeFrightened
         {
             Dictionary<float, Vector2> directionsMap = CalculateDirections(availableDirections);
-            Vector2 direction = SelectRandomDirection(directionsMap);
-            return direction;
+            return SelectRandomDirection(directionsMap);
         }
 
         private Dictionary<float, Vector2> CalculateDirectionsToScatterPosition(List<Vector2> availableDirections)
         {
-            var calculateDirections = CreateDirectionsMap(availableDirections, _targetPosition.Value);
-            return RemoveUnnecessaryDirection(calculateDirections);
+            var calculateDirections = CalculateDirectionsClosestToTarget(availableDirections, _targetPosition.Value);
+            return RemoveWrongDirection(calculateDirections, ItFar);
         }
 
         private Dictionary<float, Vector2> CalculateDirectionsToGatePosition(List<Vector2> availableDirections)
         {
             CheckNeighboringTilesForGates();
             Vector2 targetPosition = CalculatePositionNearestGate();
-            var calculateDirections = CreateDirectionsMap(availableDirections, targetPosition);
-            return RemoveUnnecessaryDirection(calculateDirections);
+            var calculateDirections = CalculateDirectionsClosestToTarget(availableDirections, targetPosition);
+            return RemoveWrongDirection(calculateDirections, ItFar);
         }
 
         private void CheckNeighboringTilesForGates()
@@ -65,24 +66,6 @@ namespace MyPacman
 
             if (_mapHandlerService.CheckTile(lastPosition, GameConstants.GateTile))
                 CalculateDirections = CalculateDirectionsToScatterPosition;
-        }
-
-        private Dictionary<float, Vector2> RemoveUnnecessaryDirection(Dictionary<float, Vector2> calculateDirections)
-        {
-            while (calculateDirections.Count > 1)   // Именно 1, потому как движение в обратную сторону уже убранно
-            {
-                float maxDistance = float.MinValue;
-
-                foreach (var direction in calculateDirections)
-                {
-                    if (direction.Key > maxDistance)
-                        maxDistance = direction.Key;
-                }
-
-                calculateDirections.Remove(calculateDirections.First(value => value.Key == maxDistance).Key);
-            }
-
-            return calculateDirections;
         }
 
         private Vector2 CalculatePositionNearestGate()
@@ -99,29 +82,6 @@ namespace MyPacman
             }
 
             return targetPosition;
-        }
-
-        private Dictionary<float, Vector2> CreateDirectionsMap(List<Vector2> directions, Vector2 targetPosition)
-        {
-            //float maxDistance = float.MinValue;
-            Dictionary<float, Vector2> directionsMap = new();
-
-            foreach (var direction in directions)
-            {
-                if (direction == -_selfDirection)
-                    continue;
-
-                float distance = targetPosition.SqrDistance(_selfPosition + direction);
-                directionsMap[distance] = direction;
-
-                //if (distance > maxDistance)
-                //    maxDistance = distance;
-            }
-
-            //if (directionsMap.Count > 2)
-            //    directionsMap.Remove(directionsMap.First(value => value.Key == maxDistance).Key);
-
-            return directionsMap;
         }
     }
 }
