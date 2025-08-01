@@ -5,7 +5,7 @@ namespace MyPacman
 {
     public class MovableEntityViewModel : EntityViewModel
     {
-        public readonly ReadOnlyReactiveProperty<bool> IsMoving;
+        public readonly ReadOnlyReactiveProperty<bool> IsMoving;        // Вынести в PacmanViewModel ?
         public readonly ReadOnlyReactiveProperty<Vector2> Direction;
 
         public MovableEntityViewModel(Entity entity) : base(entity)

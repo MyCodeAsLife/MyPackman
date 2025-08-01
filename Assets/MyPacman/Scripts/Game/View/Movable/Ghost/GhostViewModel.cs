@@ -1,6 +1,6 @@
 ﻿namespace MyPacman
 {
-    public class GhostViewModel : EntityViewModel
+    public class GhostViewModel : MovableEntityViewModel
     {
         public GhostViewModel(Entity entity) : base(entity)
         {
