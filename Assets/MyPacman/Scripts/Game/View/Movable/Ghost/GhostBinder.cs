@@ -14,6 +14,10 @@ namespace MyPacman
         //[SerializeField] private SpriteRenderer _body;
         [SerializeField] private SpriteRenderer _eyes;
 
+        // For test
+        [SerializeField] private int _lastState;
+        [SerializeField] private int _currentState;
+
         private Sprite[] _eyesAll = new Sprite[4];
 
         public override void Bind(EntityViewModel viewModel)
@@ -66,36 +70,37 @@ namespace MyPacman
         // For test
         private IEnumerator RandomSwitching()
         {
-            int lastState = 0;
+            _lastState = 0;
 
             while (true)
             {
                 float delay = Random.Range(0f, 3f);
-                int randomState = Random.Range(0, 4);
+                _currentState = Random.Range(0, 4);
 
-                if (randomState == 3)       // Возвращение домой
+                if (_currentState == 3)                 // Возвращение домой
                 {
                     _eyes.enabled = true;
-                    _animatorBody.SetInteger(BehaviorModeType, randomState);
-                    lastState = randomState;
+                    //_animatorBody.SetInteger(BehaviorModeType, randomState);
+                    _lastState = _currentState;
                 }
                 else
                 {
-                    _animatorBody.SetInteger(BehaviorModeType, randomState);
-
-                    if (randomState == 2 && lastState != 3)   // Страх
+                    if (_lastState == 3)
+                    {
+                        if (_currentState == 0)         // Преследование
+                        {
+                            _eyes.enabled = true;
+                            _lastState = _currentState;
+                        }
+                    }
+                    else if (_currentState == 2)        // Страх
                     {
                         _eyes.enabled = false;
-
+                        _lastState = _currentState;
                     }
-                    else
-                    {
-                        _eyes.enabled = true;
-                    }
-
-                    lastState = randomState;
                 }
 
+                _animatorBody.SetInteger(BehaviorModeType, _currentState);
                 yield return new WaitForSeconds(delay);
             }
         }
