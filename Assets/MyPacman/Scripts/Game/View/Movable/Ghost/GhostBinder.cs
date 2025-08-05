@@ -11,12 +11,12 @@ namespace MyPacman
         private const string BehaviorModeType = nameof(BehaviorModeType);
 
         [SerializeField] private Animator _animatorBody;
-        //[SerializeField] private SpriteRenderer _body;
         [SerializeField] private SpriteRenderer _eyes;
 
         // For test
         [SerializeField] private int _lastState;
         [SerializeField] private int _currentState;
+        [SerializeField] private string _path;
 
         private Sprite[] _eyesAll = new Sprite[4];
 
@@ -40,6 +40,7 @@ namespace MyPacman
 
 
             // For test
+            _path = viewModel.PrefabPath;
             StartCoroutine(RandomSwitching());
         }
 
@@ -68,6 +69,7 @@ namespace MyPacman
         }
 
         // For test
+        // Нормальное переключение между состояниями
         private IEnumerator RandomSwitching()
         {
             _lastState = 0;
@@ -75,34 +77,42 @@ namespace MyPacman
             while (true)
             {
                 float delay = Random.Range(0f, 3f);
+                yield return new WaitForSeconds(delay);
                 _currentState = Random.Range(0, 4);
 
-                if (_currentState == 3)                 // Возвращение домой
+                if (_currentState == 1)
+                    continue;
+
+                if (_lastState == 2) // Если был Страх
                 {
-                    _eyes.enabled = true;
-                    //_animatorBody.SetInteger(BehaviorModeType, randomState);
-                    _lastState = _currentState;
+                    if (_currentState == 0 || _currentState == 3)       // Преследование
+                    {
+                        _eyes.enabled = true;
+                        _animatorBody.SetInteger(BehaviorModeType, _currentState);
+                        _lastState = _currentState;
+                    }
                 }
                 else
                 {
-                    if (_lastState == 3)
-                    {
-                        if (_currentState == 0)         // Преследование
-                        {
-                            _eyes.enabled = true;
-                            _lastState = _currentState;
-                        }
-                    }
-                    else if (_currentState == 2)        // Страх
+                    if (_currentState == 2 && _lastState != 3) // Страх
                     {
                         _eyes.enabled = false;
+                        _animatorBody.SetInteger(BehaviorModeType, _currentState);
+                        _lastState = _currentState;
+                    }
+                    else if (_currentState != 2)  // Возвращение домой
+                    {
+                        _eyes.enabled = true;
+                        _animatorBody.SetInteger(BehaviorModeType, _currentState);
                         _lastState = _currentState;
                     }
                 }
 
-                _animatorBody.SetInteger(BehaviorModeType, _currentState);
-                yield return new WaitForSeconds(delay);
             }
+
+            // 0 - Преследование
+            // 2 - Страх
+            // 3 - Возвращение домой
         }
     }
 }

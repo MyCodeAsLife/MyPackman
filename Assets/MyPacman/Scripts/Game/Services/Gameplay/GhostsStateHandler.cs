@@ -13,22 +13,31 @@ namespace MyPacman
         private readonly Dictionary<EntityType, Ghost> _ghostsMap = new();
         private readonly BehaviourModesFactory _behaviourModesFactory;
         private readonly TimeService _timeService;
+        private readonly Pacman _pacman;
+        private readonly ReactiveProperty<int> _pacmanLifePoints;
+        private readonly ReadOnlyReactiveProperty<Vector2> _pacmanSpawnPosition;
 
         private GhostBehaviorModeType _globalStateOfGhosts;
         private float _amountTime = 0f;
         private float _timer = 0f;
         private float _levelTimeHasPassed = 0f;         // Время с начала раунда(без пауз)
+        private float _invincibleTimer = 0f;
 
         private event Action Timer;
 
         public GhostsStateHandler(
             IObservableCollection<Entity> entities,
             Pacman pacman,
+            ReactiveProperty<int> pacmanLifePoints,
+            ReadOnlyReactiveProperty<Vector2> pacmanSpawnPosition,
             TimeService timeService,
             MapHandlerService mapHandlerService,
             ILevelConfig levelConfig,
-            ReadOnlyReactiveProperty<Vector2> homePosition) // Или выбирать homePosition для каждого призрака отдельно?
+            ReadOnlyReactiveProperty<Vector2> ghostsHomePosition) // Или выбирать homePosition для каждого призрака отдельно?
         {
+            _pacman = pacman;
+            _pacmanLifePoints = pacmanLifePoints;
+            _pacmanSpawnPosition = pacmanSpawnPosition;
             Vector2 mapSize = new Vector2(levelConfig.Map.GetLength(1), -levelConfig.Map.GetLength(0));
             _timeService = timeService;
             _timeService.TimeHasTicked += Tick;
@@ -39,11 +48,12 @@ namespace MyPacman
                 pacman.Position,
                 pacman.Direction,
                 mapSize,
-                homePosition);
+                ghostsHomePosition);
 
             InitGhostsMap(entities);
             InitGhostMovementServicesMap(entities, pacman.Position, levelConfig);
 
+            // For test
             SwitchBehaviorModes(GhostBehaviorModeType.Scatter);
         }
 
@@ -99,6 +109,7 @@ namespace MyPacman
             }
         }
 
+        // For test?
         private void OnTimer()
         {
             _timer += Time.fixedDeltaTime;
@@ -210,6 +221,61 @@ namespace MyPacman
             }
 
             // Нужно добавить (таймер?) на переключение поведения при выходе из загона.
+        }
+
+        // Призрак сообщает когда сталкивается с игроком
+        private void OnRanIntoPacman(EntityType entityType)
+        {
+            if (_invincibleTimer != 0)
+                return;
+
+            // Проверяем текущее состояние/поведение призрака и в зависимости от него реагируем.
+            var behaviourModeType = _ghostMovementServicesMap[entityType].BehaviorModeType;
+
+            if (behaviourModeType == GhostBehaviorModeType.Frightened)      // Если призрак под страхом
+            {
+                // Переключаем его в режим возвращения домой
+                SetBehaviourMode(entityType, GhostBehaviorModeType.Homecomming);
+                // Увеличить кол-во очков (в зависимости от того какой по счету съеден призрак за время работы страха)
+            }
+            else if (behaviourModeType != GhostBehaviorModeType.Homecomming)  // Если призрак не возвращается домой
+            {
+                // Вызвать событие получения урона
+                PacmanTakeDamage();
+            }
+        }
+
+        private void PacmanTakeDamage()
+        {
+            // Проверяем кол-во жизней пакмана
+            if (_pacmanLifePoints.Value > 0)
+            {
+                // если больше нуля то вычесть одну
+                // телепортировать на точку спавна
+                // запустить временную неуязвимость
+                _pacmanLifePoints.Value--;
+                _pacman.Position.Value = _pacmanSpawnPosition.CurrentValue;
+                _invincibleTimer = GameConstants.PlayerInvincibleTimer;
+                Timer += InvincibleTimer;
+            }
+            else
+            {
+                // если равно нулю или меньше то вызываем конец игры
+            }
+
+        }
+
+        private void InvincibleTimer()
+        {
+            if (_invincibleTimer > 0)
+            {
+                _invincibleTimer -= Time.deltaTime;
+            }
+            else
+            {
+                _invincibleTimer = 0f;
+                Timer -= InvincibleTimer;
+            }
         }
     }
 }

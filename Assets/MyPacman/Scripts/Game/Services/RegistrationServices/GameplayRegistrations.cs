@@ -39,6 +39,8 @@ namespace MyPacman
             sceneContainer.RegisterFactory(_ => new GhostsStateHandler(
                     entities,
                     sceneContainer.Resolve<Entity>(EntityType.Pacman.ToString()) as Pacman,
+                    gameStateService.GameState.LifePoints,
+                    gameStateService.GameState.Map.CurrentValue.PacmanSpawnPos,
                     sceneContainer.Resolve<TimeService>(),
                     sceneContainer.Resolve<MapHandlerService>(),
                     sceneContainer.Resolve<ILevelConfig>(),

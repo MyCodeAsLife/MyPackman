@@ -29,6 +29,7 @@ namespace MyPacman
         public const string GhostsFolderPath = "Prefabs/Ghosts/";
         public const string PelletsFolderPath = "Prefabs/Pellets/";
         public const string FruitsFolderPath = "Prefabs/Fruits/";
+        public const string PopupText = "Prefabs/";
         //public const string UIRootViewFullPath = "Prefabs/UI/RootViewUI";
         //public const string UIMainMenuFullPath = "Prefabs/UI/MainMenuUI";
         //public const string UIGameplayFullPath = "Prefabs/UI/GameplayUI";
@@ -45,6 +46,7 @@ namespace MyPacman
 
         // Gameplay settings
         public const float PlayerSpeed = 6f;
+        public const float PlayerInvincibleTimer = 2.5f;
         public const float ScatterTimer = 6f;
         public const float ChaseTimer = 6f;
         public const int StartLifePointsAmount = 3;
