@@ -29,7 +29,7 @@ namespace MyPacman
         public const string GhostsFolderPath = "Prefabs/Ghosts/";
         public const string PelletsFolderPath = "Prefabs/Pellets/";
         public const string FruitsFolderPath = "Prefabs/Fruits/";
-        public const string PopupText = "Prefabs/";
+        public const string UIFolderPath = "Prefabs/UI/";
         //public const string UIRootViewFullPath = "Prefabs/UI/RootViewUI";
         //public const string UIMainMenuFullPath = "Prefabs/UI/MainMenuUI";
         //public const string UIGameplayFullPath = "Prefabs/UI/GameplayUI";

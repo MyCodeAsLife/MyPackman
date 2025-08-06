@@ -4,8 +4,6 @@
     {
         public ApplicationRegistrations(DIContainer projectContainer)
         {
-            //var entitiesFactory = new EntitiesFactory();
-            //projectContainer.RegisterInstance(entitiesFactory);                  // Фабрика сущностей
             projectContainer.RegisterFactory<IGameStateService>(
                 _ => new PlayerPrefsGameStateService()
                 ).AsSingle();  // Регистрация сервиса загрузки\сохранения

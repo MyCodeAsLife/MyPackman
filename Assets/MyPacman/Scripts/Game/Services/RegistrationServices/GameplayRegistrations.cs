@@ -6,7 +6,6 @@ namespace MyPacman
     {
         public GameplayRegistrations(DIContainer sceneContainer, GameplayEnterParams gameplayEnterParams)
         {
-            sceneContainer.RegisterFactory(_ => new EntityBinderFactory()).AsSingle();
             sceneContainer.RegisterInstance(gameplayEnterParams.LevelConfig);
 
             // Перед данной регистрацией нужно чтобы состояние уровня\карты уже было создано
