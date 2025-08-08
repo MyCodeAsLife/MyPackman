@@ -19,7 +19,7 @@ namespace MyPacman
         // Добавить подписку на изменение данного массива, при изменении позиции призраков
         private readonly Dictionary<Vector3Int, Entity> _edibleEntityMap = new();       // Призраки не меняют свою позицию
 
-        public event Action<EdibleEntityPoints> EntityEaten;
+        public event Action<EdibleEntityPoints, Vector2> EntityEaten;
 
         public MapHandlerService(GameState gameState, ILevelConfig levelConfig, Tilemap obstaclesTileMap, PlayerMovemenService player)
         {
@@ -56,7 +56,7 @@ namespace MyPacman
                 else
                 {
                     _entities.Remove(edibleEntity);
-                    EntityEaten?.Invoke(edibleEntity.Points);
+                    EntityEaten?.Invoke(edibleEntity.Points, edibleEntity.Position.Value);
                 }
             }
         }

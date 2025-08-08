@@ -1,13 +1,15 @@
 ﻿using System;
+using UnityEngine;
 
 namespace MyPacman
 {
     public class ScoringService
     {
-        private GameState _gameState;
+        private readonly GameState _gameState;
+
         private int _scoreForRound;
 
-        public event Action<int> PointsReceived;            // для подписи сервиса который будет создавать\уничтожать view c сообщениями на экране
+        public event Action<int, Vector2> PointsReceived;            // для подписи сервиса который будет создавать\уничтожать view c сообщениями на экране
 
         public ScoringService(GameState gameState, MapHandlerService mapHandlerService)
         {
@@ -15,12 +17,12 @@ namespace MyPacman
             mapHandlerService.EntityEaten += OnEntityEaten;
         }
 
-        private void OnEntityEaten(EdibleEntityPoints enumPoints)
+        private void OnEntityEaten(EdibleEntityPoints enumPoints, Vector2 position)       // Также нужны координаты места подбора
         {
             int points = (int)enumPoints;
             _gameState.Score.Value += points;
             _scoreForRound += points;
-            PointsReceived?.Invoke(points);
+            PointsReceived?.Invoke(points, position);
 
             CheckTheRequiredConditions();
         }

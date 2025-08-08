@@ -7,7 +7,7 @@ namespace MyPacman
     {
         protected T ViewModel;
 
-        [SerializeField] private TextMeshPro _textMeshPro;
+        [SerializeField] protected TextMeshPro _textMeshPro;
 
         public void Bind(PopupTextViewModel viewModel)
         {

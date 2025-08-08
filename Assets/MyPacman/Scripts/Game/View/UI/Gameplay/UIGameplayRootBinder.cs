@@ -7,13 +7,10 @@ namespace MyPacman
     {
         // Если захотим что-то свое, то оверрайдим OnBind
 
-        // protected override void OnBind(UIRootViewModel rootViewModel)
-        // {
-        // }
-
-        public void Bind(UIGameplayRootViewModel viewModel)
+        protected override void OnBind(UIRootViewModel rootViewModel)
         {
-            //----------------------------------------------------------------------------------------------------------
+            var viewModel = rootViewModel as UIGameplayRootViewModel;
+
             // Создаем View для уже существующих/открытых PopupTexts
             foreach (var popupText in viewModel.OpenedPopupTexts)
             {
@@ -31,8 +28,6 @@ namespace MyPacman
             {
                 UIContainer.ClosePopupText(collectionRemoveEvent.Value);
             }));
-
-            base.Bind(viewModel);
         }
     }
 }

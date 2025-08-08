@@ -1,6 +1,6 @@
 ﻿namespace MyPacman
 {
-    public class GameplayUIManager : UIManager
+    public class GameplayUIManager : UIManager  // Через интерфейсы разделить доступные методы для разных сервисов
     {
         private UIGameplayRootViewModel _rootUI;
         //private readonly Subject<Unit> _exitSceneRequest;
@@ -54,7 +54,6 @@
         public ScorePopupTextViewModel OpenScorePopup()
         {
             var scorePopup = new ScorePopupTextViewModel();
-            //var rootUI = SceneContainer.Resolve<UIGameplayRootViewModel>();
             RootUI.OpenPopupText(scorePopup);
             return scorePopup;
         }

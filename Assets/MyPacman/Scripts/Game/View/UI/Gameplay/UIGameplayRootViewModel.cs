@@ -5,7 +5,7 @@ namespace MyPacman
     public class UIGameplayRootViewModel : UIRootViewModel
     {
         public IObservableCollection<PopupTextViewModel> OpenedPopupTexts => _openedPopupTexts;    //new Отдаем данные только для чтения
-        private readonly ObservableList<PopupTextViewModel> _openedPopupTexts = new();              // new
+        private readonly ObservableList<PopupTextViewModel> _openedPopupTexts = new();             // new
 
         public UIGameplayRootViewModel()
         {
