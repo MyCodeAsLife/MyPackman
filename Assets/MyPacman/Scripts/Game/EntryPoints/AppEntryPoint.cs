@@ -11,7 +11,7 @@ namespace MyPacman
 
         private readonly DIContainer _projectContainer = new();
 
-        //private UIRootView _uiRoot;
+        private UIRootView _uiRoot;
         private DIContainer _cashedSceneContainer;
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
@@ -26,6 +26,11 @@ namespace MyPacman
             new ApplicationRegistrations(_projectContainer);
 
             _projectContainer.Resolve<IGameStateService>().LoadSettingsState();        // Загрузка настроек приложения из соранения
+
+            // Создание и регистрация корневого UI
+            var loadingScreenPrefab = Resources.Load<UIRootView>(GameConstants.UIRootViewFullPath);
+            _uiRoot = Object.Instantiate(loadingScreenPrefab);
+            _projectContainer.RegisterInstance(_uiRoot);
         }
 
         private /*async*/ void RunApplication()

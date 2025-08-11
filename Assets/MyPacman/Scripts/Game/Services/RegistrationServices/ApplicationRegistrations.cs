@@ -4,10 +4,9 @@
     {
         public ApplicationRegistrations(DIContainer projectContainer)
         {
-            projectContainer.RegisterFactory<IGameStateService>(
-                _ => new PlayerPrefsGameStateService()
-                ).AsSingle();  // Регистрация сервиса загрузки\сохранения
-
+            // Регистрация сервиса загрузки\сохранения
+            projectContainer.RegisterFactory<IGameStateService>(_ => new PlayerPrefsGameStateService()).AsSingle();
+            // Регистрация управления
             projectContainer.RegisterFactory<PlayerInputActions>(_ => new PlayerInputActions()).AsSingle();
 
             // Вынести настройку и регистрацию таймсервиса
