@@ -30,9 +30,9 @@ namespace MyPacman
         public const string PelletsFolderPath = "Prefabs/Pellets/";
         public const string FruitsFolderPath = "Prefabs/Fruits/";
         public const string UIFolderPath = "Prefabs/UI/";
-        public const string UIRootViewFullPath = "Prefabs/UI/RootViewUI";
+        public const string UIRootViewFullPath = "Prefabs/UI/UIRootView";
         //public const string UIMainMenuFullPath = "Prefabs/UI/MainMenuUI";
-        public const string UIGameplayFullPath = "Prefabs/UI/GameplayUI";
+        public const string UIGameplayFullPath = "Prefabs/UI/UIGameplay";
 
         // Number of tiles along the specified path
         public const int NumberOfWallTiles = 38;
