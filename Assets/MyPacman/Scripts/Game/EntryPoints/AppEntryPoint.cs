@@ -64,7 +64,7 @@ namespace MyPacman
 
         private IEnumerator LoadAndStartMainMenu(MainMenuEnterParams mainMenuEnterParams = null)
         {
-            //_uiRoot.ShowLoadingScreen();
+            _uiRoot.ShowLoadingScreen();
             _cashedSceneContainer?.Dispose();
 
             yield return LoadScene(GameConstants.BootScene);
@@ -79,12 +79,12 @@ namespace MyPacman
                 Coroutines.StartRoutine(LoadAndStartGameplay(mainMenuExitParams.TargetSceneEnterParams));
             });
 
-            //_uiRoot.HideLoadingScreen();
+            _uiRoot.HideLoadingScreen();
         }
 
         private IEnumerator LoadAndStartGameplay(SceneEnterParams sceneEnterParams)
         {
-            //_uiRoot.ShowLoadingScreen();
+            _uiRoot.ShowLoadingScreen();
             _cashedSceneContainer?.Dispose();
 
             yield return LoadScene(GameConstants.BootScene);
@@ -105,7 +105,7 @@ namespace MyPacman
                 Coroutines.StartRoutine(LoadAndStartMainMenu(gameplayExitParams.MainMenuEnterParams));
             });
 
-            //_uiRoot.HideLoadingScreen();
+            _uiRoot.HideLoadingScreen();
         }
 
         private IEnumerator LoadScene(string sceneName)
