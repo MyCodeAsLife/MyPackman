@@ -8,17 +8,7 @@
         public GameplayUIManager(DIContainer container) : base(container)
         {
             //_exitSceneRequest = container.Resolve<Subject<Unit>>(GameConstants.ExitSceneRequestTag);
-        }
-
-        private UIGameplayRootViewModel RootUI      // Ститль именования?
-        {
-            get
-            {
-                if (_rootUI == null)
-                    _rootUI = SceneContainer.Resolve<UIGameplayRootViewModel>();
-
-                return _rootUI;
-            }
+            _rootUI = SceneContainer.Resolve<UIGameplayRootViewModel>();
         }
 
         //public ScreenGameplayViewModel OpenScreenGameplay()
@@ -51,16 +41,16 @@
         //    return popupB;
         //}
 
-        public ScorePopupTextViewModel OpenScorePopup()
+        public ScorePopupTextViewModel OpenScorePopupText()
         {
             var scorePopup = new ScorePopupTextViewModel();
-            RootUI.OpenPopupText(scorePopup);
+            _rootUI.OpenPopupText(scorePopup);
             return scorePopup;
         }
 
-        public void CloseScorePopup(PopupTextViewModel viewModel)
+        public void CloseScorePopupText(PopupTextViewModel viewModel)
         {
-            RootUI.ClosePopupText(viewModel);
+            _rootUI.ClosePopupText(viewModel);
         }
     }
 }

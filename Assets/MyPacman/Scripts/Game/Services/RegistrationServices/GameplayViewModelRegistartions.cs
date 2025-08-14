@@ -5,6 +5,7 @@
         public GameplayViewModelRegistartions(DIContainer viewModelsContainer)
         {
             viewModelsContainer.RegisterFactory(_ => new GameplayUIManager(viewModelsContainer)).AsSingle();
+            viewModelsContainer.RegisterFactory(_ => new UIGameplayRootViewModel()).AsSingle();
         }
     }
 }

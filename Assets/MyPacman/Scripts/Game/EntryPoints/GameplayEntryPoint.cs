@@ -16,8 +16,7 @@ namespace MyPacman
             GameplayEnterParams gameplayEnterParams = sceneEnterParams.As<GameplayEnterParams>();
 
             // Регистрация всего необходимого для данной сцены
-            var gameplayRegistartions = new GameplayRegistrations(_sceneContainer, gameplayEnterParams);    // Регистрируем все сервисы необходимые для сцены
-            //GameplayRegistrations.Register(_sceneContainer, gameplayEnterParams);     // Регистрируем все сервисы необходимые для сцены
+            new GameplayRegistrations(_sceneContainer, gameplayEnterParams);            // Регистрируем все сервисы необходимые для сцены
             var gameplayViewModelsContainer = new DIContainer(_sceneContainer);         // Создаем отдельный контейнер для ViewModel's
             new GameplayViewModelRegistartions(gameplayViewModelsContainer);            // Регистрируем все ViewModel's необходимые для сцены
 
@@ -46,21 +45,27 @@ namespace MyPacman
 
         private void InitUI(DIContainer viewsContainer)
         {
+            CreateUIRootBinder();
+            // Запрашиваем рутовую вьюмодель и пихаем ее в биндер, который создали
+            var uiSceneRootViewModel = viewsContainer.Resolve<UIGameplayRootViewModel>();
+            _uiScene.Bind(uiSceneRootViewModel);
+
             //// Вынести, так как GameplayUIManager в другом контейнере
-            //sceneContainer.RegisterFactory(_ => new TextPopupService(
-            //    sceneContainer.Resolve<GameplayUIManager>(),
-            //    sceneContainer.Resolve<ScoringService>()
+            //_sceneContainer.RegisterFactory(_ => new TextPopupService(
+            //    _sceneContainer.Resolve<GameplayUIManager>(),
+            //    _sceneContainer.Resolve<ScoringService>()
             //    )).AsSingle();
 
-            //CreateUIRootBinder();
+            // For test Можно открывать окошки
+            var uiManager = viewsContainer.Resolve<GameplayUIManager>();
+            var scoringService = viewsContainer.Resolve<ScoringService>();
+            _sceneContainer.RegisterInstance(new TextPopupService(uiManager, scoringService));
 
-            //// Запрашиваем рутовую вьюмодель и пихаем ее в биндер, который создали
-            //var uiSceneRootViewModel = viewsContainer.Resolve<UIGameplayRootViewModel>();
-            //_uiScene.Bind(uiSceneRootViewModel);
-
-            //// For test Можно открывать окошки
-            //var uiManager = viewsContainer.Resolve<GameplayUIManager>();
-            //uiManager.OpenScreenGameplay();
+            //var popupText = uiManager.OpenScorePopupText();
+            //popupText.SetText("Success!");
+            //Vector2 pos = Camera.main.transform.position;
+            //popupText.SetPosition(pos);
+            //popupText.SetColor(new Color(1f, 1f, 1f, 0.3f));
         }
 
         private void CreateViewRootBinder(DIContainer gameplayViewModelsContainer)

@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace MyPacman
@@ -6,44 +7,46 @@ namespace MyPacman
     public class TextPopupService
     {
         private readonly GameplayUIManager _uiManager;
-        //private readonly Dictionary<int, ScorePopupTextViewModel> _textPopups = new();
+        private List<ScorePopupTextViewModel> _popupTexts = new();
 
-        //private readonly Func<int> _getId;      // Принцип именования
-
-        public TextPopupService(GameplayUIManager uiManager, ScoringService scoringService/*, Func<int> getId*/)
+        public TextPopupService(GameplayUIManager uiManager, ScoringService scoringService)
         {
             _uiManager = uiManager;
-            //_getId = getId;
             scoringService.PointsReceived += OnPointsReceived;
         }
 
         private void OnPointsReceived(int score, Vector2 position)
         {
-            var popup = _uiManager.OpenScorePopup();
-            //_textPopups.Add(popup.Id, popup);
+            var popup = _uiManager.OpenScorePopupText();
+            _popupTexts.Add(popup);
             string text = score.ToString() + '!';                                           // Magic
-
-            Coroutines.StartRoutine(TextDisplayTimer(popup, text, 2f));                     // Magic
+            popup.SetText(text);
+            popup.SetPosition(position);
+            Coroutines.StartRoutine(ShowingPopupText(popup, position, 2f));           // Magic
         }
 
-        private IEnumerator TextDisplayTimer(ScorePopupTextViewModel scorePopup, string text, float duration)
+        private IEnumerator ShowingPopupText(ScorePopupTextViewModel scorePopup, Vector2 position, float duration)
         {
             float timer = 0f;
+            float alpha = 1f;
+            float rateOfChange = 1 / duration;
+            Color textColor = scorePopup.TextColor.CurrentValue;
 
-            while (true)
+            while (timer < duration)
             {
                 yield return null;
+                timer += Time.deltaTime;
 
-                if (timer < duration)
-                    timer += Time.deltaTime;
-                else
-                    break;
+                alpha = Mathf.MoveTowards(alpha, 0f, rateOfChange * Time.deltaTime);
+                textColor = new Color(textColor.r, textColor.g, textColor.b, alpha);
+                scorePopup.SetColor(textColor);
 
-                // "Анимация" - изменение позиции всплывающего текста 
+                Vector2 nextPos = new Vector2(position.x + timer, position.y + timer);
+                scorePopup.SetPosition(nextPos);
             }
 
-            //_textPopups.Remove(scorePopup.Id);
-            _uiManager.CloseScorePopup(scorePopup);
+            _popupTexts.Remove(scorePopup);
+            _uiManager.CloseScorePopupText(scorePopup);
         }
     }
 }

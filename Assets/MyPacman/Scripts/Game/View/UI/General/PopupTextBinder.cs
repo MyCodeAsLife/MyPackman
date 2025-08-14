@@ -1,4 +1,5 @@
-﻿using TMPro;
+﻿using R3;
+using TMPro;
 using UnityEngine;
 
 namespace MyPacman
@@ -6,13 +7,16 @@ namespace MyPacman
     public abstract class PopupTextBinder<T> : MonoBehaviour, IPopupTextBinder where T : PopupTextViewModel
     {
         protected T ViewModel;
-
-        [SerializeField] protected TextMeshPro _textMeshPro;
+        protected TextMeshProUGUI PopupText;
 
         public void Bind(PopupTextViewModel viewModel)
         {
             ViewModel = (T)viewModel;
             OnBind(ViewModel);
+            PopupText = GetComponentInChildren<TextMeshProUGUI>();
+            ViewModel.Text.Subscribe(newText => PopupText.text = newText);
+            ViewModel.Position.Subscribe(newPos => transform.position = newPos);
+            ViewModel.TextColor.Skip(1).Subscribe(textColor => PopupText.color = textColor);
         }
 
         public virtual void Close()
