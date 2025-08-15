@@ -1,4 +1,5 @@
-﻿using UnityEngine.Tilemaps;
+﻿using R3;
+using UnityEngine.Tilemaps;
 
 namespace MyPacman
 {
@@ -11,6 +12,9 @@ namespace MyPacman
             // Перед данной регистрацией нужно чтобы состояние уровня\карты уже было создано
             var gameStateService = sceneContainer.Resolve<IGameStateService>();
             var entities = gameStateService.GameState.Map.Value.Entities;
+
+            // Регистрируем сигнал запрашивающий выход в MainMenu
+            sceneContainer.RegisterInstance(GameConstants.ExitSceneRequestTag, new Subject<Unit>());
 
             sceneContainer.RegisterFactory(_ => new WorldGameplayRootViewModel(entities)).AsSingle();      // Регистрацию вынести?
 

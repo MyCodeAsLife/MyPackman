@@ -32,7 +32,7 @@ namespace MyPacman
         public const string UIFolderPath = "Prefabs/UI/";
         public const string UIRootViewFullPath = "Prefabs/UI/UIRootView";
         //public const string UIMainMenuFullPath = "Prefabs/UI/MainMenuUI";
-        public const string UIGameplayFullPath = "Prefabs/UI/UIGameplay";
+        public const string UIGameplayFullPath = "Prefabs/UI/UIGameplayRootView";
 
         // Number of tiles along the specified path
         public const int NumberOfWallTiles = 38;
@@ -75,7 +75,7 @@ namespace MyPacman
         public const float GameplayInformationalPamelHeight = 3f;
 
         // Signal Tag
-        //public const string ExitSceneRequestTag = nameof(ExitSceneRequestTag);
+        public const string ExitSceneRequestTag = nameof(ExitSceneRequestTag);
 
         // Errors
         public const string NoSwitchingDefined = "There is no switching defined for this behavior. Behavior: ";

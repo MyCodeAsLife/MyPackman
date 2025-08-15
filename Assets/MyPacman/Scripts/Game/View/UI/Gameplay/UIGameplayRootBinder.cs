@@ -16,13 +16,13 @@ namespace MyPacman
                 Subscriptions.Add(popupText);
             }
 
-            // Подписываемся на создание новых всплывающих сообщений
+            // Подписываемся на создание новых PopupTexts
             Subscriptions.Add(viewModel.OpenedPopupTexts.ObserveAdd().Subscribe(collectionAddEvent =>
             {
                 UIContainer.OpenPopupText(collectionAddEvent.Value);
             }));
 
-            // Подписываемся на закрытие уже открытых сообщений
+            // Подписываемся на закрытие уже PopupTexts
             Subscriptions.Add(viewModel.OpenedPopupTexts.ObserveRemove().Subscribe(collectionRemoveEvent =>
             {
                 UIContainer.ClosePopupText(collectionRemoveEvent.Value);

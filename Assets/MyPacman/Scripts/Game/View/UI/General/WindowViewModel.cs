@@ -1,12 +1,10 @@
 ﻿using R3;
-using System;
 
 namespace MyPacman
 {
-    public abstract class WindowViewModel : IDisposable
+    public abstract class WindowViewModel : UIViewModel
     {
         public Observable<WindowViewModel> CloseRequested => _closeRequested;
-        public abstract string Id { get; }  // Имя для поиска\выбора префаба
 
         private readonly Subject<WindowViewModel> _closeRequested = new();
 
@@ -14,7 +12,5 @@ namespace MyPacman
         {
             _closeRequested.OnNext(this);
         }
-
-        public virtual void Dispose() { }
     }
 }

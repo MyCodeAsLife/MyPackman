@@ -2,14 +2,14 @@
 
 namespace MyPacman
 {
-    public abstract class WindowBinder<T> : MonoBehaviour, IWindowBinder where T : WindowViewModel
+    public abstract class WindowBinder<T> : MonoBehaviour, IUIBinder where T : UIViewModel
     {
         protected T ViewModel;
 
-        public void Bind(WindowViewModel viewModel)
+        public void Bind(UIViewModel viewModel)
         {
             ViewModel = (T)viewModel;
-            OnBind(ViewModel);
+            OnBind();
         }
 
         public virtual void Close()
@@ -18,6 +18,6 @@ namespace MyPacman
             Destroy(gameObject);
         }
 
-        protected virtual void OnBind(WindowViewModel viewModel) { }
+        protected virtual void OnBind() { }
     }
 }

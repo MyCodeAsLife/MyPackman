@@ -208,7 +208,7 @@ GameObject:
   - component: {fileID: 4678614600589979960}
   - component: {fileID: 8791913334298076976}
   m_Layer: 5
-  m_Name: UIGameplay
+  m_Name: UIGameplayRootView
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

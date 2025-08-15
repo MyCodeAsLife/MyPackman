@@ -6,17 +6,17 @@ namespace MyPacman
     // Создает, хранит и закрывает View
     public class UIContainer : MonoBehaviour
     {
-        //[SerializeField] private Transform _screensContainer;
+        [SerializeField] private Transform _screensContainer;
         //[SerializeField] private Transform _popupsContainer;
         [SerializeField] private Transform _popupTextsContainer;
 
         //private readonly Dictionary<WindowViewModel, IWindowBinder> _openedPopupBinders = new();
-        private readonly Dictionary<PopupTextViewModel, IPopupTextBinder> _openedPopupTextBinders = new();
-        //private IWindowBinder _openedScreenBinder;
+        private readonly Dictionary<PopupTextViewModel, IUIBinder> _openedPopupTextBinders = new();
+        private IUIBinder _openedScreenBinder;
 
         public void OpenPopupText(PopupTextViewModel viewModel)
         {
-            IPopupTextBinder binder = CreatePopupTextView(viewModel, _popupTextsContainer);
+            IUIBinder binder = CreatePopupTextView(viewModel, _popupTextsContainer);
             _openedPopupTextBinders.Add(viewModel, binder);
         }
 
@@ -40,42 +40,42 @@ namespace MyPacman
         //    _openedPopupBinders.Remove(popupViewModel);
         //}
 
-        //public void OpenScreen(WindowViewModel viewModel)
-        //{
-        //    if (viewModel == null)
-        //        return;
+        public void OpenScreen(WindowViewModel viewModel)
+        {
+            if (viewModel == null)
+                return;
 
-        //    IWindowBinder binder = CreateView(viewModel, _screensContainer);
-        //    _openedScreenBinder = binder;
-        //}
+            IUIBinder binder = CreateWindowView(viewModel, _screensContainer);
+            _openedScreenBinder = binder;
+        }
 
-        //private string GetPrefabPath(WindowViewModel viewModel)
-        //{
-        //    return GameConstants.UIFolderPath + viewModel.Id;
-        //}
+        private string GetPrefabPath(string id)
+        {
+            return GameConstants.UIFolderPath + id;
+        }
 
-        //private IWindowBinder CreateWindowView(WindowViewModel viewModel, Transform container)    // Где присваивать позицию созданному объекту?
-        //{
-        //    var prefabPath = GetPrefabPath(viewModel);
-        //    var prefab = Resources.Load<GameObject>(prefabPath);
-        //    var createdPopup = Instantiate(prefab, container);
-        //    var binder = createdPopup.GetComponent<IWindowBinder>();
-        //    binder.Bind(viewModel);
+        private IUIBinder CreateWindowView(WindowViewModel viewModel, Transform container)
+        {
+            var prefabPath = GetPrefabPath(viewModel.Id);
+            var prefab = Resources.Load<GameObject>(prefabPath);
+            var createdPopup = Instantiate(prefab, container);
+            var binder = createdPopup.GetComponent<IUIBinder>();
+            binder.Bind(viewModel);
 
-        //    return binder;
-        //}
+            return binder;
+        }
 
-        private IPopupTextBinder CreatePopupTextView(PopupTextViewModel viewModel, Transform container)
+        private IUIBinder CreatePopupTextView(PopupTextViewModel viewModel, Transform container)
         {
             var createdPopup = CreateView(viewModel.Id, container);
-            var binder = createdPopup.GetComponent<IPopupTextBinder>();
+            var binder = createdPopup.GetComponent<IUIBinder>();
             binder.Bind(viewModel);
             return binder;
         }
 
         private GameObject CreateView(string id, Transform container)
         {
-            string prefabPath = GameConstants.UIFolderPath + id;
+            string prefabPath = GetPrefabPath(id);
             var prefab = Resources.Load<GameObject>(prefabPath);
             return Instantiate(prefab, container);
         }

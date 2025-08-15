@@ -98,7 +98,6 @@ namespace MyPacman
 
             var gameplayContainer = _cashedSceneContainer = new DIContainer(_projectContainer);
             var sceneEntryPoint = Object.FindFirstObjectByType<GameplayEntryPoint>();
-            //var sceneEntryPoint = Object.FindFirstObjectByType<SceneEntryPoint>();
 
             sceneEntryPoint.Run(sceneEnterParams, gameplayContainer).Subscribe(gameplayExitParams =>
             {

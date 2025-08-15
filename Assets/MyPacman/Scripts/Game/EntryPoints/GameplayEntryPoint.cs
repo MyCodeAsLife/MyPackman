@@ -23,13 +23,11 @@ namespace MyPacman
             InitCamera(gameplayEnterParams.LevelConfig.Map);
             CreateScene(gameplayEnterParams.LevelConfig);
 
-            // New
             InitWorld(gameplayViewModelsContainer);
             InitUI(gameplayViewModelsContainer);
 
             // Привязка сигнала к UI сцены (на кнопку выхода в MainMenu)
             var exitParams = CreateExitParams();
-            //_uiScene.Bind(_sceneContainer.Resolve<UIGameplayRootViewModel>());
             var exitToMainMenuSceneSignal = ConfigurateExitSignal(exitParams);
             return exitToMainMenuSceneSignal; // Возвращаем преобразованный сигнал
         }
@@ -46,32 +44,19 @@ namespace MyPacman
         private void InitUI(DIContainer viewsContainer)
         {
             CreateUIRootBinder();
-            // Запрашиваем рутовую вьюмодель и пихаем ее в биндер, который создали
-            var uiSceneRootViewModel = viewsContainer.Resolve<UIGameplayRootViewModel>();
-            _uiScene.Bind(uiSceneRootViewModel);
+            // Запрашиваем\создаеам рутовую вьюмодель и пихаем ее в биндер, который создали
+            _uiScene.Bind(viewsContainer.Resolve<UIGameplayRootViewModel>());
 
-            //// Вынести, так как GameplayUIManager в другом контейнере
-            //_sceneContainer.RegisterFactory(_ => new TextPopupService(
-            //    _sceneContainer.Resolve<GameplayUIManager>(),
-            //    _sceneContainer.Resolve<ScoringService>()
-            //    )).AsSingle();
-
-            // For test Можно открывать окошки
+            // Вынести создание сервиса вслываюших текстовых сообщений?
             var uiManager = viewsContainer.Resolve<GameplayUIManager>();
             var scoringService = viewsContainer.Resolve<ScoringService>();
             _sceneContainer.RegisterInstance(new TextPopupService(uiManager, scoringService));
-
-            //var popupText = uiManager.OpenScorePopupText();
-            //popupText.SetText("Success!");
-            //Vector2 pos = Camera.main.transform.position;
-            //popupText.SetPosition(pos);
-            //popupText.SetColor(new Color(1f, 1f, 1f, 0.3f));
         }
 
         private void CreateViewRootBinder(DIContainer gameplayViewModelsContainer)
         {
             _worldGameplayRootBinder = gameObject.AddComponent<WorldGameplayRootBinder>();
-            _worldGameplayRootBinder.Bind(gameplayViewModelsContainer.Resolve<WorldGameplayRootViewModel>());       // Еще не создается
+            _worldGameplayRootBinder.Bind(gameplayViewModelsContainer.Resolve<WorldGameplayRootViewModel>());
         }
 
         // Можно выделить в шаблон (в MainMenuEntryPoint похожая функция)
@@ -85,9 +70,7 @@ namespace MyPacman
 
         private Observable<SceneExitParams> ConfigurateExitSignal(SceneExitParams exitParams)
         {
-            //var exitSceneSignalSubj = _sceneContainer.Resolve<Subject<R3.Unit>>(GameConstants.ExitSceneRequestTag);
-
-            var exitSceneSignalSubj = new Subject<R3.Unit>();       // Заглушка
+            var exitSceneSignalSubj = _sceneContainer.Resolve<Subject<R3.Unit>>(GameConstants.ExitSceneRequestTag);
             // Преобразовываем сигнал выхода со сцены, чтобы он возвращал значение GameplayExitParams
             var exitToMainMenuSceneSignal = exitSceneSignalSubj.Select(_ => exitParams);
             return exitToMainMenuSceneSignal;
@@ -122,7 +105,7 @@ namespace MyPacman
             var wallsCollider = walls.AddComponent<TilemapCollider2D>();
         }
 
-        private void InitCamera(int[,] map)
+        private void InitCamera(int[,] map)     // Вынуть размер карты из mapHandler?
         {
             const float OffsetFromScreenAspectRatio = 16f / 9f;                 // Magic
 

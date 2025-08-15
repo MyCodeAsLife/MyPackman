@@ -22,7 +22,7 @@ namespace MyPacman
             string text = score.ToString() + '!';                                           // Magic
             popup.SetText(text);
             popup.SetPosition(position);
-            Coroutines.StartRoutine(ShowingPopupText(popup, position, 2f));           // Magic
+            Coroutines.StartRoutine(ShowingPopupText(popup, position, 1f));           // Magic
         }
 
         private IEnumerator ShowingPopupText(ScorePopupTextViewModel scorePopup, Vector2 position, float duration)
@@ -41,7 +41,7 @@ namespace MyPacman
                 textColor = new Color(textColor.r, textColor.g, textColor.b, alpha);
                 scorePopup.SetColor(textColor);
 
-                Vector2 nextPos = new Vector2(position.x + timer, position.y + timer);
+                Vector2 nextPos = new Vector2(position.x + timer * 5, position.y + timer * 5);
                 scorePopup.SetPosition(nextPos);
             }
 

@@ -12,11 +12,11 @@ namespace MyPacman
 
         public void Bind(UIRootViewModel viewModel)
         {
-            //// Подписываемся на изменение viewModel.OpenedScreen, тоесть когда пришел на запрос открытия нового окна
-            //_subscriptions.Add(viewModel.OpenedScreen.Subscribe(newScreenViewModel =>
-            //{
-            //    _UIContainer.OpenScreen(newScreenViewModel);
-            //}));
+            // Подписываемся на изменение viewModel.OpenedScreen, тоесть когда пришел на запрос открытия нового окна
+            Subscriptions.Add(viewModel.OpenedScreen.Subscribe(newScreenViewModel =>
+            {
+                UIContainer.OpenScreen(newScreenViewModel);
+            }));
 
             //// Создаем View для уже существующих/открытых Popups
             //foreach (var popup in viewModel.OpenedPopups)

@@ -8,24 +8,24 @@ namespace MyPacman
     // Обрабатывает запросы на создание и закрытие окон
     public class UIRootViewModel : IDisposable
     {
-        //public ReadOnlyReactiveProperty<WindowViewModel> OpenedScreen => _openedScreen; // Отдаем данные только для чтения
+        public ReadOnlyReactiveProperty<WindowViewModel> OpenedScreen => _openedScreen; // Отдаем данные только для чтения
         //public IObservableCollection<WindowViewModel> OpenedPopups => _openedPopups;    // Отдаем данные только для чтения
 
-        //private readonly ReactiveProperty<WindowViewModel> _openedScreen = new();
+        private readonly ReactiveProperty<WindowViewModel> _openedScreen = new();
         //private readonly ObservableList<WindowViewModel> _openedPopups = new();
         //private readonly Dictionary<WindowViewModel, IDisposable> _popupSubscriptions = new();
 
         public virtual void Dispose()
         {
             //CloseAllPopups();
-            //_openedScreen.Value?.Dispose();
+            _openedScreen.Value?.Dispose();
         }
 
-        //public void OpenScreen(WindowViewModel screenViewModel)
-        //{
-        //    _openedScreen.Value?.Dispose();             // Закрываем открытое окно
-        //    _openedScreen.Value = screenViewModel;
-        //}
+        public void OpenScreen(WindowViewModel screenViewModel)
+        {
+            _openedScreen.Value?.Dispose();             // Закрываем открытое окно
+            _openedScreen.Value = screenViewModel;
+        }
 
         //public void OpenPopup(WindowViewModel popupViewModel)
         //{
