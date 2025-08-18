@@ -5,11 +5,11 @@ namespace MyPacman
     public abstract class UIManager
     {
         // Чтобы вытаскивать все необходимое для сбора вьюмоделей окошек
-        protected readonly DIContainer SceneContainer;
+        protected readonly DIContainer Container;
 
         protected UIManager(DIContainer container)
         {
-            SceneContainer = container;
+            Container = container;
         }
     }
 }

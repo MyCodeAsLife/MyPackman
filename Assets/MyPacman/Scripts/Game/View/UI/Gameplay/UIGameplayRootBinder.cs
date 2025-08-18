@@ -1,5 +1,5 @@
-﻿using R3;
-using ObservableCollections;
+﻿using ObservableCollections;
+using R3;
 
 namespace MyPacman
 {
@@ -15,6 +15,8 @@ namespace MyPacman
             {
                 Subscriptions.Add(popupText);
             }
+
+            Subscriptions.Add(viewModel.UIGameplay.Subscribe(UIGameplay => UIContainer.CreateUIGameplay(UIGameplay)));
 
             // Подписываемся на создание новых PopupTexts
             Subscriptions.Add(viewModel.OpenedPopupTexts.ObserveAdd().Subscribe(collectionAddEvent =>

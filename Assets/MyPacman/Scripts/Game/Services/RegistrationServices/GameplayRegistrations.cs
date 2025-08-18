@@ -16,9 +16,13 @@ namespace MyPacman
             // Регистрируем сигнал запрашивающий выход в MainMenu
             sceneContainer.RegisterInstance(GameConstants.ExitSceneRequestTag, new Subject<Unit>());
 
-            sceneContainer.RegisterFactory(_ => new WorldGameplayRootViewModel(entities)).AsSingle();      // Регистрацию вынести?
+            sceneContainer.RegisterFactory(_ => new PlayerInputActions()).AsSingle();
+            sceneContainer.RegisterFactory(_ => new WorldGameplayRootViewModel(entities)).AsSingle();
 
-            sceneContainer.RegisterFactory(_ => new LevelCreator(sceneContainer, gameplayEnterParams.LevelConfig)).AsSingle();
+            sceneContainer.RegisterFactory(_ => new LevelCreator(
+                sceneContainer,
+                gameplayEnterParams.LevelConfig
+                )).AsSingle();
 
             sceneContainer.RegisterFactory(_ => new MapHandlerService(
                     gameStateService.GameState,
@@ -29,6 +33,7 @@ namespace MyPacman
 
             sceneContainer.RegisterFactory(_ => new PlayerMovemenService(
                     sceneContainer.Resolve<Entity>(EntityType.Pacman.ToString()) as Pacman,
+                    sceneContainer.Resolve<PlayerInputActions>(),
                     sceneContainer.Resolve<IGameStateService>(),
                     sceneContainer.Resolve<ILevelConfig>(),
                     sceneContainer.Resolve<TimeService>()

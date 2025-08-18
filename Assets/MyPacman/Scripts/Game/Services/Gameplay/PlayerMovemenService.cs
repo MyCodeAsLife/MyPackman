@@ -9,7 +9,7 @@ namespace MyPacman
     {
         public readonly ReactiveProperty<Vector3Int> PlayerTilePosition = new();
 
-        private readonly PlayerInputActions _inputActions = new();
+        private readonly PlayerInputActions _inputActions;
         private readonly TimeService _timeService;
         private readonly Pacman _entity;
 
@@ -22,22 +22,14 @@ namespace MyPacman
 
         private event Action Moved;
 
-        ~PlayerMovemenService()
-        {
-            _inputActions.Disable();
-            _inputActions.Keyboard.Movement.performed -= OnMoveStarted;
-            _inputActions.Keyboard.Movement.canceled -= OnMoveCanceled;
-
-            _timeService.TimeHasTicked -= Tick;
-        }
-
         public PlayerMovemenService(
             Pacman entity,
-            //PlayerInputActions inputActions,            // Нужно передавать или создать здесь?
+            PlayerInputActions inputActions,            // Нужно передавать или создать здесь?
             IGameStateService gameStateService,
             ILevelConfig levelConfig,
             TimeService timeService)
         {
+            _inputActions = inputActions;
             _entity = entity;
             _gameStateService = gameStateService;
             _timeService = timeService;
@@ -47,6 +39,15 @@ namespace MyPacman
             PlayerTilePosition.OnNext(Convert.ToTilePosition(_entity.Position.Value));
 
             InitPlayerControl();
+        }
+
+        ~PlayerMovemenService()
+        {
+            _inputActions.Disable();
+            _inputActions.Keyboard.Movement.performed -= OnMoveStarted;
+            _inputActions.Keyboard.Movement.canceled -= OnMoveCanceled;
+
+            _timeService.TimeHasTicked -= Tick;
         }
 
         private void InitPlayerControl()

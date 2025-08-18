@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
+using R3;
+using System;
 
 namespace MyPacman
 {
@@ -9,10 +11,19 @@ namespace MyPacman
         [SerializeField] private Transform _screensContainer;
         //[SerializeField] private Transform _popupsContainer;
         [SerializeField] private Transform _popupTextsContainer;
+        [SerializeField] private Transform _uiGameplayContainer;
 
-        //private readonly Dictionary<WindowViewModel, IWindowBinder> _openedPopupBinders = new();
+        //private readonly Dictionary<UIViewModel, IDisposable> _subscriptions = new();               
         private readonly Dictionary<PopupTextViewModel, IUIBinder> _openedPopupTextBinders = new();
         private IUIBinder _openedScreenBinder;
+        private IUIBinder _openedUIGameplay;
+
+        public void CreateUIGameplay(UIGameplayViewModel uiGameplayView)
+        {
+            var uiGameplay = CreateView(uiGameplayView.Id, _uiGameplayContainer);
+            _openedUIGameplay = uiGameplay.GetComponent<IUIBinder>();
+            _openedUIGameplay.Bind(uiGameplayView);
+        }
 
         public void OpenPopupText(PopupTextViewModel viewModel)
         {
@@ -46,7 +57,14 @@ namespace MyPacman
                 return;
 
             IUIBinder binder = CreateWindowView(viewModel, _screensContainer);
+            var subscription = viewModel.CloseRequested.Subscribe(CloseScreen);
             _openedScreenBinder = binder;
+        }
+
+        public void CloseScreen(WindowViewModel viewModel)
+        {
+            viewModel.Dispose();
+            _openedScreenBinder?.Close();
         }
 
         private string GetPrefabPath(string id)

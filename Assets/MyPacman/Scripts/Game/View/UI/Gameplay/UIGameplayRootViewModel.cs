@@ -1,15 +1,16 @@
 ﻿using ObservableCollections;
 using R3;
+using System;
 
 namespace MyPacman
 {
     public class UIGameplayRootViewModel : UIRootViewModel
     {
         public IObservableCollection<PopupTextViewModel> OpenedPopupTexts => _openedPopupTexts;    //new Отдаем данные только для чтения
-        public ReadOnlyReactiveProperty<UIGameplayViewModel> GameplayUI => _gameplayUI;
+        public ReadOnlyReactiveProperty<UIGameplayViewModel> UIGameplay => _uiGameplay;
 
         private readonly ObservableList<PopupTextViewModel> _openedPopupTexts = new();             // new
-        private readonly ReactiveProperty<UIGameplayViewModel> _gameplayUI = new();
+        private readonly ReactiveProperty<UIGameplayViewModel> _uiGameplay = new();
 
         public UIGameplayRootViewModel()
         {
@@ -24,8 +25,8 @@ namespace MyPacman
 
         public void CreateGameplayUI(UIGameplayViewModel gameplayUI)
         {
-            _gameplayUI.Value?.Dispose();
-            _gameplayUI.Value = gameplayUI;
+            _uiGameplay.Value?.Dispose();
+            _uiGameplay.Value = gameplayUI;
         }
 
         public void OpenPopupText(PopupTextViewModel popupViewModel)

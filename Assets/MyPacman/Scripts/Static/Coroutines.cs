@@ -37,5 +37,10 @@ namespace MyPacman
         {
             Instance.StopCoroutine(routine);
         }
+
+        public static void StopAllRoutine()
+        {
+            Instance.StopAllCoroutines();
+        }
     }
 }

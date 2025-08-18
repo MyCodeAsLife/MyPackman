@@ -1,5 +1,6 @@
 using R3;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.Tilemaps;
 
 namespace MyPacman
@@ -10,6 +11,10 @@ namespace MyPacman
         private UIGameplayRootBinder _uiScene;
         private WorldGameplayRootBinder _worldGameplayRootBinder;
 
+        // For tetst
+        private DIContainer _viewModelsContainer;
+        private WindowViewModel _pauseMenu;
+
         public Observable<SceneExitParams> Run(SceneEnterParams sceneEnterParams, DIContainer sceneContainer)
         {
             _sceneContainer = sceneContainer;
@@ -19,6 +24,7 @@ namespace MyPacman
             new GameplayRegistrations(_sceneContainer, gameplayEnterParams);            // Регистрируем все сервисы необходимые для сцены
             var gameplayViewModelsContainer = new DIContainer(_sceneContainer);         // Создаем отдельный контейнер для ViewModel's
             new GameplayViewModelRegistartions(gameplayViewModelsContainer);            // Регистрируем все ViewModel's необходимые для сцены
+            _viewModelsContainer = gameplayViewModelsContainer;
 
             InitCamera(gameplayEnterParams.LevelConfig.Map);
             CreateScene(gameplayEnterParams.LevelConfig);
@@ -51,6 +57,13 @@ namespace MyPacman
             var uiManager = viewsContainer.Resolve<GameplayUIManager>();
             var scoringService = viewsContainer.Resolve<ScoringService>();
             _sceneContainer.RegisterInstance(new TextPopupService(uiManager, scoringService));
+            // Создание UIGameplay
+            var uiGameplay = uiManager.OpenUIGameplay();        // Нужен ли функционал закрытия/скрытия ui?
+
+            // For test
+            var inputActions = _sceneContainer.Resolve<PlayerInputActions>();
+            inputActions.Enable();
+            inputActions.Keyboard.Escape.performed += OnEscapePresed;
         }
 
         private void CreateViewRootBinder(DIContainer gameplayViewModelsContainer)
@@ -121,6 +134,28 @@ namespace MyPacman
 
             Camera.main.orthographicSize
                 = size + (GameConstants.GameplayInformationalPamelHeight * OffsetFromScreenAspectRatio);
+        }
+
+        // For test
+        private void OnEscapePresed(InputAction.CallbackContext context)
+        {
+            var uiManager = _viewModelsContainer.Resolve<GameplayUIManager>();
+
+            if (_pauseMenu == null)
+                OpenPauseMenu(uiManager);
+            else
+                ClosePauseMenu(uiManager);
+        }
+
+        private void OpenPauseMenu(GameplayUIManager uiManager)
+        {
+            _pauseMenu = uiManager.OpenScreenPauseMenu();
+        }
+
+        private void ClosePauseMenu(GameplayUIManager uiManager)
+        {
+            uiManager.CloseScreenPauseMenu(_pauseMenu);
+            _pauseMenu = null;
         }
     }
 }

@@ -4,18 +4,19 @@ namespace MyPacman
 {
     public class UIGameplayViewModel : UIViewModel
     {
-        public ReadOnlyReactiveProperty<int> HighScore;
-        public ReadOnlyReactiveProperty<int> Score;
-        public ReadOnlyReactiveProperty<int> LifePoints;
+        public readonly ReadOnlyReactiveProperty<int> HighScore;
+        public readonly ReadOnlyReactiveProperty<int> Score;
+        public readonly ReadOnlyReactiveProperty<int> LifePoints;
 
-        public UIGameplayViewModel(IGameStateService gameState)
+        // Потенциальная проблема, в момент создания будет попытка его забиндить с префабом, а поля еще не созданны!!!!!!!
+        public UIGameplayViewModel(GameState gameState)     // Не будет ли проблем с отложеной инициализацией?
         {
             // Определить где и как будет сохранятся максимальный счет, и соответственно откуда будет сюда подцеплятся
-            HighScore = gameState.GameState.Score;      // Определится с максимальным счетом
-            Score = gameState.GameState.Score;
-            LifePoints = gameState.GameState.LifePoints;
+            HighScore = gameState.Score;      // Определится с максимальным счетом
+            Score = gameState.Score;
+            LifePoints = gameState.LifePoints;
         }
 
-        public override string Id => "GameplayUI";                          //Magic
+        public override string Id => "UIGameplay";                          //Magic
     }
 }

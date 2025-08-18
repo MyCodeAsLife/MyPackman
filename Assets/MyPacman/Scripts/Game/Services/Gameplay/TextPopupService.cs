@@ -30,7 +30,7 @@ namespace MyPacman
             float timer = 0f;
             float alpha = 1f;
             float rateOfChange = 1 / duration;
-            Color textColor = scorePopup.TextColor.CurrentValue;
+            Color textColor = Color.white;
 
             while (timer < duration)
             {

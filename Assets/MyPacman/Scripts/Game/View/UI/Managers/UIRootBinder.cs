@@ -15,7 +15,7 @@ namespace MyPacman
             // Подписываемся на изменение viewModel.OpenedScreen, тоесть когда пришел на запрос открытия нового окна
             Subscriptions.Add(viewModel.OpenedScreen.Subscribe(newScreenViewModel =>
             {
-                UIContainer.OpenScreen(newScreenViewModel);
+                UIContainer.OpenScreen(newScreenViewModel);         // Проверить не вызывается ли это при закрытии окна
             }));
 
             //// Создаем View для уже существующих/открытых Popups
@@ -43,8 +43,8 @@ namespace MyPacman
 
         private void OnDestroy()
         {
-            foreach (var popup in Subscriptions)
-                popup.Dispose();
+            foreach (var uiElement in Subscriptions)
+                uiElement?.Dispose();
         }
     }
 }

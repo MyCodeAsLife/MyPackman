@@ -76,6 +76,7 @@ namespace MyPacman
             var sceneEntryPoint = Object.FindFirstObjectByType<MainMenuEntryPoint>();
             sceneEntryPoint.Run(mainMenuEnterParams, mainMenuContainer).Subscribe(mainMenuExitParams =>
             {
+                Coroutines.StopAllRoutine();            // Желательно переделать на остановку конкретных корутин
                 Coroutines.StartRoutine(LoadAndStartGameplay(mainMenuExitParams.TargetSceneEnterParams));
             });
 
@@ -101,6 +102,7 @@ namespace MyPacman
 
             sceneEntryPoint.Run(sceneEnterParams, gameplayContainer).Subscribe(gameplayExitParams =>
             {
+                Coroutines.StopAllRoutine();                // Желательно переделать на остановку конкретных корутин
                 Coroutines.StartRoutine(LoadAndStartMainMenu(gameplayExitParams.MainMenuEnterParams));
             });
 

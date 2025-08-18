@@ -1,5 +1,4 @@
-﻿using ObservableCollections;
-using R3;
+﻿using R3;
 using System;
 using System.Collections.Generic;
 
@@ -13,11 +12,11 @@ namespace MyPacman
 
         private readonly ReactiveProperty<WindowViewModel> _openedScreen = new();
         //private readonly ObservableList<WindowViewModel> _openedPopups = new();
-        //private readonly Dictionary<WindowViewModel, IDisposable> _popupSubscriptions = new();
+        private readonly Dictionary<UIViewModel, IDisposable> _windowSubscriptions = new();
 
         public virtual void Dispose()
         {
-            //CloseAllPopups();
+            CloseAllWindows();
             _openedScreen.Value?.Dispose();
         }
 
@@ -25,6 +24,13 @@ namespace MyPacman
         {
             _openedScreen.Value?.Dispose();             // Закрываем открытое окно
             _openedScreen.Value = screenViewModel;
+            var subscription = screenViewModel.CloseRequested.Subscribe(CloseScreen);
+            _windowSubscriptions[screenViewModel] = subscription;
+        }
+
+        public void CloseScreen(WindowViewModel screenViewModel)        // Это лишнее?
+        {
+            _openedScreen.Value.RequestClose();
         }
 
         //public void OpenPopup(WindowViewModel popupViewModel)
@@ -56,10 +62,12 @@ namespace MyPacman
         //        ClosePopup(openedPopup);
         //}
 
-        //public void CloseAllPopups()
-        //{
-        //    foreach (var popup in _openedPopups)
-        //        ClosePopup(popup);
-        //}
+        public void CloseAllWindows()
+        {
+            foreach (var subscribe in _windowSubscriptions)
+                subscribe.Value?.Dispose();
+
+            _windowSubscriptions.Clear();
+        }
     }
 }

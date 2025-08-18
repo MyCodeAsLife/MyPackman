@@ -4,23 +4,36 @@ namespace MyPacman
 {
     public class GameplayUIManager : UIManager  // Через интерфейсы разделить доступные методы для разных сервисов
     {
-        private UIGameplayRootViewModel _rootUI;
+        private readonly UIGameplayRootViewModel _rootUI;
         private readonly Subject<Unit> _exitSceneRequest;
 
-        public GameplayUIManager(DIContainer container) : base(container)
+        public GameplayUIManager(DIContainer viewModelContainer) : base(viewModelContainer)
         {
-            _exitSceneRequest = container.Resolve<Subject<Unit>>(GameConstants.ExitSceneRequestTag);
-            _rootUI = SceneContainer.Resolve<UIGameplayRootViewModel>();
+            _exitSceneRequest = viewModelContainer.Resolve<Subject<Unit>>(GameConstants.ExitSceneRequestTag);
+            _rootUI = Container.Resolve<UIGameplayRootViewModel>();
         }
 
-        public ScreenMainMenuGameplayViewModel OpenScreenGameplay()
+        public UIGameplayViewModel OpenUIGameplay()
         {
-            var viewModel = new ScreenMainMenuGameplayViewModel(this, _exitSceneRequest);
+            var viewModel = new UIGameplayViewModel(Container.Resolve<IGameStateService>().GameState);
+            _rootUI.CreateGameplayUI(viewModel);
+            return viewModel;
+        }
+
+        public ScreenPauseMenuViewModel OpenScreenPauseMenu()
+        {
+            var viewModel = new ScreenPauseMenuViewModel(this, _exitSceneRequest);
             //var rootUI = SceneContainer.Resolve<UIGameplayRootViewModel>();  // Вызов тут, потому как в конструкторе еще неизвестно, создан или нет UIGameplayRootViewModel
 
             _rootUI.OpenScreen(viewModel);
 
             return viewModel;
+        }
+
+        // Test???
+        public void CloseScreenPauseMenu(WindowViewModel screenViewModel)
+        {
+            _rootUI.CloseScreen(screenViewModel);
         }
 
         //public PopupAViewModel OpenPopupA()     // Похож на OpenPopupB
