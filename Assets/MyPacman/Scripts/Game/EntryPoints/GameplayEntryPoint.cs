@@ -1,6 +1,5 @@
 using R3;
 using UnityEngine;
-using UnityEngine.InputSystem;
 using UnityEngine.Tilemaps;
 
 namespace MyPacman
@@ -11,26 +10,21 @@ namespace MyPacman
         private UIGameplayRootBinder _uiScene;
         private WorldGameplayRootBinder _worldGameplayRootBinder;
 
-        // For tetst
-        private DIContainer _viewModelsContainer;
-        private WindowViewModel _pauseMenu;
-
         public Observable<SceneExitParams> Run(SceneEnterParams sceneEnterParams, DIContainer sceneContainer)
         {
             _sceneContainer = sceneContainer;
             GameplayEnterParams gameplayEnterParams = sceneEnterParams.As<GameplayEnterParams>();
 
             // Регистрация всего необходимого для данной сцены
-            new GameplayRegistrations(_sceneContainer, gameplayEnterParams);            // Регистрируем все сервисы необходимые для сцены
-            var gameplayViewModelsContainer = new DIContainer(_sceneContainer);         // Создаем отдельный контейнер для ViewModel's
-            new GameplayViewModelRegistartions(gameplayViewModelsContainer);            // Регистрируем все ViewModel's необходимые для сцены
-            _viewModelsContainer = gameplayViewModelsContainer;
+            var viewModelsContainer = new DIContainer(_sceneContainer);         // Создаем отдельный контейнер для ViewModel's
+            new GameplayRegistrations(_sceneContainer, viewModelsContainer, gameplayEnterParams);            // Регистрируем все сервисы необходимые для сцены
+            new GameplayViewModelRegistartions(viewModelsContainer);            // Регистрируем все ViewModel's необходимые для сцены
 
             InitCamera(gameplayEnterParams.LevelConfig.Map);
             CreateScene(gameplayEnterParams.LevelConfig);
 
-            InitWorld(gameplayViewModelsContainer);
-            InitUI(gameplayViewModelsContainer);
+            InitWorld(viewModelsContainer);
+            InitUI(viewModelsContainer);
 
             // Привязка сигнала к UI сцены (на кнопку выхода в MainMenu)
             var exitParams = CreateExitParams();
@@ -42,7 +36,7 @@ namespace MyPacman
         {
             var mapHandler = _sceneContainer.Resolve<MapHandlerService>();
             CreateViewRootBinder(viewsContainer);
-            var player = _sceneContainer.Resolve<PlayerMovemenService>();
+            var player = _sceneContainer.Resolve<PlayerMovementService>();
             var scoringService = _sceneContainer.Resolve<ScoringService>();
             var ghostsStateHandler = _sceneContainer.Resolve<GhostsStateHandler>();
         }
@@ -60,10 +54,8 @@ namespace MyPacman
             // Создание UIGameplay
             var uiGameplay = uiManager.OpenUIGameplay();        // Нужен ли функционал закрытия/скрытия ui?
 
-            // For test
-            var inputActions = _sceneContainer.Resolve<PlayerInputActions>();
-            inputActions.Enable();
-            inputActions.Keyboard.Escape.performed += OnEscapePresed;
+            // Инициализация управления (вынести отсюда)
+            var inputHandler = _sceneContainer.Resolve<GameplayInputActionsHandler>();
         }
 
         private void CreateViewRootBinder(DIContainer gameplayViewModelsContainer)
@@ -134,28 +126,6 @@ namespace MyPacman
 
             Camera.main.orthographicSize
                 = size + (GameConstants.GameplayInformationalPamelHeight * OffsetFromScreenAspectRatio);
-        }
-
-        // For test
-        private void OnEscapePresed(InputAction.CallbackContext context)
-        {
-            var uiManager = _viewModelsContainer.Resolve<GameplayUIManager>();
-
-            if (_pauseMenu == null)
-                OpenPauseMenu(uiManager);
-            else
-                ClosePauseMenu(uiManager);
-        }
-
-        private void OpenPauseMenu(GameplayUIManager uiManager)
-        {
-            _pauseMenu = uiManager.OpenScreenPauseMenu();
-        }
-
-        private void ClosePauseMenu(GameplayUIManager uiManager)
-        {
-            uiManager.CloseScreenPauseMenu(_pauseMenu);
-            _pauseMenu = null;
         }
     }
 }

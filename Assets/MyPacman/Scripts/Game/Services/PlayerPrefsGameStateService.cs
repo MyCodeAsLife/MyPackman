@@ -107,8 +107,8 @@ namespace MyPacman
         private GameState CreateGameStateFromSettings()
         {
             ILevelConfig levelConfig = new NormalLevelConfig();
-            BaseGameStateCreationService baseGameStateCreationService = new BaseGameStateCreationService();
-            _gameStateOrigin = baseGameStateCreationService.Create(levelConfig);
+            BaseGameStateSettings baseGameStateCreationService = new BaseGameStateSettings();
+            _gameStateOrigin = baseGameStateCreationService.GetBaseGameState(levelConfig);
 
             return new GameState(_gameStateOrigin);
         }

@@ -1,8 +1,8 @@
 ﻿namespace MyPacman
 {
-    public class BaseGameStateCreationService
+    public class BaseGameStateSettings
     {
-        public GameStateData Create(ILevelConfig levelConfig)
+        public GameStateData GetBaseGameState(ILevelConfig levelConfig)
         {
             var gameStateData = new GameStateData();
             gameStateData.Score = 0;

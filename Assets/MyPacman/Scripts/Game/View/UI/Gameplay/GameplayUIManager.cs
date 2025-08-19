@@ -13,6 +13,9 @@ namespace MyPacman
             _rootUI = Container.Resolve<UIGameplayRootViewModel>();
         }
 
+        public bool IsScreenOpen => _rootUI.OpenedScreen.CurrentValue != null;
+        public ReadOnlyReactiveProperty<WindowViewModel> OpenedScreen => _rootUI.OpenedScreen;
+
         public UIGameplayViewModel OpenUIGameplay()
         {
             var viewModel = new UIGameplayViewModel(Container.Resolve<IGameStateService>().GameState);
@@ -30,10 +33,9 @@ namespace MyPacman
             return viewModel;
         }
 
-        // Test???
-        public void CloseScreenPauseMenu(WindowViewModel screenViewModel)
+        public void CloseScreenPauseMenu()
         {
-            _rootUI.CloseScreen(screenViewModel);
+            _rootUI.CloseScreen();
         }
 
         //public PopupAViewModel OpenPopupA()     // Похож на OpenPopupB

@@ -1,7 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using R3;
+using System.Collections.Generic;
 using UnityEngine;
-using R3;
-using System;
 
 namespace MyPacman
 {

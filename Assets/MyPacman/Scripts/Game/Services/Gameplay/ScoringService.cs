@@ -17,7 +17,7 @@ namespace MyPacman
             mapHandlerService.EntityEaten += OnEntityEaten;
         }
 
-        private void OnEntityEaten(EdibleEntityPoints enumPoints, Vector2 position)       // Также нужны координаты места подбора
+        private void OnEntityEaten(EdibleEntityPoints enumPoints, Vector2 position)
         {
             int points = (int)enumPoints;
             _gameState.Score.Value += points;

@@ -67,7 +67,7 @@ namespace MyPacman
 
         private void Tick()
         {
-            _levelTimeHasPassed += Time.deltaTime;
+            _levelTimeHasPassed += _timeService.DeltaTime;
             Timer?.Invoke();
         }
 
@@ -112,9 +112,9 @@ namespace MyPacman
         // For test?
         private void OnTimer()
         {
-            _timer += Time.fixedDeltaTime;
+            _timer += _timeService.DeltaTime;
 
-            CheckTimerTest();   // For tets
+            CheckTimerTest();   // For test
         }
 
         private float GetTimerForBehaviorType(GhostBehaviorModeType behaviorModeType)
@@ -269,7 +269,7 @@ namespace MyPacman
         {
             if (_invincibleTimer > 0)
             {
-                _invincibleTimer -= Time.deltaTime;
+                _invincibleTimer -= _timeService.DeltaTime;
             }
             else
             {

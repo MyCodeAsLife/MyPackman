@@ -66,7 +66,7 @@ namespace MyPacman
             while (IsMoving)
             {
                 Vector2 currentPosition = _entity.Position.Value;
-                float speed = GameConstants.PlayerSpeed * Time.deltaTime;
+                float speed = GameConstants.PlayerSpeed * _timeService.DeltaTime;
                 Vector2 tempPosition = Vector3.MoveTowards(currentPosition, nextPosition, speed);
                 float nextPosX = Utility.RepeatInRange(tempPosition.x, 1, _mapSize.x - 1);
                 float nextPosY = Utility.RepeatInRange(tempPosition.y, _mapSize.y + 2, 0);
@@ -81,6 +81,7 @@ namespace MyPacman
                 yield return null;
             }
 
+            // Возможное место фиксации столкновения с игроком
             //if (_entity.Position.Value.SqrDistance(_targetPosition) < 1f)       // Если расстояние до цели меньше размера тайла
             if (_entity.Position.Value == _targetPosition)
                 TargetReached?.Invoke(_entity.Type);
@@ -109,7 +110,7 @@ namespace MyPacman
                     return firstPos.y < secondPos.y;
             }
 
-            throw new Exception(
+            throw new Exception(                                                    // Magic
                 $"Unknown error." +
                 $"First pos: {firstPos}." +
                 $"Second pos: {secondPos}." +

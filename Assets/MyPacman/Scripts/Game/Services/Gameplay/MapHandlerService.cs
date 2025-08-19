@@ -21,7 +21,7 @@ namespace MyPacman
 
         public event Action<EdibleEntityPoints, Vector2> EntityEaten;
 
-        public MapHandlerService(GameState gameState, ILevelConfig levelConfig, Tilemap obstaclesTileMap, PlayerMovemenService player)
+        public MapHandlerService(GameState gameState, ILevelConfig levelConfig, Tilemap obstaclesTileMap, PlayerMovementService player)
         {
             _gameState = gameState;
             _entities = gameState.Map.CurrentValue.Entities;

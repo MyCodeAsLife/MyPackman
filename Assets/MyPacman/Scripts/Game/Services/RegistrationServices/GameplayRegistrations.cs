@@ -5,7 +5,10 @@ namespace MyPacman
 {
     public class GameplayRegistrations
     {
-        public GameplayRegistrations(DIContainer sceneContainer, GameplayEnterParams gameplayEnterParams)
+        public GameplayRegistrations(
+            DIContainer sceneContainer,
+            DIContainer viewModelsContainer,
+            GameplayEnterParams gameplayEnterParams)
         {
             sceneContainer.RegisterInstance(gameplayEnterParams.LevelConfig);
 
@@ -28,10 +31,10 @@ namespace MyPacman
                     gameStateService.GameState,
                     sceneContainer.Resolve<ILevelConfig>(),
                     sceneContainer.Resolve<Tilemap>(GameConstants.Obstacle),
-                    sceneContainer.Resolve<PlayerMovemenService>()
+                    sceneContainer.Resolve<PlayerMovementService>()
                 )).AsSingle();
 
-            sceneContainer.RegisterFactory(_ => new PlayerMovemenService(
+            sceneContainer.RegisterFactory(_ => new PlayerMovementService(
                     sceneContainer.Resolve<Entity>(EntityType.Pacman.ToString()) as Pacman,
                     sceneContainer.Resolve<PlayerInputActions>(),
                     sceneContainer.Resolve<IGameStateService>(),
@@ -53,6 +56,12 @@ namespace MyPacman
                     sceneContainer.Resolve<MapHandlerService>(),
                     sceneContainer.Resolve<ILevelConfig>(),
                     sceneContainer.Resolve<IGameStateService>().GameState.Map.Value.InkySpawnPos   // Временное решение?
+                )).AsSingle();
+
+            sceneContainer.RegisterFactory(_ => new GameplayInputActionsHandler(
+                    viewModelsContainer.Resolve<GameplayUIManager>(),
+                    sceneContainer.Resolve<PlayerInputActions>(),
+                    sceneContainer.Resolve<PlayerMovementService>()
                 )).AsSingle();
         }
     }

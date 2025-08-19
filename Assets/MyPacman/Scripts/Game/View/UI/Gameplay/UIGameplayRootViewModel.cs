@@ -1,6 +1,5 @@
 ﻿using ObservableCollections;
 using R3;
-using System;
 
 namespace MyPacman
 {
@@ -12,9 +11,15 @@ namespace MyPacman
         private readonly ObservableList<PopupTextViewModel> _openedPopupTexts = new();             // new
         private readonly ReactiveProperty<UIGameplayViewModel> _uiGameplay = new();
 
-        public UIGameplayRootViewModel()
+        public UIGameplayRootViewModel(TimeService timeService)
         {
-            // Делаем свои кастомные штучки для сцены, если надо.
+            OpenedScreen.Subscribe(viewModel =>
+            {
+                if (viewModel == null)
+                    timeService.RunTime();
+                else
+                    timeService.StopTime();
+            });
         }
 
         public override void Dispose()

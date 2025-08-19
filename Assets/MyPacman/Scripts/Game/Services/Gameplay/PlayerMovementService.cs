@@ -5,11 +5,10 @@ using UnityEngine.InputSystem;
 
 namespace MyPacman
 {
-    public class PlayerMovemenService
+    public class PlayerMovementService
     {
         public readonly ReactiveProperty<Vector3Int> PlayerTilePosition = new();
 
-        private readonly PlayerInputActions _inputActions;
         private readonly TimeService _timeService;
         private readonly Pacman _entity;
 
@@ -20,16 +19,18 @@ namespace MyPacman
         private Vector2Int _lastDirection;
         private Vector2 _lastPosition;
 
+        private Func<Vector2> GetMovementDirection;
+
         private event Action Moved;
 
-        public PlayerMovemenService(
+        public PlayerMovementService(
             Pacman entity,
             PlayerInputActions inputActions,            // Нужно передавать или создать здесь?
             IGameStateService gameStateService,
             ILevelConfig levelConfig,
             TimeService timeService)
         {
-            _inputActions = inputActions;
+            GetMovementDirection = inputActions.Keyboard.Movement.ReadValue<Vector2>;        // Передать сюда только функцию?
             _entity = entity;
             _gameStateService = gameStateService;
             _timeService = timeService;
@@ -37,25 +38,11 @@ namespace MyPacman
 
             _mapSize = new Vector2(levelConfig.Map.GetLength(1), -levelConfig.Map.GetLength(0));
             PlayerTilePosition.OnNext(Convert.ToTilePosition(_entity.Position.Value));
-
-            InitPlayerControl();
         }
 
-        ~PlayerMovemenService()
+        ~PlayerMovementService()
         {
-            _inputActions.Disable();
-            _inputActions.Keyboard.Movement.performed -= OnMoveStarted;
-            _inputActions.Keyboard.Movement.canceled -= OnMoveCanceled;
-
             _timeService.TimeHasTicked -= Tick;
-        }
-
-        private void InitPlayerControl()
-        {
-            //_inputActions = new PlayerInputActions();
-            _inputActions.Enable();
-            _inputActions.Keyboard.Movement.started += OnMoveStarted;
-            _inputActions.Keyboard.Movement.canceled += OnMoveCanceled;
         }
 
         private void Tick()
@@ -73,20 +60,20 @@ namespace MyPacman
 
         private void Movement()
         {
-            Vector2 currentDirection = _inputActions.Keyboard.Movement.ReadValue<Vector2>();
+            Vector2 movementDirection = GetMovementDirection();
             Vector2 currentPosition = _entity.GetCurrentPosition();
 
-            Rotate(currentDirection);
-            Move(currentPosition, currentDirection);
+            Rotate(movementDirection);
+            Move(currentPosition, movementDirection);
         }
 
-        private void OnMoveStarted(InputAction.CallbackContext context)
+        public void OnMoveStarted(InputAction.CallbackContext context)
         {
             _entity.IsMoving.OnNext(true);
             Moved += Movement;
         }
 
-        private void OnMoveCanceled(InputAction.CallbackContext context)
+        public void OnMoveCanceled(InputAction.CallbackContext context)
         {
             Moved -= Movement;
             _entity.IsMoving.OnNext(false);
