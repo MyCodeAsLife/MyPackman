@@ -37,7 +37,7 @@ namespace MyPacman
             var mapHandler = _sceneContainer.Resolve<MapHandlerService>();
             CreateViewRootBinder(viewsContainer);
             var player = _sceneContainer.Resolve<PlayerMovementService>();
-            var scoringService = _sceneContainer.Resolve<ScoringService>();
+            //var scoringService = _sceneContainer.Resolve<ScoringService>();           // Дубль        
             var ghostsStateHandler = _sceneContainer.Resolve<GhostsStateHandler>();
         }
 
@@ -52,7 +52,7 @@ namespace MyPacman
             var scoringService = viewsContainer.Resolve<ScoringService>();
             _sceneContainer.RegisterInstance(new TextPopupService(uiManager, scoringService));
             // Создание UIGameplay
-            var uiGameplay = uiManager.OpenUIGameplay();        // Нужен ли функционал закрытия/скрытия ui?
+            var uiGameplay = uiManager.OpenUIGameplay();        // Нужен ли функционал закрытия/скрытия ui?  // Зарегестрировать в контейнер?
 
             // Инициализация управления (вынести отсюда)
             var inputHandler = _sceneContainer.Resolve<GameplayInputActionsHandler>();

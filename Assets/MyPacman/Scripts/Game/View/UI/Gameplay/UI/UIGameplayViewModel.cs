@@ -1,22 +1,28 @@
 ﻿using R3;
+using System;
+using UnityEngine;
 
 namespace MyPacman
 {
-    public class UIGameplayViewModel : UIViewModel
+    public class UIGameplayViewModel : UIViewModel, IUIGameplayViewModel
     {
-        public readonly ReadOnlyReactiveProperty<int> HighScore;
-        public readonly ReadOnlyReactiveProperty<int> Score;
-        public readonly ReadOnlyReactiveProperty<int> LifePoints;
+        private readonly ReadOnlyReactiveProperty<int> _highScore;
+        private readonly ReadOnlyReactiveProperty<int> _score;
+        //public readonly ReadOnlyReactiveProperty<int> LifePoints;       // Убрать после выноса объекта в GameplayUIManager
 
-        // Потенциальная проблема, в момент создания будет попытка его забиндить с префабом, а поля еще не созданны!!!!!!!
-        public UIGameplayViewModel(GameState gameState)     // Не будет ли проблем с отложеной инициализацией?
+        public UIGameplayViewModel(GameState gameState)     // Передать не весь объект а конкретные поля
         {
             // Определить где и как будет сохранятся максимальный счет, и соответственно откуда будет сюда подцеплятся
-            HighScore = gameState.Score;      // Определится с максимальным счетом
-            Score = gameState.Score;
-            LifePoints = gameState.LifePoints;
+            _highScore = gameState.Score;      // Определится с максимальным счетом
+            _score = gameState.Score;
+            //LifePoints = gameState.LifePoints;
         }
 
-        public override string Id => "UIGameplay";                          //Magic
+        public override string Id => "UIGameplay";                  //Magic
+        public Action<bool> SetActiveLifeUpText { get; set; }       // Передавать через интерфейс только get
+        public Transform PanelOfRecentlyPickedFruits { get; set; }  // Передавать через интерфейс только get
+        public Transform LifeDisplayPanel { get; set; }             // Передавать через интерфейс только get
+        public ReadOnlyReactiveProperty<int> HighScore => _highScore;
+        public ReadOnlyReactiveProperty<int> Score => _score;
     }
 }

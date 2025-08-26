@@ -25,7 +25,7 @@ namespace MyPacman
             pacmanViewModel.Direction.Skip(1).Subscribe(direction =>
             {
                 // Повернуть
-                _animator.transform.rotation = Quaternion.Euler(DefineAngle(direction));
+                _animator.transform.rotation = Quaternion.Euler(direction.DefineAngle());
             });
 
             pacmanViewModel.IsMoving.Subscribe(isMoving => _animator.SetBool(IsMoving, isMoving));  // Переключение анимации движения
@@ -36,19 +36,5 @@ namespace MyPacman
 
         // Получать позицию игрока здесь, она напрямую зависит от коллайдера и rigitbody
         private Vector2 GetCurrentPosition() => _rigidbody.position;
-
-        private Vector3 DefineAngle(Vector2 direction)
-        {
-            Vector3 angle = new Vector3();
-
-            if (direction == Vector2.left)
-                angle.y = 180;
-            else if (direction == Vector2.up)
-                angle.z = 90;
-            else if (direction == Vector2.down)
-                angle.z = -90;
-
-            return angle;
-        }
     }
 }

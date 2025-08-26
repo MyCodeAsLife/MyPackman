@@ -18,6 +18,20 @@ namespace MyPacman
         {
             return value / 2f;
         }
+
+        public static Vector3 DefineAngle(this Vector2 value)
+        {
+            Vector3 angle = new Vector3();
+
+            if (value == Vector2.left)
+                angle.y = 180;
+            else if (value == Vector2.up)
+                angle.z = 90;
+            else if (value == Vector2.down)
+                angle.z = -90;
+
+            return angle;
+        }
     }
 
 }
