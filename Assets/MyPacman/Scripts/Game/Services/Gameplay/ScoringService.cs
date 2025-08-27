@@ -10,6 +10,8 @@ namespace MyPacman
         private readonly IUIGameplayViewModel _uiGameplay;
 
         private int _scoreForRound;
+        // For test
+        private Coroutine _lifeUpShowing;
 
         // Массив подобранных фруктов
         // 1. Полноценное сохранение и загрузка данного массива
@@ -34,6 +36,10 @@ namespace MyPacman
             PointsReceived?.Invoke(points, position);
 
             CheckTheRequiredConditions();
+
+            //For test
+            if (_lifeUpShowing == null)
+                _lifeUpShowing = Coroutines.StartRoutine(LifeUpFlickering(5f));
         }
 
         private void CheckTheRequiredConditions()
@@ -42,35 +48,38 @@ namespace MyPacman
                 _gameState.LifePoints.Value++;
         }
 
-        private IEnumerator LifeUpShowing(float duration)           // Вынести логику в GameplayUIManager ??
+        private IEnumerator LifeUpFlickering(float duration)           // Вынести логику в GameplayUIManager ??
         {
             // Проблема в том что данный скрипт будет срабатывать не только 
             // когда кол-во жизней увеличится, но и когда уменьшится
             float timer = 0f;
-            float timeDelay = 0.7f;                                                                 // Magic
+            float timeDelay = 0.4f;                                                                 // Magic
             var delay = new WaitForSeconds(timeDelay);
+            string text = _uiGameplay.LifeUpText.text;
 
             while (timer < duration)
             {
                 yield return delay;
-                //_lifeUpText.SetActive(false);
+                _uiGameplay.LifeUpText.text = string.Empty;
 
                 yield return delay;
-                //_lifeUpText.SetActive(true);
-                timer += Time.deltaTime;
+                _uiGameplay.LifeUpText.text = text;
+                timer += (timeDelay * 2);
             }
+
+            _lifeUpShowing = null;
         }
 
-        // For test
-        private void LoadAndShowFruits()
-        {
-            var fruits = Resources.LoadAll<GameObject>("Prefabs/Fruits/Icons/");
+        //// For test
+        //private void LoadAndShowFruits()
+        //{
+        //    var fruits = Resources.LoadAll<GameObject>("Prefabs/Fruits/Icons/");
 
-            //StartCoroutine(PanelRecicle(fruits));
-        }
+        //    //StartCoroutine(PanelRecicle(fruits));
+        //}
 
-        // For test     Создание и удаление фруктов в цикле
-        //IEnumerator PanelRecicle(GameObject[] fruits)
+        ////For test     Создание и удаление фруктов в цикле
+        //private IEnumerator PanelRecicle(GameObject[] fruits)
         //{
         //    float delay = 1f;
         //    int counter = 0;

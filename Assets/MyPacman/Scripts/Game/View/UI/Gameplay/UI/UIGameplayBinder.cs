@@ -8,9 +8,10 @@ namespace MyPacman
     {
         [SerializeField] private TextMeshProUGUI _highScore;
         [SerializeField] private TextMeshProUGUI _score;
-        [SerializeField] private GameObject _lifeUpText;                            // Вернуть во вьюмодель для для использования в функции мигания
-        [SerializeField] private Transform _panelOfRecentlyPickedFruits;            // Вернуть во вьюмодель для добавления на нее иконок
-        [SerializeField] private Transform _lifeDisplayPanel;                       // Вернуть во вьюмодель для добавления на нее иконок
+        [SerializeField] private TextMeshProUGUI _lifeUpText;
+        [SerializeField] private Transform _panelOfRecentlyPickedFruits;
+        [SerializeField] private Transform _lifeDisplayPanel;
+        [SerializeField] private UIGameplayIconContainer _iconContainer;
 
         // Здесь передаем на UI изменения из GameState (очки, жизни, время и т.д.)
         protected override void OnBind()
@@ -20,92 +21,16 @@ namespace MyPacman
             //ViewModel.LifePoints.Skip(1).Subscribe(_ => Coroutines.StartRoutine(LifeUpShowing(4f)));        // Magic
 
             // New
-            ViewModel.SetActiveLifeUpText = _lifeUpText.SetActive;
             ViewModel.PanelOfRecentlyPickedFruits = _panelOfRecentlyPickedFruits;
             ViewModel.LifeDisplayPanel = _lifeDisplayPanel;
+            ViewModel.LifeUpText = _lifeUpText;
 
-            //// For test
-            //LoadAndShowFruits();
+            // For test
+            _iconContainer.ShowFruits();
+
+            // 1. Перебираем из GameState массив с подобранными фруктами и отправляем сигнал в контейнер на создание иконки
+            // 2. Подписываемся на массив с подобранными фруктами
+            // 3. Прописать в контейнер ограничение на 10 иконок на панелях, добавить в константы ограничивающее число
         }
-
-        //private IEnumerator LifeUpShowing(float duration)           // Вынести логику в GameplayUIManager ??
-        //{
-        //    // Проблема в том что данный скрипт будет срабатывать не только 
-        //    // когда кол-во жизней увеличится, но и когда уменьшится
-        //    float timer = 0f;
-        //    float timeDelay = 0.7f;                                                                 // Magic
-        //    var delay = new WaitForSeconds(timeDelay);
-
-        //    while (timer < duration)
-        //    {
-        //        yield return delay;
-        //        _lifeUpText.SetActive(false);
-        //        yield return delay;
-        //        _lifeUpText.SetActive(true);
-        //        timer += Time.deltaTime;
-        //    }
-        //}
-
-        //// For test
-        //private void LoadAndShowFruits()
-        //{
-        //    var fruits = Resources.LoadAll<GameObject>("Prefabs/Fruits/Icons/");
-
-        //    StartCoroutine(PanelRecicle(fruits));
-        //}
-
-        //// For test     Создание и удаление фруктов в цикле
-        //IEnumerator PanelRecicle(GameObject[] fruits)
-        //{
-        //    float delay = 1f;
-        //    int counter = 0;
-        //    List<GameObject> fruitsLeftPanel = new();
-        //    List<GameObject> fruitsRightPanel = new();
-        //    bool fill = true;
-
-        //    while (true)
-        //    {
-        //        if (fill)
-        //        {
-        //            if (counter < fruits.Length)
-        //            {
-        //                fruitsRightPanel.Add(CreateFruit(fruits[counter], _panelOfRecentlyPickedFruits));
-        //                fruitsLeftPanel.Add(CreateFruit(fruits[counter], _lifeDisplayPanel));
-        //                counter++;
-        //            }
-        //            else
-        //            {
-        //                fill = false;
-        //            }
-        //        }
-        //        else
-        //        {
-        //            if (counter > 0)
-        //            {
-        //                // Удаление фруктов с наяала
-        //                Destroy(fruitsLeftPanel[0]);
-        //                fruitsLeftPanel.RemoveAt(0);
-
-        //                counter--;
-        //                // Удаление фруктов с конца
-        //                Destroy(fruitsRightPanel[counter]);
-        //                fruitsRightPanel.RemoveAt(counter);
-        //            }
-        //            else
-        //            {
-        //                fill = true;
-        //            }
-        //        }
-
-        //        yield return new WaitForSeconds(delay);
-        //    }
-        //}
-
-        //private GameObject CreateFruit(GameObject prefab, Transform parent)
-        //{
-        //    var fruit = Instantiate(prefab, parent);
-        //    fruit.SetActive(true);
-        //    return fruit;
-        //}
     }
 }

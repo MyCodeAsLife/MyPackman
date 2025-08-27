@@ -16,20 +16,16 @@ namespace MyPacman
         public bool IsScreenOpen => _rootUI.OpenedScreen.CurrentValue != null;
         public ReadOnlyReactiveProperty<WindowViewModel> OpenedScreen => _rootUI.OpenedScreen;
 
-        public UIGameplayViewModel OpenUIGameplay()
+        public void OpenUIGameplay()
         {
-            var viewModel = new UIGameplayViewModel(Container.Resolve<IGameStateService>().GameState);
+            var viewModel = Container.Resolve<IUIGameplayViewModel>() as UIGameplayViewModel;
             _rootUI.CreateGameplayUI(viewModel);
-            return viewModel;
         }
 
         public ScreenPauseMenuViewModel OpenScreenPauseMenu()
         {
             var viewModel = new ScreenPauseMenuViewModel(this, _exitSceneRequest);
-            //var rootUI = SceneContainer.Resolve<UIGameplayRootViewModel>();  // Вызов тут, потому как в конструкторе еще неизвестно, создан или нет UIGameplayRootViewModel
-
             _rootUI.OpenScreen(viewModel);
-
             return viewModel;
         }
 

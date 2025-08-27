@@ -1,11 +1,11 @@
 ﻿using R3;
-using System.Collections.Generic;
 using UnityEngine;
+using System.Collections.Generic;
 
 namespace MyPacman
 {
     // Создает, хранит и закрывает View
-    public class UIContainer : MonoBehaviour
+    public class UIWindowsContainer : MonoBehaviour
     {
         [SerializeField] private Transform _screensContainer;
         //[SerializeField] private Transform _popupsContainer;

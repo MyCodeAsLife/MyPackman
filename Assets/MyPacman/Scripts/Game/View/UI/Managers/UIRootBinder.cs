@@ -6,7 +6,7 @@ namespace MyPacman
     // Отвечает за все подписки Вьюх на Вьюмодели
     public class UIRootBinder : MonoBehaviour
     {
-        [SerializeField] protected UIContainer UIContainer;
+        [SerializeField] protected UIWindowsContainer UIContainer;
 
         protected readonly CompositeDisposable Subscriptions = new();    // Для отписок
 

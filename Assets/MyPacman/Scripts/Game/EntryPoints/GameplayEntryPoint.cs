@@ -52,7 +52,7 @@ namespace MyPacman
             var scoringService = viewsContainer.Resolve<ScoringService>();
             _sceneContainer.RegisterInstance(new TextPopupService(uiManager, scoringService));
             // Создание UIGameplay
-            var uiGameplay = uiManager.OpenUIGameplay();        // Нужен ли функционал закрытия/скрытия ui?  // Зарегестрировать в контейнер?
+            uiManager.OpenUIGameplay();        // Нужен ли функционал закрытия/скрытия ui?  // Зарегестрировать в контейнер?
 
             // Инициализация управления (вынести отсюда)
             var inputHandler = _sceneContainer.Resolve<GameplayInputActionsHandler>();

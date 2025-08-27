@@ -1,5 +1,6 @@
 ﻿using R3;
 using System;
+using TMPro;
 using UnityEngine;
 
 namespace MyPacman
@@ -8,7 +9,7 @@ namespace MyPacman
     {
         private readonly ReadOnlyReactiveProperty<int> _highScore;
         private readonly ReadOnlyReactiveProperty<int> _score;
-        //public readonly ReadOnlyReactiveProperty<int> LifePoints;       // Убрать после выноса объекта в GameplayUIManager
+        //public readonly ReadOnlyReactiveProperty<int> LifePoints;       // Убрать после выноса объекта в GameplayUIManager ?
 
         public UIGameplayViewModel(GameState gameState)     // Передать не весь объект а конкретные поля
         {
@@ -19,10 +20,10 @@ namespace MyPacman
         }
 
         public override string Id => "UIGameplay";                  //Magic
-        public Action<bool> SetActiveLifeUpText { get; set; }       // Передавать через интерфейс только get
-        public Transform PanelOfRecentlyPickedFruits { get; set; }  // Передавать через интерфейс только get
-        public Transform LifeDisplayPanel { get; set; }             // Передавать через интерфейс только get
         public ReadOnlyReactiveProperty<int> HighScore => _highScore;
         public ReadOnlyReactiveProperty<int> Score => _score;
+        public Transform PanelOfRecentlyPickedFruits { get; set; }
+        public Transform LifeDisplayPanel { get; set; }
+        public TextMeshProUGUI LifeUpText {  get; set; } 
     }
 }

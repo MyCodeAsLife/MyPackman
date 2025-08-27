@@ -146,6 +146,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7346123352467474010}
   - component: {fileID: 3642625536484583890}
+  - component: {fileID: 3454651965597145349}
   m_Layer: 5
   m_Name: UIGameplay
   m_TagString: Untagged
@@ -188,9 +189,24 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _highScore: {fileID: 2453135302779136458}
   _score: {fileID: 7606886483384367877}
-  _lifeUpText: {fileID: 1160212219484697890}
+  _lifeUpText: {fileID: 90325121405195229}
   _panelOfRecentlyPickedFruits: {fileID: 5681553712458076401}
   _lifeDisplayPanel: {fileID: 4079012949409592458}
+  _iconContainer: {fileID: 3454651965597145349}
+--- !u!114 &3454651965597145349
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 506152917393266118}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e1c91bb113b9d7e4698cc0cc003f0992, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _fruitIconContainer: {fileID: 5681553712458076401}
+  _playerLifeIconContainer: {fileID: 4079012949409592458}
 --- !u!1 &1160212219484697890
 GameObject:
   m_ObjectHideFlags: 0
@@ -338,7 +354,7 @@ GameObject:
   - component: {fileID: 4079012949409592458}
   - component: {fileID: 3343371216656928946}
   m_Layer: 5
-  m_Name: LeftHorizontalLayout
+  m_Name: LeftGridLayout
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -396,9 +412,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 814067917258681924}
-  - component: {fileID: 7726971929504131320}
+  - component: {fileID: 6682305647100022282}
   m_Layer: 5
-  m_Name: VerticalLayoutLeft
+  m_Name: LeftGridLayout
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -425,7 +441,7 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &7726971929504131320
+--- !u!114 &6682305647100022282
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -434,7 +450,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 4548276092442617767}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 59f8146938fff824cb5fd77236b75775, type: 3}
+  m_Script: {fileID: 11500000, guid: 8a8695521f0d02e499659fee002a26c2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_Padding:
@@ -442,15 +458,13 @@ MonoBehaviour:
     m_Right: 0
     m_Top: 0
     m_Bottom: 0
-  m_ChildAlignment: 0
-  m_Spacing: -10
-  m_ChildForceExpandWidth: 1
-  m_ChildForceExpandHeight: 1
-  m_ChildControlWidth: 1
-  m_ChildControlHeight: 1
-  m_ChildScaleWidth: 0
-  m_ChildScaleHeight: 0
-  m_ReverseArrangement: 0
+  m_ChildAlignment: 1
+  m_StartCorner: 1
+  m_StartAxis: 0
+  m_CellSize: {x: 500, y: 44}
+  m_Spacing: {x: 0, y: 0}
+  m_Constraint: 2
+  m_ConstraintCount: 2
 --- !u!1 &4759763376926704418
 GameObject:
   m_ObjectHideFlags: 0
@@ -462,7 +476,7 @@ GameObject:
   - component: {fileID: 5681553712458076401}
   - component: {fileID: 6493149671276256776}
   m_Layer: 5
-  m_Name: RightHorizontalLayout
+  m_Name: RightGridLayout
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -520,7 +534,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 14762825301240426}
-  - component: {fileID: 2458001910818227593}
+  - component: {fileID: 3291326786183363334}
   m_Layer: 5
   m_Name: VerticalLayoutRight
   m_TagString: Untagged
@@ -549,7 +563,7 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &2458001910818227593
+--- !u!114 &3291326786183363334
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -558,7 +572,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 5558680860869788141}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 59f8146938fff824cb5fd77236b75775, type: 3}
+  m_Script: {fileID: 11500000, guid: 8a8695521f0d02e499659fee002a26c2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_Padding:
@@ -566,15 +580,13 @@ MonoBehaviour:
     m_Right: 0
     m_Top: 0
     m_Bottom: 0
-  m_ChildAlignment: 0
-  m_Spacing: -10
-  m_ChildForceExpandWidth: 1
-  m_ChildForceExpandHeight: 1
-  m_ChildControlWidth: 1
-  m_ChildControlHeight: 1
-  m_ChildScaleWidth: 0
-  m_ChildScaleHeight: 0
-  m_ReverseArrangement: 0
+  m_ChildAlignment: 1
+  m_StartCorner: 0
+  m_StartAxis: 0
+  m_CellSize: {x: 800, y: 44}
+  m_Spacing: {x: 0, y: 0}
+  m_Constraint: 2
+  m_ConstraintCount: 2
 --- !u!1 &5696546550676347146
 GameObject:
   m_ObjectHideFlags: 0
@@ -1017,8 +1029,8 @@ MonoBehaviour:
     m_Right: 600
     m_Top: 0
     m_Bottom: 0
-  m_ChildAlignment: 0
-  m_Spacing: 0
+  m_ChildAlignment: 4
+  m_Spacing: 30
   m_ChildForceExpandWidth: 1
   m_ChildForceExpandHeight: 1
   m_ChildControlWidth: 1

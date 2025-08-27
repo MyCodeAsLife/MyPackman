@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &5301303251713291102
+--- !u!1 &4721081171769351763
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,27 +8,27 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 2632484324592520421}
-  - component: {fileID: 7912070956000389369}
-  - component: {fileID: 3840919702150441590}
+  - component: {fileID: 3551829620247118994}
+  - component: {fileID: 4996805578069347468}
+  - component: {fileID: 1206027119040250647}
   m_Layer: 5
-  m_Name: PacmanIcon
+  m_Name: Strawberry
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 0
---- !u!224 &2632484324592520421
+--- !u!224 &3551829620247118994
 RectTransform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5301303251713291102}
+  m_GameObject: {fileID: 4721081171769351763}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 1
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -37,21 +37,21 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 35, y: 35}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!222 &7912070956000389369
+--- !u!222 &4996805578069347468
 CanvasRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5301303251713291102}
+  m_GameObject: {fileID: 4721081171769351763}
   m_CullTransparentMesh: 1
---- !u!114 &3840919702150441590
+--- !u!114 &1206027119040250647
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5301303251713291102}
+  m_GameObject: {fileID: 4721081171769351763}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
@@ -65,7 +65,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: -6116695336936236789, guid: fb92cbae9684fdc408d9a468a0c06378, type: 3}
+  m_Sprite: {fileID: -4113970610265177591, guid: fecb66c2a35c95a45ab3eab6bd564d83, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1

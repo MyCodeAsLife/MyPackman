@@ -49,7 +49,7 @@ namespace MyPacman
             sceneContainer.RegisterFactory(_ => new ScoringService(
                     gameStateService.GameState,
                     sceneContainer.Resolve<MapHandlerService>(),
-                    sceneContainer.Resolve<IUIGameplayViewModel>()      // Создавать раньше
+                    sceneContainer.Resolve<IUIGameplayViewModel>()
                 )).AsSingle();
 
             sceneContainer.RegisterFactory(_ => new GhostsStateHandler(
@@ -60,7 +60,6 @@ namespace MyPacman
                     sceneContainer.Resolve<TimeService>(),
                     sceneContainer.Resolve<MapHandlerService>(),
                     sceneContainer.Resolve<ILevelConfig>(),
-                    //sceneContainer.Resolve<IGameStateService>().GameState.Map.Value.InkySpawnPos   // Временное решение?
                     gameStateService.GameState.Map.Value.InkySpawnPos       // Временное решение?
                 )).AsSingle();
 

@@ -18,5 +18,5 @@
     GalaxianStarship = -16,
     Bell = -17,
     Key = -18,
-    Fruit = -19,
+    Fruit = -19,                // Это нужно?
 }
