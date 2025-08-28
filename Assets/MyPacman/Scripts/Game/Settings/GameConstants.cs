@@ -29,6 +29,7 @@ namespace MyPacman
         public const string GhostsFolderPath = "Prefabs/Ghosts/";
         public const string PelletsFolderPath = "Prefabs/Pellets/";
         public const string FruitsFolderPath = "Prefabs/Fruits/";
+        public const string IconsFolderPath = "Prefabs/Fruits/Icons/";
         public const string UIFolderPath = "Prefabs/UI/";
         public const string UIRootViewFullPath = "Prefabs/UI/UIRootView";
         //public const string UIMainMenuFullPath = "Prefabs/UI/MainMenuUI";
@@ -54,6 +55,8 @@ namespace MyPacman
         public const int CollectedPelletsForFirstFruitSpawn = 70;
         public const int CollectedPelletsForSecondFruitSpawn = 170;
         public const int PriceLifePoint = 10000;
+        public const int MaxNumberFruitIconOnPanel = 10;
+        public const int MaxNumberLifeIconOnPanel = 10;
 
         // Level Constructor - переделать в enum?
         //public const int EmptyTile = 0;

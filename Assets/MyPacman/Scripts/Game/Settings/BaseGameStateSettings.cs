@@ -1,4 +1,6 @@
-﻿namespace MyPacman
+﻿using System.Collections.Generic;
+
+namespace MyPacman
 {
     public class BaseGameStateSettings
     {
@@ -7,7 +9,7 @@
             var gameStateData = new GameStateData();
             gameStateData.Score = 0;
             gameStateData.LifePoints = GameConstants.StartLifePointsAmount;
-            gameStateData.NumberOfCollectedFruits = 0;
+            gameStateData.PickedFruits = new List<EntityType>();
 
             gameStateData.Map = new MapData();
             gameStateData.Map.LevelNumber = GameConstants.StartingDifficultyLevel;

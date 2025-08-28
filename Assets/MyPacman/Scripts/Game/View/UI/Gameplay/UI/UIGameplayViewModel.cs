@@ -1,7 +1,6 @@
-﻿using R3;
-using System;
+﻿using ObservableCollections;
+using R3;
 using TMPro;
-using UnityEngine;
 
 namespace MyPacman
 {
@@ -9,21 +8,26 @@ namespace MyPacman
     {
         private readonly ReadOnlyReactiveProperty<int> _highScore;
         private readonly ReadOnlyReactiveProperty<int> _score;
-        //public readonly ReadOnlyReactiveProperty<int> LifePoints;       // Убрать после выноса объекта в GameplayUIManager ?
+        private readonly ReadOnlyReactiveProperty<int> _lifePoints;
+        private readonly IReadOnlyObservableList<EntityType> _pickedFruits;
 
         public UIGameplayViewModel(GameState gameState)     // Передать не весь объект а конкретные поля
         {
             // Определить где и как будет сохранятся максимальный счет, и соответственно откуда будет сюда подцеплятся
             _highScore = gameState.Score;      // Определится с максимальным счетом
             _score = gameState.Score;
-            //LifePoints = gameState.LifePoints;
+            _lifePoints = gameState.LifePoints;
+            _pickedFruits = gameState.PickedFruits;
         }
 
         public override string Id => "UIGameplay";                  //Magic
         public ReadOnlyReactiveProperty<int> HighScore => _highScore;
         public ReadOnlyReactiveProperty<int> Score => _score;
-        public Transform PanelOfRecentlyPickedFruits { get; set; }
-        public Transform LifeDisplayPanel { get; set; }
-        public TextMeshProUGUI LifeUpText {  get; set; } 
+        public ReadOnlyReactiveProperty<int> LifePoints => _lifePoints;                 // Нужно тут?
+        public IReadOnlyObservableList<EntityType> PickedFruits => _pickedFruits;       // Нужно тут?
+        //public Transform PanelOfRecentlyPickedFruits { get; set; }
+        //public Transform LifeDisplayPanel { get; set; }
+        public TextMeshProUGUI LifeUpText { get; set; }
+
     }
 }

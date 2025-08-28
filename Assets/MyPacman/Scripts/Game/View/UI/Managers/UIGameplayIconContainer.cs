@@ -1,5 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace MyPacman
@@ -11,17 +11,60 @@ namespace MyPacman
 
         // New
         private Dictionary<EntityType, GameObject> _prefabIcons = new();
-        private List<GameObject> _fruitIcons = new();
-        private List<GameObject> _playerLifeIcons = new();
+        private Dictionary<EntityType, GameObject> _fruitIcons = new();
+        private Dictionary<EntityType, GameObject> _playerLifeIcons = new();
 
         private void OnEnable()
         {
             LoadPrefabIcons();
         }
 
+        public void ShowIcon(EntityType entityType)
+        {
+            if (_prefabIcons.TryGetValue(entityType, out GameObject prefab))
+            {
+                var container = _fruitIconContainer;
+                var cashIcons = _fruitIcons;
+                int maxNumberIconOnPanel = GameConstants.MaxNumberFruitIconOnPanel;
+
+                if (entityType == EntityType.Pacman)
+                {
+                    container = _playerLifeIconContainer;
+                    cashIcons = _playerLifeIcons;
+                    maxNumberIconOnPanel = GameConstants.MaxNumberLifeIconOnPanel;
+                }
+
+                var createdIcon = CreateIcon(prefab, container);
+
+                if (maxNumberIconOnPanel <= cashIcons.Count)
+                    cashIcons.Remove(cashIcons.Last().Key);
+
+                cashIcons.Add(entityType, createdIcon);
+            }
+        }
+
+        public void HideIcon(EntityType entityType)
+        {
+            GameObject icon = null;
+
+            if (entityType == EntityType.Pacman)
+            {
+                if (_playerLifeIcons.TryGetValue(entityType, out icon))
+                    _playerLifeIcons.Remove(entityType);
+            }
+            else
+            {
+                if (_fruitIcons.TryGetValue(entityType, out icon))
+                    _fruitIcons.Remove(entityType);
+            }
+
+            if (icon != null)
+                Destroy(icon);
+        }
+
         private void LoadPrefabIcons()
         {
-            var fruits = Resources.LoadAll<GameObject>("Prefabs/Fruits/Icons/");                // Magic
+            var fruits = Resources.LoadAll<GameObject>(GameConstants.IconsFolderPath);
 
             foreach (var fruit in fruits)
             {
@@ -38,62 +81,23 @@ namespace MyPacman
             }
         }
 
-        // For test
-        public void ShowFruits()
+        public void OnPlayerLifePointsChanged(int lifePoints)
         {
-            StartCoroutine(PanelRecicle());
-        }
-
-        //For test     Создание и удаление фруктов в цикле
-        private IEnumerator PanelRecicle()
-        {
-            float delay = 1f;
-            int counter = 0;
-            //List<GameObject> _playerLifeIcons = new();
-            //List<GameObject> _fruitIcons = new();
-            bool fill = true;
-
-            while (true)
+            if (_playerLifeIcons.Count != lifePoints)
             {
-                if (fill)
+                int count = lifePoints - _playerLifeIcons.Count;
+
+                if (count > 0)
                 {
-                    for (int i = (int)EntityType.Pacman; i > (int)EntityType.Fruit; i--)
-                    {
-                        if (_prefabIcons.TryGetValue((EntityType)i, out GameObject prefab))
-                        {
-                            if (counter < _prefabIcons.Count)
-                            {
-                                _fruitIcons.Add(CreateIcon(prefab, _fruitIconContainer));
-                                _playerLifeIcons.Add(CreateIcon(prefab, _playerLifeIconContainer));
-                                counter++;
-                                yield return new WaitForSeconds(delay);
-                            }
-                            else
-                            {
-                                fill = false;
-                            }
-                        }
-                    }
+                    for (int i = 0; i < count; i++)
+                        ShowIcon(EntityType.Pacman);
+
+                    Debug.Log("Tut");                                       //+++++++++++++++++++++++++
                 }
                 else
                 {
-                    if (counter > 0)
-                    {
-                        // Удаление фруктов с начала
-                        Destroy(_playerLifeIcons[0]);
-                        _playerLifeIcons.RemoveAt(0);
-
-                        counter--;
-                        // Удаление фруктов с конца
-                        Destroy(_fruitIcons[counter]);
-                        _fruitIcons.RemoveAt(counter);
-                    }
-                    else
-                    {
-                        fill = true;
-                    }
-
-                    yield return new WaitForSeconds(delay);
+                    for (int i = count; i > 0; i++)
+                        HideIcon(EntityType.Pacman);
                 }
             }
         }

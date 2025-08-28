@@ -1,7 +1,5 @@
 ﻿using R3;
 using TMPro;
-using System;
-using UnityEngine;
 
 namespace MyPacman
 {
@@ -9,9 +7,10 @@ namespace MyPacman
     {
         public ReadOnlyReactiveProperty<int> HighScore { get; }
         public ReadOnlyReactiveProperty<int> Score { get; }
+        public ReadOnlyReactiveProperty<int> LifePoints { get; }
 
-        public Transform PanelOfRecentlyPickedFruits { get; }
-        public Transform LifeDisplayPanel { get; }
+        //public Transform PanelOfRecentlyPickedFruits { get; }
+        //public Transform LifeDisplayPanel { get; }
         public TextMeshProUGUI LifeUpText { get; }
 
         public string Id { get; }

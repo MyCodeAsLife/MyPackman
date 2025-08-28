@@ -42,6 +42,7 @@ namespace MyPacman
                     sceneContainer.Resolve<TimeService>()
                 )).AsSingle();
 
+            // Перенести регистрацию во вьюмодели
             sceneContainer.RegisterFactory<IUIGameplayViewModel>(_ => new UIGameplayViewModel(
                     gameStateService.GameState
                 )).AsSingle();
@@ -66,7 +67,8 @@ namespace MyPacman
             sceneContainer.RegisterFactory(_ => new GameplayInputActionsHandler(
                     viewModelsContainer.Resolve<GameplayUIManager>(),
                     sceneContainer.Resolve<PlayerInputActions>(),
-                    sceneContainer.Resolve<PlayerMovementService>()
+                    sceneContainer.Resolve<PlayerMovementService>(),
+                    gameStateService.GameState                          // For test
                 )).AsSingle();
         }
     }

@@ -102,7 +102,7 @@ namespace MyPacman
 
         private void SpawnFruit()
         {
-            int numFruitType = (int)EntityType.Chery - _gameState.NumberOfCollectedFruits.CurrentValue;
+            int numFruitType = (int)EntityType.Chery - _gameState.PickedFruits.Count;
 
             if (numFruitType < (int)EntityType.Key)
                 numFruitType = (int)EntityType.Key;

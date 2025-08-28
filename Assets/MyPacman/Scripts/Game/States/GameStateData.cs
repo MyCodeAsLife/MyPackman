@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace MyPacman
 {
@@ -9,7 +10,7 @@ namespace MyPacman
         public MapData Map { get; set; }
         public int Score { get; set; }
         public int LifePoints { get; set; }
-        public int NumberOfCollectedFruits { get; set; }
+        public List<EntityType> PickedFruits { get; set; } = new();
 
         public int CreateEntityId()
         {

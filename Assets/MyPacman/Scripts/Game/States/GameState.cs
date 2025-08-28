@@ -1,17 +1,17 @@
-﻿using ObservableCollections;
-using R3;
+﻿using R3;
+using ObservableCollections;
 
 namespace MyPacman
 {
     public class GameState
     {
         public readonly EntitiesFactory EntitiesFactory;
-
-        private readonly GameStateData _gameStateData;
         public readonly ReactiveProperty<Map> Map;
         public readonly ReactiveProperty<int> Score;
         public readonly ReactiveProperty<int> LifePoints;
-        public readonly ReactiveProperty<int> NumberOfCollectedFruits;
+        public readonly ObservableList<EntityType> PickedFruits = new();
+
+        private readonly GameStateData _gameStateData;
 
         public GameState(GameStateData gameStateData)
         {
@@ -21,7 +21,6 @@ namespace MyPacman
             Map = new ReactiveProperty<Map>(new Map(_gameStateData.Map, EntitiesFactory));
             Score = new ReactiveProperty<int>(_gameStateData.Score);
             LifePoints = new ReactiveProperty<int>(_gameStateData.LifePoints);
-            NumberOfCollectedFruits = new ReactiveProperty<int>(_gameStateData.NumberOfCollectedFruits);
 
             InitMap();
             //InitResources();
@@ -36,12 +35,15 @@ namespace MyPacman
                 var removedEntity = collectionRemovedEvent.Value;
 
                 if (removedEntity.Type <= EntityType.Chery)
-                    NumberOfCollectedFruits.Value++;
+                    PickedFruits.Add(removedEntity.Type);
             });
 
+            // Вынести из этой функции ???
             Score.Subscribe(value => _gameStateData.Score = value);
             LifePoints.Subscribe(value => _gameStateData.LifePoints = value);
-            NumberOfCollectedFruits.Subscribe(value => _gameStateData.NumberOfCollectedFruits = value);
+            _gameStateData.PickedFruits.ForEach(value => PickedFruits.Add(value));
+            PickedFruits.ObserveRemove().Subscribe(e => _gameStateData.PickedFruits.Remove(e.Value));
+            PickedFruits.ObserveAdd().Subscribe(e => _gameStateData.PickedFruits.Add(e.Value));
         }
 
         //private void InitResources()

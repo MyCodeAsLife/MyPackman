@@ -1,5 +1,5 @@
-﻿using ObservableCollections;
-using R3;
+﻿using R3;
+using ObservableCollections;
 
 namespace MyPacman
 {
