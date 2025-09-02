@@ -23,10 +23,8 @@ namespace MyPacman
         public override string Id => "UIGameplay";                  //Magic
         public ReadOnlyReactiveProperty<int> HighScore => _highScore;
         public ReadOnlyReactiveProperty<int> Score => _score;
-        public ReadOnlyReactiveProperty<int> LifePoints => _lifePoints;                 // Нужно тут?
-        public IReadOnlyObservableList<EntityType> PickedFruits => _pickedFruits;       // Нужно тут?
-        //public Transform PanelOfRecentlyPickedFruits { get; set; }
-        //public Transform LifeDisplayPanel { get; set; }
+        public ReadOnlyReactiveProperty<int> LifePoints => _lifePoints;
+        public IReadOnlyObservableList<EntityType> PickedFruits => _pickedFruits;
         public TextMeshProUGUI LifeUpText { get; set; }
 
     }

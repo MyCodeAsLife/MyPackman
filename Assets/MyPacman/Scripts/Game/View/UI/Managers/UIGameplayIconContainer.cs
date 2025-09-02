@@ -11,36 +11,40 @@ namespace MyPacman
 
         // New
         private Dictionary<EntityType, GameObject> _prefabIcons = new();
-        private Dictionary<EntityType, GameObject> _fruitIcons = new();
-        private Dictionary<EntityType, GameObject> _playerLifeIcons = new();
+        private List<GameObject> _fruitIcons = new();
+        private List<GameObject> _playerLifeIcons = new();
 
         private void OnEnable()
         {
             LoadPrefabIcons();
         }
 
-        public void ShowIcon(EntityType entityType)
+        public void ShowPlayerLifeIcon()
         {
-            if (_prefabIcons.TryGetValue(entityType, out GameObject prefab))
+            if (_playerLifeIcons.Count < GameConstants.MaxNumberLifeIconOnPanel)
             {
-                var container = _fruitIconContainer;
-                var cashIcons = _fruitIcons;
-                int maxNumberIconOnPanel = GameConstants.MaxNumberFruitIconOnPanel;
-
-                if (entityType == EntityType.Pacman)
-                {
-                    container = _playerLifeIconContainer;
-                    cashIcons = _playerLifeIcons;
-                    maxNumberIconOnPanel = GameConstants.MaxNumberLifeIconOnPanel;
-                }
-
-                var createdIcon = CreateIcon(prefab, container);
-
-                if (maxNumberIconOnPanel <= cashIcons.Count)
-                    cashIcons.Remove(cashIcons.Last().Key);
-
-                cashIcons.Add(entityType, createdIcon);
+                var prefab = _prefabIcons[EntityType.Pacman];
+                var createdIcon = CreateIcon(prefab, _playerLifeIconContainer);
+                _playerLifeIcons.Add(createdIcon);
             }
+        }
+
+        public void ShowFruitIcon(EntityType fruitType)
+        {
+            if (fruitType > EntityType.Cherry || fruitType < EntityType.Key)
+                return;
+
+            var prefab = _prefabIcons[fruitType];
+            var createdIcon = CreateIcon(prefab, _fruitIconContainer);
+
+            if (GameConstants.MaxNumberFruitIconOnPanel <= _fruitIcons.Count)
+            {
+                var icon = _fruitIcons[0];
+                _fruitIcons.RemoveAt(0);
+                Destroy(icon);
+            }
+
+            _fruitIcons.Add(createdIcon);
         }
 
         public void HideIcon(EntityType entityType)
@@ -49,17 +53,43 @@ namespace MyPacman
 
             if (entityType == EntityType.Pacman)
             {
-                if (_playerLifeIcons.TryGetValue(entityType, out icon))
-                    _playerLifeIcons.Remove(entityType);
+                if (_playerLifeIcons.Count > 0)
+                {
+                    icon = _playerLifeIcons[0];
+                    _playerLifeIcons.RemoveAt(0);
+                }
             }
             else
             {
-                if (_fruitIcons.TryGetValue(entityType, out icon))
-                    _fruitIcons.Remove(entityType);
+                if (_fruitIcons.Count > 0)
+                {
+                    icon = _fruitIcons.Last();
+                    _fruitIcons.Remove(icon);
+                }
             }
 
             if (icon != null)
                 Destroy(icon);
+        }
+
+        public void OnPlayerLifePointsChanged(int numberLifePoints)
+        {
+            int numberIcons = _playerLifeIcons.Count;
+            int difference = numberLifePoints - numberIcons;
+
+            if (numberIcons != numberLifePoints)
+            {
+                if (difference > 0)
+                {
+                    for (int i = 0; i < difference; i++)
+                        ShowPlayerLifeIcon();
+                }
+                else if (difference < 0 && GameConstants.MaxNumberLifeIconOnPanel > numberLifePoints)
+                {
+                    for (int i = difference; i < 0; i++)
+                        HideIcon(EntityType.Pacman);
+                }
+            }
         }
 
         private void LoadPrefabIcons()
@@ -77,27 +107,6 @@ namespace MyPacman
                     {
                         _prefabIcons.Add(iconType, fruit);
                     }
-                }
-            }
-        }
-
-        public void OnPlayerLifePointsChanged(int lifePoints)
-        {
-            if (_playerLifeIcons.Count != lifePoints)
-            {
-                int count = lifePoints - _playerLifeIcons.Count;
-
-                if (count > 0)
-                {
-                    for (int i = 0; i < count; i++)
-                        ShowIcon(EntityType.Pacman);
-
-                    Debug.Log("Tut");                                       //+++++++++++++++++++++++++
-                }
-                else
-                {
-                    for (int i = count; i > 0; i++)
-                        HideIcon(EntityType.Pacman);
                 }
             }
         }

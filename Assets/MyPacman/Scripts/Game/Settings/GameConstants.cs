@@ -52,8 +52,8 @@ namespace MyPacman
         public const float ChaseTimer = 6f;
         public const int StartLifePointsAmount = 3;
         public const int StartingDifficultyLevel = 1;
-        public const int CollectedPelletsForFirstFruitSpawn = 70;
-        public const int CollectedPelletsForSecondFruitSpawn = 170;
+        public const int CollectedPelletsForFirstFruitSpawn = 10;           // 70       Переделать под процент от всех пеллетов на уровне
+        public const int CollectedPelletsForSecondFruitSpawn = 170;         // 170      Переделать под процент от всех пеллетов на уровне
         public const int PriceLifePoint = 10000;
         public const int MaxNumberFruitIconOnPanel = 10;
         public const int MaxNumberLifeIconOnPanel = 10;

@@ -1,14 +1,15 @@
-﻿using R3;
+﻿using ObservableCollections;
+using R3;
+using System.Linq;
 using TMPro;
 using UnityEngine;
-using ObservableCollections;
 
 namespace MyPacman
 {
     public class UIGameplayBinder : WindowBinder<UIGameplayViewModel>
     {
-        [SerializeField] private TextMeshProUGUI _highScore;
         [SerializeField] private TextMeshProUGUI _score;
+        [SerializeField] private TextMeshProUGUI _highScore;
         [SerializeField] private TextMeshProUGUI _lifeUpText;
         [SerializeField] private UIGameplayIconContainer _iconContainer;
 
@@ -21,9 +22,9 @@ namespace MyPacman
             // New
             ViewModel.LifeUpText = _lifeUpText;
             ViewModel.LifePoints.Subscribe(lifePoints => _iconContainer.OnPlayerLifePointsChanged(lifePoints));
+            ViewModel.PickedFruits.ToList().ForEach(entityType => _iconContainer.ShowFruitIcon(entityType));
             ViewModel.PickedFruits.ObserveRemove().Subscribe(entityType => _iconContainer.HideIcon(entityType.Value));
-            ViewModel.PickedFruits.ObserveAdd().Subscribe(entityType => _iconContainer.ShowIcon(entityType.Value));
-            // Нужна функция перебора массива PickedFruits и ручного добавления иконок?
+            ViewModel.PickedFruits.ObserveAdd().Subscribe(entityType => _iconContainer.ShowFruitIcon(entityType.Value));
         }
     }
 }

@@ -34,7 +34,7 @@ namespace MyPacman
             {
                 var removedEntity = collectionRemovedEvent.Value;
 
-                if (removedEntity.Type <= EntityType.Chery)
+                if (removedEntity.Type <= EntityType.Cherry)
                     PickedFruits.Add(removedEntity.Type);
             });
 

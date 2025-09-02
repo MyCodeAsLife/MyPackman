@@ -14,7 +14,7 @@ namespace MyPacman
         }
 
         public bool IsScreenOpen => _rootUI.OpenedScreen.CurrentValue != null;
-        public ReadOnlyReactiveProperty<WindowViewModel> OpenedScreen => _rootUI.OpenedScreen;
+        //public ReadOnlyReactiveProperty<WindowViewModel> OpenedScreen => _rootUI.OpenedScreen;
 
         public void OpenUIGameplay()
         {

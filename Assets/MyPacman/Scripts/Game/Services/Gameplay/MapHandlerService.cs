@@ -14,7 +14,9 @@ namespace MyPacman
 
         private readonly TilemapHandler _tilemapHandler;
 
-        private Vector2 _fruitSpawnPosition;
+        //private Vector2 _fruitSpawnPosition;
+
+        private ReadOnlyReactiveProperty<Vector2> _fruitSpawnPosition;
 
         // Добавить подписку на изменение данного массива, при изменении позиции призраков
         private readonly Dictionary<Vector3Int, Entity> _edibleEntityMap = new();       // Призраки не меняют свою позицию
@@ -26,8 +28,10 @@ namespace MyPacman
             _gameState = gameState;
             _entities = gameState.Map.CurrentValue.Entities;
 
+            _fruitSpawnPosition = _gameState.Map.Value.FruitSpawnPos;
+
             _tilemapHandler = new TilemapHandler(obstaclesTileMap, levelConfig);
-            _gameState.Map.Value.FruitSpawnPos.Subscribe(position => _fruitSpawnPosition = position);
+            //_gameState.Map.Value.FruitSpawnPos.Subscribe(position => _fruitSpawnPosition = position);
             player.PlayerTilePosition.Subscribe(PlayerTileChanged);
             gameState.Map.CurrentValue.NumberOfCollectedPellets.Subscribe(OnCollectedPellet);
 
@@ -102,12 +106,12 @@ namespace MyPacman
 
         private void SpawnFruit()
         {
-            int numFruitType = (int)EntityType.Chery - _gameState.PickedFruits.Count;
+            int numFruitType = (int)EntityType.Cherry - _gameState.PickedFruits.Count;  // Если игрок не будет подбирать бонусы, то они не будут улучшатся
 
             if (numFruitType < (int)EntityType.Key)
                 numFruitType = (int)EntityType.Key;
 
-            var entity = _gameState.EntitiesFactory.CreateEntity(_fruitSpawnPosition, (EntityType)numFruitType);
+            var entity = _gameState.EntitiesFactory.CreateEntity(_fruitSpawnPosition.CurrentValue, (EntityType)numFruitType);
             _gameState.Map.CurrentValue.Entities.Add(entity);
         }
     }

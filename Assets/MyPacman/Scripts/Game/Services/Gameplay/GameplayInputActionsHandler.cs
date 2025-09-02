@@ -1,5 +1,4 @@
-﻿using UnityEngine;
-using UnityEngine.InputSystem;
+﻿using UnityEngine.InputSystem;
 
 namespace MyPacman
 {
@@ -10,20 +9,21 @@ namespace MyPacman
         private readonly PlayerMovementService _playerMovement;
 
         // For test
-        private readonly GameState _gameState;
-        private int _counter;
+        //private readonly GameState _gameState;
+        //private int _number;
+        //private bool _switcher = false;
 
         public GameplayInputActionsHandler(
             GameplayUIManager uiManager,
             PlayerInputActions inputActions,
-            PlayerMovementService playerMovement,
-            GameState gameState                         // For test
+            PlayerMovementService playerMovement
+            //GameState gameState                         // For test
             )
         {
             _uiManager = uiManager;
             _inputActions = inputActions;
             _playerMovement = playerMovement;
-            _gameState = gameState;                     // For test
+            //_gameState = gameState;                     // For test
 
             _inputActions.Enable();
             _inputActions.Keyboard.Movement.started += _playerMovement.OnMoveStarted;
@@ -41,26 +41,39 @@ namespace MyPacman
 
         private void OnEscapePressed(InputAction.CallbackContext context)
         {
-            //  НЕ УДАЛЯТЬ!! Закоментированно на время тестирования других функций
-            //if (_uiManager.IsScreenOpen)
-            //    _uiManager.CloseScreenPauseMenu();
-            //else
-            //    _uiManager.OpenScreenPauseMenu();
+            if (_uiManager.IsScreenOpen)
+                _uiManager.CloseScreenPauseMenu();
+            else
+                _uiManager.OpenScreenPauseMenu();
             //--------------------------------------------------------------------------
             // For test
-            EntityType entity = EntityType.Chery - _counter;
-
-            if (entity <= EntityType.Chery && entity > EntityType.Fruit)
-            {
-                _gameState.PickedFruits.Add(entity);
-            }
-
-            _counter++;
-
-            if (Random.Range(0, 2) > 0)
-                _gameState.LifePoints.Value++;
-            else
-                _gameState.LifePoints.Value--;
+            //TestIconsUI();
         }
+
+        //private void TestIconsUI()
+        //{
+        //    //EntityType entity = EntityType.Cherry - _counter;
+
+        //    int num = Random.Range((int)EntityType.Cherry, (int)EntityType.Fruit);
+        //    EntityType entity = (EntityType)num;
+        //        _gameState.PickedFruits.Add(entity);
+
+
+        //    if (_switcher == false)
+        //    {
+        //        if(_gameState.LifePoints.Value > 13)
+        //            _switcher = true;
+        //    }
+        //    else
+        //    {
+        //        if(_gameState.LifePoints.Value < 3)
+        //            _switcher = false;
+        //    }
+
+        //    if (_switcher)
+        //        _gameState.LifePoints.Value--;
+        //    else
+        //        _gameState.LifePoints.Value++;
+        //}
     }
 }

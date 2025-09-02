@@ -6,7 +6,7 @@ namespace MyPacman
     [Serializable]
     public class MapData
     {
-        public string MapTag { get; set; }                  // Тэг используемой карты
+        public string MapTag { get; set; }                  // Тэг используемой карты       Допилить загрузку из сохранения
         public List<EntityData> Entities { get; set; } = new();
         public int LevelNumber { get; set; }                // Уровень сложности
         public int NumberOfPellets { get; set; }           // Кол-во гранул на уровень

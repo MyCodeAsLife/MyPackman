@@ -112,7 +112,7 @@ namespace MyPacman
 
         private void InitCamera(int[,] map)     // ¬ынуть размер карты из mapHandler?
         {
-            const float OffsetFromScreenAspectRatio = 16f / 9f;                 // Magic
+            const float OffsetFromScreenAspectRatio = 16f / 9f;                 // Magic    ѕолучить разрешение с камеры и вставить в данную формулу
 
             float y = map.GetLength(0) * GameConstants.GridCellSize * GameConstants.Half;
             float x = map.GetLength(1) * GameConstants.GridCellSize * GameConstants.Half;

@@ -45,7 +45,7 @@ namespace MyPacman
                 case EntityType.Clyde:
                     return new Ghost(entityData as GhostData);
 
-                case EntityType.Chery:
+                case EntityType.Cherry:
                 case EntityType.Strawberry:
                 case EntityType.Orange:
                 case EntityType.Apple:

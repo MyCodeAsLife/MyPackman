@@ -22,7 +22,7 @@ namespace MyPacman
                 entityData = new PelletData();
             else if (type <= EntityType.Blinky && type >= EntityType.Clyde)
                 entityData = new GhostData();
-            else if (type <= EntityType.Chery && type >= EntityType.Key)
+            else if (type <= EntityType.Cherry && type >= EntityType.Key)
                 entityData = new FruitData();
             else
                 throw new System.Exception($"Unsuported entity type: {type}");       // Magic
@@ -48,7 +48,7 @@ namespace MyPacman
                 path = GameConstants.PelletsFolderPath;
             else if (entityType <= EntityType.Blinky && entityType >= EntityType.Clyde)
                 path = GameConstants.GhostsFolderPath;
-            else if (entityType <= EntityType.Chery && entityType >= EntityType.Key)
+            else if (entityType <= EntityType.Cherry && entityType >= EntityType.Key)
                 path = GameConstants.FruitsFolderPath;
             else
                 throw new Exception($"Unsuported entity type: {entityType}");       // Magic
@@ -81,7 +81,7 @@ namespace MyPacman
                 case EntityType.Clyde:
                     return EdibleEntityPoints.Ghost;
 
-                case EntityType.Chery:
+                case EntityType.Cherry:
                     return EdibleEntityPoints.Cherry;
 
                 case EntityType.Strawberry:

@@ -159,17 +159,17 @@ namespace MyPacman
 
         private ReactiveProperty<Vector2> InitFruitSpawnPos()
         {
-            var clydeSpawnPos = new ReactiveProperty<Vector2>(new Vector2(
+            var fruitSpawnPos = new ReactiveProperty<Vector2>(new Vector2(
                 OriginData.FruitSpawnPosX,
                 OriginData.FruitSpawnPosY));
 
-            clydeSpawnPos.Subscribe(newPos =>
+            fruitSpawnPos.Subscribe(newPos =>
             {
                 OriginData.FruitSpawnPosX = newPos.x;
                 OriginData.FruitSpawnPosY = newPos.y;
             });
 
-            return clydeSpawnPos;
+            return fruitSpawnPos;
         }
     }
 }

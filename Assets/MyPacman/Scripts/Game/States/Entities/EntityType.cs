@@ -10,7 +10,7 @@
     Inky = -9,
     Clyde = -10,
 
-    Chery = -11,
+    Cherry = -11,
     Strawberry = -12,
     Orange = -13,
     Apple = -14,

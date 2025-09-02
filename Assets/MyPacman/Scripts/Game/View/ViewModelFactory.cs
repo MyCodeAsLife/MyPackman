@@ -20,7 +20,7 @@
                 case EntityType.Clyde:
                     return new GhostViewModel(entity as Ghost);
 
-                case EntityType.Chery:
+                case EntityType.Cherry:
                 case EntityType.Strawberry:
                 case EntityType.Orange:
                 case EntityType.Apple:

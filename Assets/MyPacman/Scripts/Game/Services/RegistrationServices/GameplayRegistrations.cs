@@ -67,8 +67,8 @@ namespace MyPacman
             sceneContainer.RegisterFactory(_ => new GameplayInputActionsHandler(
                     viewModelsContainer.Resolve<GameplayUIManager>(),
                     sceneContainer.Resolve<PlayerInputActions>(),
-                    sceneContainer.Resolve<PlayerMovementService>(),
-                    gameStateService.GameState                          // For test
+                    sceneContainer.Resolve<PlayerMovementService>()
+                    //gameStateService.GameState                          // For test
                 )).AsSingle();
         }
     }
