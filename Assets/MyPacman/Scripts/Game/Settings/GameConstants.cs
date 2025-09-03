@@ -1,6 +1,8 @@
+п»їusing System;
+
 namespace MyPacman
 {
-    public static class GameConstants   // Разделить на GameConstants и AppConstants?
+    public static class GameConstants   // Р Р°Р·РґРµР»РёС‚СЊ РЅР° GameConstants Рё AppConstants?
     {
         // General
         public const float Half = 0.5f;
@@ -20,9 +22,9 @@ namespace MyPacman
 
         // Paths to prefabs
         public const string PacmanFolderPath = "Prefabs/";
-        //public const string PacmanTestFullPath = "Prefabs/PacmanTest";      // Выпилить
+        //public const string PacmanTestFullPath = "Prefabs/PacmanTest";      // Р’С‹РїРёР»РёС‚СЊ
         //public const string PacmanNewFullPath = "Prefabs/NewPacman";
-        public const string NoFrictionMaterialFullPath = "Prefabs/NoFrictionMaterial";    // Материал без трения
+        public const string NoFrictionMaterialFullPath = "Prefabs/NoFrictionMaterial";    // РњР°С‚РµСЂРёР°Р» Р±РµР· С‚СЂРµРЅРёСЏ
         public const string WallTilesFolderPath = "Assets/WallTiles/";
         //public const string FruitRuleTilesFolderPath = "Assets/FruitsRuleTiles/";
         //public const string PelletRuleTilesFolderPath = "Assets/PelletsRuleTiles/";
@@ -38,35 +40,39 @@ namespace MyPacman
         // Number of tiles along the specified path
         public const int NumberOfWallTiles = 38;
         public const int NumberOfPelletTiles = 3;
-        //public const int NumberOfFruitTiles = 1;         // Количество подбираемых вещей в папке Prefabs(apple, key и т.д.)
+        //public const int NumberOfFruitTiles = 1;         // РљРѕР»РёС‡РµСЃС‚РІРѕ РїРѕРґР±РёСЂР°РµРјС‹С… РІРµС‰РµР№ РІ РїР°РїРєРµ Prefabs(apple, key Рё С‚.Рґ.)
 
         // Map settings
         public const float GridCellSize = 1f;
         //public const int GridCellPixelSize = 24;
-        //public const int FieldsAtTheEdgesOfTheMap = 1;  // Отступы по краям карты
+        //public const int FieldsAtTheEdgesOfTheMap = 1;  // РћС‚СЃС‚СѓРїС‹ РїРѕ РєСЂР°СЏРј РєР°СЂС‚С‹
 
         // Gameplay settings
         public const float PlayerSpeed = 6f;
         public const float PlayerInvincibleTimer = 2.5f;
         public const float ScatterTimer = 6f;
         public const float ChaseTimer = 6f;
+        public const float GhostSpeed = 6f;
+        public const float GhostStartingSpeedвЂ‹вЂ‹Modifier = 1f;
+        public const float GhostTunelSpeedвЂ‹вЂ‹Modifier = 0.6f;
         public const int StartLifePointsAmount = 3;
         public const int StartingDifficultyLevel = 1;
-        public const int CollectedPelletsForFirstFruitSpawn = 10;           // 70       Переделать под процент от всех пеллетов на уровне
-        public const int CollectedPelletsForSecondFruitSpawn = 170;         // 170      Переделать под процент от всех пеллетов на уровне
+        public const int CollectedPelletsForFirstFruitSpawn = 10;           // 70       РџРµСЂРµРґРµР»Р°С‚СЊ РїРѕРґ РїСЂРѕС†РµРЅС‚ РѕС‚ РІСЃРµС… РїРµР»Р»РµС‚РѕРІ РЅР° СѓСЂРѕРІРЅРµ
+        public const int CollectedPelletsForSecondFruitSpawn = 15;         // 170      РџРµСЂРµРґРµР»Р°С‚СЊ РїРѕРґ РїСЂРѕС†РµРЅС‚ РѕС‚ РІСЃРµС… РїРµР»Р»РµС‚РѕРІ РЅР° СѓСЂРѕРІРЅРµ
         public const int PriceLifePoint = 10000;
         public const int MaxNumberFruitIconOnPanel = 10;
         public const int MaxNumberLifeIconOnPanel = 10;
 
-        // Level Constructor - переделать в enum?
+        // Level Constructor - РїРµСЂРµРґРµР»Р°С‚СЊ РІ enum?
         //public const int EmptyTile = 0;
         public const int GateTile = 37;
-        public const int PacmanSpawn = (int)EntityType.Pacman;
-        public const int BlinkySpawn = (int)EntityType.Blinky;
-        public const int PinkySpawn = (int)EntityType.Pinky;
-        public const int InkySpawn = (int)EntityType.Inky;
-        public const int ClydeSpawn = (int)EntityType.Clyde;
-        public const int FruitSpawn = (int)EntityType.Fruit;
+        public const int SpeedChangingTile = -2;
+        //public const int PacmanSpawn = (int)SpawnPointType.Pacman;
+        //public const int BlinkySpawn = (int)SpawnPointType.Blinky;
+        //public const int PinkySpawn = (int)SpawnPointType.Pinky;
+        //public const int InkySpawn = (int)SpawnPointType.Inky;
+        //public const int ClydeSpawn = (int)SpawnPointType.Clyde;
+        //public const int FruitSpawn = (int)SpawnPointType.Fruit;
         //public const int SmallPellet = -3;
         //public const int MediumPellet = -4;
         //public const int LargePellet = -5;

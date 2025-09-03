@@ -4,7 +4,7 @@ using UnityEngine.Tilemaps;
 
 namespace MyPacman
 {
-    public class LevelCreator
+    public class LevelConstructor
     {
         private readonly Tilemap _obstacleTileMap;                  // Получать через DI 
         private readonly Tile[] _obstacleTiles;                     // Получать через DI ?
@@ -15,7 +15,7 @@ namespace MyPacman
 
         private readonly bool _isLoaded = false;
 
-        public LevelCreator(DIContainer sceneContainer, ILevelConfig levelConfig)
+        public LevelConstructor(DIContainer sceneContainer, ILevelConfig levelConfig)
         {
             _obstacleTileMap = sceneContainer.Resolve<Tilemap>(GameConstants.Obstacle);
             _obstacleTiles = LoadTiles(GameConstants.WallTilesFolderPath, GameConstants.NumberOfWallTiles);
@@ -54,15 +54,15 @@ namespace MyPacman
                     {
                         CreateObstacle(numTile, x, y);
                     }
-                    else if(numTile <= (int)EntityType.SmallPellet)
+                    else if (numTile <= (int)EntityType.SmallPellet)
                     {
                         if (numTile <= (int)EntityType.Pacman)
                         {
                             var position = CalculateCorrectSpawnPosition(numTile, x, y);
-                            SetSpawnPosition((EntityType)numTile, position);
+                            SetSpawnPosition((SpawnPointType)numTile, position);
                         }
 
-                        if (_isLoaded == false)
+                        if (_isLoaded == false && numTile > (int)SpawnPointType.Fruit)
                             CreateEntity(x, y, (EntityType)numTile);
                     }
                 }
@@ -94,7 +94,7 @@ namespace MyPacman
             if (entityType <= EntityType.Pacman)
             {
                 entity = _gameState.Map.Value.Entities.FirstOrDefault(entity => entity.Type == entityType);
-                pos = GetSpawnPosition(entityType);
+                pos = GetSpawnPosition((SpawnPointType)entityType);
             }
 
             if (entity == null)
@@ -120,60 +120,63 @@ namespace MyPacman
             return position;
         }
 
-        private void SetSpawnPosition(EntityType entityType, Vector2 spawnPosition)
+        private void SetSpawnPosition(SpawnPointType entityType, Vector2 spawnPosition)
         {
             switch (entityType)
             {
-                case EntityType.Pacman:
+                case SpawnPointType.Pacman:
                     _gameState.Map.CurrentValue.PacmanSpawnPos.Value = spawnPosition;
                     break;
 
-                case EntityType.Blinky:
+                case SpawnPointType.Blinky:
                     _gameState.Map.CurrentValue.BlinkySpawnPos.Value = spawnPosition;
                     break;
 
-                case EntityType.Pinky:
+                case SpawnPointType.Pinky:
                     _gameState.Map.CurrentValue.PinkySpawnPos.Value = spawnPosition;
                     break;
 
-                case EntityType.Inky:
+                case SpawnPointType.Inky:
                     _gameState.Map.CurrentValue.InkySpawnPos.Value = spawnPosition;
                     break;
 
-                case EntityType.Clyde:
+                case SpawnPointType.Clyde:
                     _gameState.Map.CurrentValue.ClydeSpawnPos.Value = spawnPosition;
                     break;
 
-                case EntityType.Fruit:
+                case SpawnPointType.Fruit:
                     _gameState.Map.CurrentValue.FruitSpawnPos.Value = spawnPosition;
                     break;
+
+                default:
+                    throw new System.Exception($"Undefined type: {entityType}");            // Magic
             }
         }
 
-        private Vector2 GetSpawnPosition(EntityType entityType)
+        private Vector2 GetSpawnPosition(SpawnPointType entityType)
         {
             switch (entityType)
             {
-                case EntityType.Pacman:
+                case SpawnPointType.Pacman:
                     return _gameState.Map.CurrentValue.PacmanSpawnPos.Value;
 
-                case EntityType.Blinky:
+                case SpawnPointType.Blinky:
                     return _gameState.Map.CurrentValue.BlinkySpawnPos.Value;
 
-                case EntityType.Pinky:
+                case SpawnPointType.Pinky:
                     return _gameState.Map.CurrentValue.PinkySpawnPos.Value;
 
-                case EntityType.Inky:
+                case SpawnPointType.Inky:
                     return _gameState.Map.CurrentValue.InkySpawnPos.Value;
 
-                case EntityType.Clyde:
+                case SpawnPointType.Clyde:
                     return _gameState.Map.CurrentValue.ClydeSpawnPos.Value;
 
-                case EntityType.Fruit:
+                case SpawnPointType.Fruit:
                     return _gameState.Map.CurrentValue.FruitSpawnPos.Value;
 
                 default:
-                    throw new System.Exception($"Undefined type: {entityType}");
+                    throw new System.Exception($"Undefined type: {entityType}");            // Magic
             }
         }
     }

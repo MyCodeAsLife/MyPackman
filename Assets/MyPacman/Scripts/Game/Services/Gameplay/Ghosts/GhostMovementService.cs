@@ -7,13 +7,13 @@ namespace MyPacman
 {
     public class GhostMovementService
     {
-        private Ghost _entity;
-        private Coroutine _moving;
-        private TimeService _timeService;
-        private GhostBehaviorMode _behaviorMode;
+        private readonly Ghost _entity;
+        private readonly TimeService _timeService;
+        private readonly Vector2 _mapSize;
 
+        private Coroutine _moving;
+        private GhostBehaviorMode _behaviorMode;
         private Vector2 _targetPosition;
-        private Vector2 _mapSize;
 
         public event Action<EntityType> TargetReached;
 
@@ -65,24 +65,36 @@ namespace MyPacman
 
             while (IsMoving)
             {
+                // Calculate movement
                 Vector2 currentPosition = _entity.Position.Value;
-                float speed = GameConstants.PlayerSpeed * _timeService.DeltaTime;
+                float speed = GameConstants.GhostSpeed * _entity.SpeedModifier.Value * _timeService.DeltaTime;
                 Vector2 tempPosition = Vector3.MoveTowards(currentPosition, nextPosition, speed);
                 float nextPosX = Utility.RepeatInRange(tempPosition.x, 1, _mapSize.x - 1);
                 float nextPosY = Utility.RepeatInRange(tempPosition.y, _mapSize.y + 2, 0);
                 _entity.Position.OnNext(new Vector2(nextPosX, nextPosY));
 
-                if (GreaterThanOrEqual(currentPosition, nextPosition, _entity.Direction.Value)
+                // Check state
+                if (Utility.GreaterThanOrEqual(currentPosition, nextPosition, _entity.Direction.Value)
                     || nextPosX != tempPosition.x
                     || nextPosY != tempPosition.y
                     )
                     IsMoving = false;
 
                 yield return null;
+
+                // Возможное место фиксации столкновения с игроком
+                //if (_entity.Position.Value.SqrDistance(_targetPosition) < 1f)       // Если расстояние до цели меньше размера тайла
             }
 
-            // Возможное место фиксации столкновения с игроком
-            //if (_entity.Position.Value.SqrDistance(_targetPosition) < 1f)       // Если расстояние до цели меньше размера тайла
+            // Check modifier serface
+            if (_behaviorMode.CheckSurfaceModifier() == true)
+            {
+                if (_entity.SpeedModifier.Value == GameConstants.GhostTunelSpeedModifier)
+                    _entity.SpeedModifier.Value = GameConstants.GhostStartingSpeedModifier;
+                else
+                    _entity.SpeedModifier.Value = GameConstants.GhostTunelSpeedModifier;
+            }
+
             if (_entity.Position.Value == _targetPosition)
                 TargetReached?.Invoke(_entity.Type);
 
@@ -90,31 +102,31 @@ namespace MyPacman
             Moved += Move;
         }
 
-        private bool GreaterThanOrEqual(Vector2 firstPos, Vector2 secondPos, Vector2 direction)
-        {
-            if (firstPos == secondPos)
-                return true;
+        //private bool GreaterThanOrEqual(Vector2 firstPos, Vector2 secondPos, Vector2 direction) // Вынести в Utility или Vector2Extensions
+        //{
+        //    if (firstPos == secondPos)
+        //        return true;
 
-            if (direction.x != 0)
-            {
-                if (direction.x > 0)
-                    return firstPos.x > secondPos.x;
-                else
-                    return firstPos.x < secondPos.x;
-            }
-            else if (direction.y != 0)
-            {
-                if (direction.y > 0)
-                    return firstPos.y > secondPos.y;
-                else
-                    return firstPos.y < secondPos.y;
-            }
+        //    if (direction.x != 0)
+        //    {
+        //        if (direction.x > 0)
+        //            return firstPos.x > secondPos.x;
+        //        else
+        //            return firstPos.x < secondPos.x;
+        //    }
+        //    else if (direction.y != 0)
+        //    {
+        //        if (direction.y > 0)
+        //            return firstPos.y > secondPos.y;
+        //        else
+        //            return firstPos.y < secondPos.y;
+        //    }
 
-            throw new Exception(                                                    // Magic
-                $"Unknown error." +
-                $"First pos: {firstPos}." +
-                $"Second pos: {secondPos}." +
-                $"Direction: {direction}");
-        }
+        //    throw new Exception(                                                    // Magic
+        //        $"Unknown error." +
+        //        $"First pos: {firstPos}." +
+        //        $"Second pos: {secondPos}." +
+        //        $"Direction: {direction}");
+        //}
     }
 }

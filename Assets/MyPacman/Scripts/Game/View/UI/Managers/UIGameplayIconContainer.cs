@@ -98,7 +98,7 @@ namespace MyPacman
 
             foreach (var fruit in fruits)
             {
-                for (int i = (int)EntityType.Pacman; i > (int)EntityType.Fruit; i--)
+                for (int i = (int)EntityType.Pacman; i >= (int)EntityType.Key; i--)
                 {
                     EntityType iconType = (EntityType)i;
                     string iconName = iconType.ToString();

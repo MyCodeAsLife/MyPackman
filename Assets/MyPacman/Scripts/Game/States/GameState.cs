@@ -1,5 +1,5 @@
-﻿using R3;
-using ObservableCollections;
+﻿using ObservableCollections;
+using R3;
 
 namespace MyPacman
 {
@@ -21,6 +21,7 @@ namespace MyPacman
             Map = new ReactiveProperty<Map>(new Map(_gameStateData.Map, EntitiesFactory));
             Score = new ReactiveProperty<int>(_gameStateData.Score);
             LifePoints = new ReactiveProperty<int>(_gameStateData.LifePoints);
+            PickedFruits = new ObservableList<EntityType>(_gameStateData.PickedFruits);
 
             InitMap();
             //InitResources();
@@ -41,7 +42,7 @@ namespace MyPacman
             // Вынести из этой функции ???
             Score.Subscribe(value => _gameStateData.Score = value);
             LifePoints.Subscribe(value => _gameStateData.LifePoints = value);
-            _gameStateData.PickedFruits.ForEach(value => PickedFruits.Add(value));
+            //_gameStateData.PickedFruits.ForEach(value => PickedFruits.Add(value));
             PickedFruits.ObserveRemove().Subscribe(e => _gameStateData.PickedFruits.Remove(e.Value));
             PickedFruits.ObserveAdd().Subscribe(e => _gameStateData.PickedFruits.Add(e.Value));
         }

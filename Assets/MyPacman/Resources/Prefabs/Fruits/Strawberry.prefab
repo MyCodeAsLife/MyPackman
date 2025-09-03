@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3879951172506460255}
   - component: {fileID: 7616768750730135109}
+  - component: {fileID: 338582183987771352}
   m_Layer: 9
   m_Name: Strawberry
   m_TagString: Untagged
@@ -87,3 +88,15 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &338582183987771352
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5701031524765831134}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5d79c8701ba1884458d2e9f08689cca5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

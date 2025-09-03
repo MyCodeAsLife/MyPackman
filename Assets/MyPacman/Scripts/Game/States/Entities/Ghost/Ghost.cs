@@ -11,9 +11,12 @@ namespace MyPacman
             IsMoving.Subscribe(isMoving => data.IsMoving = isMoving);
             Direction = new ReactiveProperty<Vector2>(data.Direction);
             Direction.Subscribe(direction => data.Direction = new Vector2Int((int)direction.x, (int)direction.y));
+            SpeedModifier = new ReactiveProperty<float>(data.SpeedModifier);
+            SpeedModifier.Subscribe(speedModifier => data.SpeedModifier = speedModifier);
         }
 
         public ReactiveProperty<bool> IsMoving { get; private set; }
         public ReactiveProperty<Vector2> Direction { get; private set; }
+        public ReactiveProperty<float> SpeedModifier { get; private set; }
     }
 }

@@ -22,7 +22,7 @@ namespace MyPacman
             sceneContainer.RegisterFactory(_ => new PlayerInputActions()).AsSingle();
             sceneContainer.RegisterFactory(_ => new WorldGameplayRootViewModel(entities)).AsSingle();
 
-            sceneContainer.RegisterFactory(_ => new LevelCreator(
+            sceneContainer.RegisterFactory(_ => new LevelConstructor(
                 sceneContainer,
                 gameplayEnterParams.LevelConfig
                 )).AsSingle();

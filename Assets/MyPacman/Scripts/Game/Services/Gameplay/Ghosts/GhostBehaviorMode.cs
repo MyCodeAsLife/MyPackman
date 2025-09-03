@@ -35,6 +35,8 @@ namespace MyPacman
             return CalculateDirection();
         }
 
+        public bool CheckSurfaceModifier() => _mapHandlerService.CheckTile(_selfPosition, GameConstants.SpeedChangingTile);
+
         protected abstract Vector2 CalculateDirectionInSelectedMode(List<Vector2> availableDirections);
 
         protected virtual Vector2 CalculateDirection(List<Vector2> availableDirections = null)

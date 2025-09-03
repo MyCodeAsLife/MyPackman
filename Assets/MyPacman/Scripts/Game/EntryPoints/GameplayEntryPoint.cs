@@ -96,7 +96,7 @@ namespace MyPacman
 
             CreateWallFrame(sceneFrame.transform);
 
-            var levelCreator = _sceneContainer.Resolve<LevelCreator>();
+            var levelCreator = _sceneContainer.Resolve<LevelConstructor>();
         }
 
         private void CreateWallFrame(Transform parent)
