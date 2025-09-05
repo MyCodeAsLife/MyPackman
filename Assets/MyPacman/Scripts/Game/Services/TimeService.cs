@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using UnityEngine;
 
 namespace MyPacman
@@ -7,6 +8,9 @@ namespace MyPacman
     {
         public bool IsTimeRun { get; private set; } = true;
         public float DeltaTime { get; private set; }        // Зачем это? к томуж привязанное к фиксированному времени
+
+        private float _time;
+        private Coroutine _timer = null;
 
         public event Action TimeHasTicked;
 
@@ -38,9 +42,29 @@ namespace MyPacman
             IsTimeRun = true;
         }
 
-        public void PauseTime(float time)       // Пока в разработке за ненадобностью
+        public void PauseTime(float time)
         {
+            IsTimeRun = false;
 
+            if (_timer != null)
+                StopCoroutine(_timer);
+
+            _timer = StartCoroutine(Timer(time));
+
+        }
+
+        IEnumerator Timer(float pauseTime)
+        {
+            _time = 0;
+
+            while (_time < pauseTime)
+            {
+                yield return null;
+                _time += Time.deltaTime;
+            }
+
+            _timer = null;
+            IsTimeRun = true;
         }
     }
 }

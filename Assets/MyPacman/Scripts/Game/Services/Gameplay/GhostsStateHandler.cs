@@ -1,6 +1,7 @@
 ﻿using ObservableCollections;
 using R3;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -17,7 +18,7 @@ namespace MyPacman
         private readonly ReactiveProperty<int> _pacmanLifePoints;
         private readonly ReadOnlyReactiveProperty<Vector2> _pacmanSpawnPosition;
 
-        private GhostBehaviorModeType _globalStateOfGhosts;
+        private GhostBehaviorModeType _globalStateOfGhosts;     // Это лишнее?
         private float _amountTime = 0f;
         private float _timer = 0f;
         private float _levelTimeHasPassed = 0f;         // Время с начала раунда(без пауз)
@@ -69,6 +70,9 @@ namespace MyPacman
         {
             _levelTimeHasPassed += _timeService.DeltaTime;
             Timer?.Invoke();
+
+            // For test
+            CheckForCollisionWithPlayer();
         }
 
         private void SwitchBehaviorModes(GhostBehaviorModeType behaviorModeType)
@@ -155,12 +159,12 @@ namespace MyPacman
         private void InitGhostsMap(IObservableCollection<Entity> entities)
         {
             foreach (var entity in entities)
-                if (CheckEntityOnGhost(entity))
+                if (IsGhostEntity(entity.Type))
                     _ghostsMap.Add(entity.Type, entity as Ghost);
 
             entities.ObserveAdd().Subscribe(e =>
             {
-                if (CheckEntityOnGhost(e.Value))
+                if (IsGhostEntity(e.Value.Type))
                     _ghostsMap.Add(e.Value.Type, e.Value as Ghost);
             });
 
@@ -172,7 +176,7 @@ namespace MyPacman
             ReadOnlyReactiveProperty<Vector2> pacmanPosition,
             ILevelConfig levelConfig)
         {
-            if (CheckEntityOnGhost(entity))
+            if (IsGhostEntity(entity.Type))
             {
                 var ghostMovementService = new GhostMovementService(
                     entity as Ghost,
@@ -187,7 +191,7 @@ namespace MyPacman
             return false;
         }
 
-        private object TryDestroyMovementService(EntityType entityType)
+        private bool TryDestroyMovementService(EntityType entityType)
         {
             if (_ghostMovementServicesMap.ContainsKey(entityType))
             {
@@ -198,17 +202,14 @@ namespace MyPacman
             return false;
         }
 
-        private bool CheckEntityOnGhost(Entity entity)
-        {
-            return (entity.Type <= EntityType.Blinky && entity.Type >= EntityType.Clyde);
-        }
+        private bool IsGhostEntity(EntityType entity) => entity <= EntityType.Blinky && entity >= EntityType.Clyde;
 
         private void OnTargetReached(EntityType entityType)
         {
-            // 1. Преследование
-            // Проверять дистаницию до цели, если достигнута то пакман съеден
-            // 2. Страх
-            // Проверять дистаницию до цели, если достигнута то призрак съеден
+            // -1. Преследование
+            // -Проверять дистаницию до цели, если достигнута то пакман съеден
+            // -2. Страх
+            // -Проверять дистаницию до цели, если достигнута то призрак съеден
             // +-3. Возврат
             // При добегании до точки(в загоне) запускать таймер - таймер будет вести призрак?
             // +-4. Разбегание
@@ -221,6 +222,13 @@ namespace MyPacman
             }
 
             // Нужно добавить (таймер?) на переключение поведения при выходе из загона.
+        }
+
+        private void CheckForCollisionWithPlayer()      // Засунуть в карутину?
+        {
+            foreach (var entity in _ghostsMap)
+                if (_pacman.Position.Value.SqrDistance(entity.Value.Position.CurrentValue) <= 1.5f)
+                    OnRanIntoPacman(entity.Key);
         }
 
         // Призрак сообщает когда сталкивается с игроком
@@ -245,37 +253,35 @@ namespace MyPacman
             }
         }
 
-        private void PacmanTakeDamage()
+        private void PacmanTakeDamage()     // Вызывать отдельный обработчик состояний игрока
         {
-            // Проверяем кол-во жизней пакмана
             if (_pacmanLifePoints.Value > 0)
             {
-                // если больше нуля то вычесть одну
-                // телепортировать на точку спавна
-                // запустить временную неуязвимость
                 _pacmanLifePoints.Value--;
                 _pacman.Position.Value = _pacmanSpawnPosition.CurrentValue;
                 _invincibleTimer = GameConstants.PlayerInvincibleTimer;
-                Timer += InvincibleTimer;
+                Coroutines.StartRoutine(InvulnerabilityTimer());
             }
             else
             {
                 // если равно нулю или меньше то вызываем конец игры
+                Debug.Log("Player lifes is end!");              //++++++++++++++++++++++++++++++++++++++++++++++++
             }
 
         }
 
-        private void InvincibleTimer()
+        private IEnumerator InvulnerabilityTimer()     // Оформить как корутину
         {
-            if (_invincibleTimer > 0)
+            // Включить мигание или уменьшение и увеличение прозрачности пакмана на время неуязвимости
+            while (_invincibleTimer > 0)
             {
                 _invincibleTimer -= _timeService.DeltaTime;
+                yield return new WaitForSeconds(0.3f);
+
+                yield return new WaitForSeconds(0.3f);
             }
-            else
-            {
-                _invincibleTimer = 0f;
-                Timer -= InvincibleTimer;
-            }
+
+            _invincibleTimer = 0f;
         }
     }
 }

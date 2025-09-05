@@ -9,17 +9,11 @@ namespace MyPacman
 {
     public class MapHandlerService
     {
-        private readonly ObservableList<Entity> _entities;
         private readonly GameState _gameState;
-
         private readonly TilemapHandler _tilemapHandler;
-
-        //private Vector2 _fruitSpawnPosition;
-
-        private ReadOnlyReactiveProperty<Vector2> _fruitSpawnPosition;
-
-        // Добавить подписку на изменение данного массива, при изменении позиции призраков
-        private readonly Dictionary<Vector3Int, Entity> _edibleEntityMap = new();       // Призраки не меняют свою позицию
+        private readonly ObservableList<Entity> _entities;
+        private readonly ReadOnlyReactiveProperty<Vector2> _fruitSpawnPosition;
+        private readonly Dictionary<Vector3Int, Entity> _edibleEntityMap = new();
 
         public event Action<EdibleEntityPoints, Vector2> EntityEaten;
 
@@ -27,50 +21,37 @@ namespace MyPacman
         {
             _gameState = gameState;
             _entities = gameState.Map.CurrentValue.Entities;
-
             _fruitSpawnPosition = _gameState.Map.Value.FruitSpawnPos;
-
             _tilemapHandler = new TilemapHandler(obstaclesTileMap, levelConfig);
-            //_gameState.Map.Value.FruitSpawnPos.Subscribe(position => _fruitSpawnPosition = position);
             player.PlayerTilePosition.Subscribe(PlayerTileChanged);
             gameState.Map.CurrentValue.NumberOfCollectedPellets.Subscribe(OnCollectedPellet);
 
             InitEdibleEntityMap();
         }
 
+        public IReadOnlyList<Vector2> GatePositions => _tilemapHandler.GatePositions;
+        public IReadOnlyList<Vector2> SpeedModifierPositions => _tilemapHandler.SpeedModifierPositions;
         public bool CheckTileForObstacle(Vector2 position) => _tilemapHandler.CheckTileForObstacle(position);
         public List<Vector2> GetDirectionsWithoutObstacles(Vector2 position) => _tilemapHandler.GetDirectionsWithoutObstacles(position);
         public List<Vector2> GetDirectionsWithoutWalls(Vector2 position) => _tilemapHandler.GetDirectionsWithoutWalls(position);
         public bool IsCenterTail(Vector2 position) => _tilemapHandler.IsCenterTail(position);
-        public List<Vector2> GetTilePositions(int numTile) => _tilemapHandler.GetTilePositions(numTile);
         public bool CheckTile(Vector2 position, int numTile) => _tilemapHandler.CheckTile(position, numTile);
 
         private void PlayerTileChanged(Vector3Int position)
         {
             if (_edibleEntityMap.TryGetValue(position, out Entity entity))
             {
-                var edibleEntity = entity as Edible;
-
-                if (edibleEntity.Type <= EntityType.Blinky && edibleEntity.Type >= EntityType.Clyde)
-                {
-                    // Проверять возможность съесть призрака
-                    // Отправлять запрос в CharactersStateHandler
-                    // если проверка не пройденна return
-                }
-                else
-                {
-                    _entities.Remove(edibleEntity);
-                    EntityEaten?.Invoke(edibleEntity.Points, edibleEntity.Position.Value);
-                }
+                var edibleEntity = entity as Edible;            // Нужен ли класс Edible ???
+                _entities.Remove(edibleEntity);
+                EntityEaten?.Invoke(edibleEntity.Points, edibleEntity.Position.Value);
             }
         }
 
         private void InitEdibleEntityMap()
         {
             foreach (var entity in _entities)
-                if (entity.Type != EntityType.Pacman)
+                if (entity.Type > EntityType.Pacman || entity.Type < EntityType.Clyde)
                     AddEntity(entity);
-
 
             _entities.ObserveAdd().Subscribe(e =>
             {

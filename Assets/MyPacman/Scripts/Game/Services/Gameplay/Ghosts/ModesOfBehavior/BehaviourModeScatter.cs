@@ -5,10 +5,10 @@ using UnityEngine;
 
 namespace MyPacman
 {
-    // Разбегание
+    // Режим разбегания
     public class BehaviourModeScatter : GhostBehaviorMode
     {
-        private List<Vector2> _gatePositions;
+        private readonly IReadOnlyList<Vector2> _gatePositions;
 
         private Func<List<Vector2>, Dictionary<float, Vector2>> CalculateDirections;
 
@@ -20,7 +20,8 @@ namespace MyPacman
             : base(mapHandlerService, self, behaviorModeType)
         {
             _targetPosition.OnNext(targetPosition);
-            _gatePositions = mapHandlerService.GetTilePositions(GameConstants.GateTile);  // Таким же макаром получать позицию своего спавна?
+            _gatePositions = mapHandlerService.GatePositions;
+            //_gatePositions = mapHandlerService.GetTilePositions(GameConstants.GateTile);  // Зачем у каждого призрака хранить копию позиций врат
             CalculateDirections = CalculateDirectionsToGatePosition;
         }
 

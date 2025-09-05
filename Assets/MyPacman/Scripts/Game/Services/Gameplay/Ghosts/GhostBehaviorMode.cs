@@ -10,6 +10,8 @@ namespace MyPacman
     {
         protected readonly MapHandlerService _mapHandlerService;
         protected readonly Ghost _self;
+        protected readonly IReadOnlyList<Vector2> _speedModifierPositions;
+        protected readonly ReactiveProperty<Vector2> _targetPosition = new();
 
         protected Vector2 _selfPosition;                // Для кеширования _self.Position?
         protected Vector2 _selfDirection;
@@ -19,9 +21,11 @@ namespace MyPacman
             _mapHandlerService = mapHandlerService;
             _self = self;
             Type = behaviorModeType;
+
+            _speedModifierPositions = mapHandlerService.SpeedModifierPositions;
         }
 
-        public ReactiveProperty<Vector2> _targetPosition { get; protected set; } = new();
+        public ReadOnlyReactiveProperty<Vector2> TargetPosition => _targetPosition;
         public GhostBehaviorModeType Type { get; private set; }
 
         public Vector2 CalculateDirectionOfMovement()
@@ -35,7 +39,19 @@ namespace MyPacman
             return CalculateDirection();
         }
 
-        public bool CheckSurfaceModifier() => _mapHandlerService.CheckTile(_selfPosition, GameConstants.SpeedChangingTile);
+        public void CheckSurfaceModifier()      // Вынести в GhostsStateHandler ?
+        {
+            foreach (var modifierPosition in _speedModifierPositions)
+            {
+                if (modifierPosition == _selfPosition)
+                {
+                    if (_self.SpeedModifier.Value == GameConstants.GhostTunelSpeedModifier)
+                        _self.SpeedModifier.Value = GameConstants.GhostNormalSpeed​​Modifier;
+                    else
+                        _self.SpeedModifier.Value = GameConstants.GhostTunelSpeedModifier;
+                }
+            }
+        }
 
         protected abstract Vector2 CalculateDirectionInSelectedMode(List<Vector2> availableDirections);
 

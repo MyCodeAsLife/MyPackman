@@ -16,7 +16,7 @@ namespace MyPacman
 
         public static Vector2 Half(this Vector2 value)
         {
-            return value / 2f;
+            return value * 0.5f;
         }
 
         public static Vector3 DefineAngle(this Vector2 value)

@@ -19,7 +19,11 @@ namespace MyPacman
 
         private event Action Moved;
 
-        public GhostMovementService(Ghost entity, ReadOnlyReactiveProperty<Vector2> pacmanPosition, TimeService timeService, ILevelConfig levelConfig)
+        public GhostMovementService(
+            Ghost entity,
+            ReadOnlyReactiveProperty<Vector2> pacmanPosition,
+            TimeService timeService,
+            ILevelConfig levelConfig)
         {
             _entity = entity;
             _timeService = timeService;
@@ -43,7 +47,7 @@ namespace MyPacman
                 Moved += Move;
 
             _behaviorMode = behaviorMode;
-            _behaviorMode._targetPosition.Subscribe(newPos => _targetPosition = newPos);
+            _behaviorMode.TargetPosition.Subscribe(newPos => _targetPosition = newPos);
         }
 
         private void Tick()
@@ -54,6 +58,7 @@ namespace MyPacman
         private void Move()
         {
             Moved -= Move;
+            _behaviorMode.CheckSurfaceModifier();
             _entity.Direction.Value = _behaviorMode.CalculateDirectionOfMovement();
             _moving = Coroutines.StartRoutine(Moving());
         }
@@ -86,47 +91,11 @@ namespace MyPacman
                 //if (_entity.Position.Value.SqrDistance(_targetPosition) < 1f)       // Если расстояние до цели меньше размера тайла
             }
 
-            // Check modifier serface
-            if (_behaviorMode.CheckSurfaceModifier() == true)
-            {
-                if (_entity.SpeedModifier.Value == GameConstants.GhostTunelSpeedModifier)
-                    _entity.SpeedModifier.Value = GameConstants.GhostStartingSpeedModifier;
-                else
-                    _entity.SpeedModifier.Value = GameConstants.GhostTunelSpeedModifier;
-            }
-
             if (_entity.Position.Value == _targetPosition)
                 TargetReached?.Invoke(_entity.Type);
 
             _moving = null;
             Moved += Move;
         }
-
-        //private bool GreaterThanOrEqual(Vector2 firstPos, Vector2 secondPos, Vector2 direction) // Вынести в Utility или Vector2Extensions
-        //{
-        //    if (firstPos == secondPos)
-        //        return true;
-
-        //    if (direction.x != 0)
-        //    {
-        //        if (direction.x > 0)
-        //            return firstPos.x > secondPos.x;
-        //        else
-        //            return firstPos.x < secondPos.x;
-        //    }
-        //    else if (direction.y != 0)
-        //    {
-        //        if (direction.y > 0)
-        //            return firstPos.y > secondPos.y;
-        //        else
-        //            return firstPos.y < secondPos.y;
-        //    }
-
-        //    throw new Exception(                                                    // Magic
-        //        $"Unknown error." +
-        //        $"First pos: {firstPos}." +
-        //        $"Second pos: {secondPos}." +
-        //        $"Direction: {direction}");
-        //}
     }
 }

@@ -53,7 +53,7 @@ namespace MyPacman
         public const float ScatterTimer = 6f;
         public const float ChaseTimer = 6f;
         public const float GhostSpeed = 6f;
-        public const float GhostStartingSpeed​​Modifier = 1f;
+        public const float GhostNormalSpeed​​Modifier = 1f;
         public const float GhostTunelSpeed​​Modifier = 0.6f;
         public const int StartLifePointsAmount = 3;
         public const int StartingDifficultyLevel = 1;
@@ -66,7 +66,7 @@ namespace MyPacman
         // Level Constructor - переделать в enum?
         //public const int EmptyTile = 0;
         public const int GateTile = 37;
-        public const int SpeedChangingTile = -2;
+        public const int SpeedModifierTile = -2;
         //public const int PacmanSpawn = (int)SpawnPointType.Pacman;
         //public const int BlinkySpawn = (int)SpawnPointType.Blinky;
         //public const int PinkySpawn = (int)SpawnPointType.Pinky;

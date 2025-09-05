@@ -12,8 +12,8 @@ namespace MyPacman
         private readonly TimeService _timeService;
         private readonly Pacman _entity;
 
-        private readonly IGameStateService _gameStateService;            //For save
-        private float _timer;                                   //For save
+        private readonly IGameStateService _gameStateService;       //For save
+        private float _timer;                                       //For save
 
         private Vector2 _mapSize;
         private Vector2Int _lastDirection;

@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace MyPacman
 {
-    // Преследование
+    // Режим преследования
     public abstract class BehaviourModeChase : GhostBehaviorMode
     {
         protected readonly ReadOnlyReactiveProperty<Vector2> _pacmanPosition;

@@ -8,11 +8,38 @@ namespace MyPacman
     {
         private readonly Tilemap _obstaclesTileMap;
         private readonly ILevelConfig _levelConfig;
+        // New
+        private readonly List<Vector2> _gatePositions = new();
+        private readonly List<Vector2> _speedModifierPositions = new();
 
         public TilemapHandler(Tilemap obstaclesTileMap, ILevelConfig levelConfig)
         {
             _obstaclesTileMap = obstaclesTileMap;
             _levelConfig = levelConfig;
+
+            InitPositions();
+        }
+
+        public IReadOnlyList<Vector2> GatePositions => _gatePositions;
+        public IReadOnlyList<Vector2> SpeedModifierPositions => _speedModifierPositions;
+
+        private void InitPositions()
+        {
+            int lengthY = _levelConfig.Map.GetLength(0);
+            int lengthX = _levelConfig.Map.GetLength(1);
+
+            for (int y = 0; y < lengthY; y++)
+            {
+                for (int x = 0; x < lengthX; x++)
+                {
+                    int numTile = _levelConfig.Map[y, x];
+
+                    if (numTile == GameConstants.GateTile)
+                        _gatePositions.Add(new Vector2(x + GameConstants.Half, -y - GameConstants.Half + 1));
+                    else if (numTile == GameConstants.SpeedModifierTile)
+                        _speedModifierPositions.Add(new Vector2(x + GameConstants.Half, -y - GameConstants.Half + 1));
+                }
+            }
         }
 
         public bool CheckTileForObstacle(Vector2 position)
@@ -66,23 +93,20 @@ namespace MyPacman
             var valueX = position.x - Mathf.Floor(position.x);
             var valueY = position.y - Mathf.Floor(position.y);
 
-            if (Mathf.Approximately(valueX, GameConstants.Half) && Mathf.Approximately(valueY, GameConstants.Half))
-                return true;
-
-            return false;
+            return Mathf.Approximately(valueX, GameConstants.Half) && Mathf.Approximately(valueY, GameConstants.Half);
         }
 
-        public List<Vector2> GetTilePositions(int numTile)
-        {
-            List<Vector2> result = new List<Vector2>();
+        //public List<Vector2> GetTilePositions(int numTile)
+        //{
+        //    List<Vector2> result = new List<Vector2>();
 
-            for (int y = 0; y < _levelConfig.Map.GetLength(0); y++)
-                for (int x = 0; x < _levelConfig.Map.GetLength(1); x++)
-                    if (_levelConfig.Map[y, x] == numTile)
-                        result.Add(new Vector2(x + GameConstants.Half, -y - GameConstants.Half));
+        //    for (int y = 0; y < _levelConfig.Map.GetLength(0); y++)
+        //        for (int x = 0; x < _levelConfig.Map.GetLength(1); x++)
+        //            if (_levelConfig.Map[y, x] == numTile)
+        //                result.Add(new Vector2(x + GameConstants.Half, -y - GameConstants.Half));
 
-            return result;
-        }
+        //    return result;
+        //}
 
         public bool CheckTile(Vector2 position, int numTile)
         {

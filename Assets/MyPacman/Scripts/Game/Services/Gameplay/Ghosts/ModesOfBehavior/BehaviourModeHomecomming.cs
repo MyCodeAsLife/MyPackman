@@ -4,6 +4,7 @@ using UnityEngine;
 
 namespace MyPacman
 {
+    // Режим возврата в загон
     public class BehaviourModeHomecomming : GhostBehaviorMode       // Вроде как ненужен этот класс
     {
         public BehaviourModeHomecomming(MapHandlerService mapHandlerService, Ghost self, Vector2 targetPosition)
