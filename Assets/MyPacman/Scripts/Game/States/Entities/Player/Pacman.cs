@@ -6,7 +6,12 @@ namespace MyPacman
 {
     public class Pacman : Entity, IMovable
     {
+        // New
+        public readonly Subject<Unit> Dead = new();
+
         public Func<Vector2> GetCurrentPosition;
+        // New
+        public event Action DeadAnimationFinished;
 
         public Pacman(PacmanData pacmanData) : base(pacmanData)
         {
@@ -17,12 +22,21 @@ namespace MyPacman
         }
 
         public ReactiveProperty<bool> IsMoving { get; private set; }
-
         public ReactiveProperty<Vector2> Direction { get; private set; }
 
         public void PassPositionRequestFunction(Func<Vector2> getCurrentPosition)
         {
             GetCurrentPosition = getCurrentPosition;
+        }
+        // New
+        public void SubscribeToDeadAnimationFinish(Observable<Unit> request)
+        {
+            request.Subscribe(_ => OnDeadAnimationFinished());
+        }
+
+        private void OnDeadAnimationFinished()
+        {
+            DeadAnimationFinished?.Invoke();
         }
     }
 }

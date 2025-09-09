@@ -6,7 +6,7 @@ namespace MyPacman
     public abstract class Entity
     {
         //public readonly ReactiveProperty<Vector3Int> TilePosition;
-        public ReactiveProperty<Vector2> Position;  // Вынести в Entity
+        public ReactiveProperty<Vector2> Position;
 
         public Entity(EntityData data)
         {

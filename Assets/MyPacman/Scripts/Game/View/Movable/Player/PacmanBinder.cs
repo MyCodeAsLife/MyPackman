@@ -9,11 +9,15 @@ namespace MyPacman
 
         private Rigidbody2D _rigidbody;
         private Animator _animator;
+        // New
+        private PacmanAnimationEvents _animationEvents;
 
         private void OnEnable()
         {
             _rigidbody = GetComponent<Rigidbody2D>();
             _animator = GetComponentInChildren<Animator>();
+            // New
+            _animationEvents = GetComponentInChildren<PacmanAnimationEvents>();
         }
 
         public override void Bind(EntityViewModel viewModel)
@@ -29,9 +33,12 @@ namespace MyPacman
             });
 
             pacmanViewModel.IsMoving.Subscribe(isMoving => _animator.SetBool(IsMoving, isMoving));  // Переключение анимации движения
-
             pacmanViewModel.Position.Subscribe(nextPosition => _rigidbody.position = nextPosition); // Функция/лямбда(подписка) на движение/смену позиции.
             pacmanViewModel.PassPositionRequestFunction(GetCurrentPosition);
+
+            // Вынести в константы и преобразовать в public readonly int Dead = Animator.StringToHash(nameof(Dead));
+            pacmanViewModel.Dead.Subscribe(_ => _animator.SetTrigger("Dead"));
+            pacmanViewModel.SubscribeToDeadAnimationFinish(_animationEvents.DeadAnimationFinish);
         }
 
         // Получать позицию игрока здесь, она напрямую зависит от коллайдера и rigitbody

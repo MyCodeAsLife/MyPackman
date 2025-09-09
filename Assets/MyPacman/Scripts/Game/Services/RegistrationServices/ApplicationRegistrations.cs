@@ -11,6 +11,7 @@
 
             // Вынести настройку и регистрацию таймсервиса
             var timeService = UtilitiesObject.Instance.AddComponent<TimeService>();
+            // Данная привязка нужна только в геймплее(пауза при нажатии escape)
             var inputActions = projectContainer.Resolve<PlayerInputActions>();
             inputActions.Keyboard.Escape.performed += _ =>
             {

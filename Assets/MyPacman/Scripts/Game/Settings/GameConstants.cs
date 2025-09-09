@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace MyPacman
+﻿namespace MyPacman
 {
     public static class GameConstants   // Разделить на GameConstants и AppConstants?
     {
@@ -84,7 +82,8 @@ namespace MyPacman
         public const float GameplayInformationalPamelHeight = 3f;
 
         // Signal Tag
-        public const string ExitSceneRequestTag = nameof(ExitSceneRequestTag);
+        public const string SceneExitRequestTag = nameof(SceneExitRequestTag);
+        //public const string RequestTagWhenDeathAnimationEnds = nameof(RequestTagWhenDeathAnimationEnds);
 
         // Errors
         public const string NoSwitchingDefined = "There is no switching defined for this behavior. Behavior: ";

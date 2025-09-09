@@ -37,7 +37,6 @@ namespace MyPacman
             var mapHandler = _sceneContainer.Resolve<MapHandlerService>();
             CreateViewRootBinder(viewsContainer);
             var player = _sceneContainer.Resolve<PlayerMovementService>();
-            //var scoringService = _sceneContainer.Resolve<ScoringService>();           // Дубль        
             var ghostsStateHandler = _sceneContainer.Resolve<GhostsStateHandler>();
         }
 
@@ -49,8 +48,9 @@ namespace MyPacman
 
             // Вынести создание сервиса вслываюших текстовых сообщений?
             var uiManager = viewsContainer.Resolve<GameplayUIManager>();
-            var scoringService = viewsContainer.Resolve<ScoringService>();
-            _sceneContainer.RegisterInstance(new TextPopupService(uiManager, scoringService));
+            //var scoringService = viewsContainer.Resolve<ScoringService>();
+            //_sceneContainer.RegisterInstance(new TextPopupService(uiManager, scoringService));
+
             // Создание UIGameplay
             uiManager.OpenUIGameplay();        // Нужен ли функционал закрытия/скрытия ui?  // Зарегестрировать в контейнер?
 
@@ -75,7 +75,7 @@ namespace MyPacman
 
         private Observable<SceneExitParams> ConfigurateExitSignal(SceneExitParams exitParams)
         {
-            var exitSceneSignalSubj = _sceneContainer.Resolve<Subject<R3.Unit>>(GameConstants.ExitSceneRequestTag);
+            var exitSceneSignalSubj = _sceneContainer.Resolve<Subject<R3.Unit>>(GameConstants.SceneExitRequestTag);
             // Преобразовываем сигнал выхода со сцены, чтобы он возвращал значение GameplayExitParams
             var exitToMainMenuSceneSignal = exitSceneSignalSubj.Select(_ => exitParams);
             return exitToMainMenuSceneSignal;
@@ -96,7 +96,7 @@ namespace MyPacman
 
             CreateWallFrame(sceneFrame.transform);
 
-            var levelCreator = _sceneContainer.Resolve<LevelConstructor>();
+            var levelConstructor = _sceneContainer.Resolve<LevelConstructor>();
         }
 
         private void CreateWallFrame(Transform parent)

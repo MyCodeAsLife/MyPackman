@@ -9,7 +9,7 @@ namespace MyPacman
 
         public GameplayUIManager(DIContainer viewModelContainer) : base(viewModelContainer)
         {
-            _exitSceneRequest = viewModelContainer.Resolve<Subject<Unit>>(GameConstants.ExitSceneRequestTag);
+            _exitSceneRequest = viewModelContainer.Resolve<Subject<Unit>>(GameConstants.SceneExitRequestTag);
             _rootUI = Container.Resolve<UIGameplayRootViewModel>();
         }
 

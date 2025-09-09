@@ -1,4 +1,6 @@
-﻿using UnityEngine.InputSystem;
+﻿using R3;
+using UnityEngine;
+using UnityEngine.InputSystem;
 
 namespace MyPacman
 {
@@ -7,28 +9,33 @@ namespace MyPacman
         private readonly GameplayUIManager _uiManager;
         private readonly PlayerInputActions _inputActions;
         private readonly PlayerMovementService _playerMovement;
+        private readonly TextPopupService _textPopupService;
+        private readonly TimeService _timeService;
 
-        // For test
-        //private readonly GameState _gameState;
-        //private int _number;
-        //private bool _switcher = false;
+        private ScorePopupTextViewModel _text;
+        private ReadOnlyReactiveProperty<Vector2> _textSpawnPos;
 
         public GameplayInputActionsHandler(
             GameplayUIManager uiManager,
             PlayerInputActions inputActions,
-            PlayerMovementService playerMovement
-            //GameState gameState                         // For test
+            PlayerMovementService playerMovement,
+            TextPopupService textPopupService,
+            TimeService timeService,
+            ReadOnlyReactiveProperty<Vector2> textSpawnPos
             )
         {
             _uiManager = uiManager;
             _inputActions = inputActions;
             _playerMovement = playerMovement;
-            //_gameState = gameState;                     // For test
+            _textPopupService = textPopupService;
+            _timeService = timeService;
+            _textSpawnPos = textSpawnPos;
 
-            _inputActions.Enable();
-            _inputActions.Keyboard.Movement.started += _playerMovement.OnMoveStarted;
-            _inputActions.Keyboard.Movement.canceled += _playerMovement.OnMoveCanceled;
-            _inputActions.Keyboard.Escape.performed += OnEscapePressed;
+            //_inputActions.Enable();
+            //_inputActions.Keyboard.Movement.started += _playerMovement.OnMoveStarted;
+            //_inputActions.Keyboard.Movement.canceled += _playerMovement.OnMoveCanceled;
+            //_inputActions.Keyboard.Escape.performed += OnEscapePressed;
+            StartInit();
         }
 
         ~GameplayInputActionsHandler()
@@ -45,35 +52,30 @@ namespace MyPacman
                 _uiManager.CloseScreenPauseMenu();
             else
                 _uiManager.OpenScreenPauseMenu();
-            //--------------------------------------------------------------------------
-            // For test
-            //TestIconsUI();
         }
 
-        //private void TestIconsUI()
-        //{
-        //    //EntityType entity = EntityType.Cherry - _counter;
+        // Вынести стартовую активацию ???
+        private void StartInit()
+        {
+            _inputActions.Enable();
+            _inputActions.Keyboard.Escape.performed += OnStartEscapePressed;
+            _text = _textPopupService.ShowPopupText("READY!", _textSpawnPos.CurrentValue);  // Форматирование выводимого текста
+            _text.SetColor(Color.red);
+            _timeService.StopTime();
+        }
 
-        //    int num = Random.Range((int)EntityType.Cherry, (int)EntityType.Fruit);
-        //    EntityType entity = (EntityType)num;
-        //        _gameState.PickedFruits.Add(entity);
-
-
-        //    if (_switcher == false)
-        //    {
-        //        if(_gameState.LifePoints.Value > 13)
-        //            _switcher = true;
-        //    }
-        //    else
-        //    {
-        //        if(_gameState.LifePoints.Value < 3)
-        //            _switcher = false;
-        //    }
-
-        //    if (_switcher)
-        //        _gameState.LifePoints.Value--;
-        //    else
-        //        _gameState.LifePoints.Value++;
-        //}
+        private void OnStartEscapePressed(InputAction.CallbackContext context)
+        {
+            if (_text != null)
+            {
+                _textPopupService.HidePopupText(_text);
+                _text = null;
+                _inputActions.Keyboard.Escape.performed -= OnStartEscapePressed;
+                _inputActions.Keyboard.Escape.performed += OnEscapePressed;
+                _inputActions.Keyboard.Movement.started += _playerMovement.OnMoveStarted;
+                _inputActions.Keyboard.Movement.canceled += _playerMovement.OnMoveCanceled;
+                _timeService.RunTime();
+            }
+        }
     }
 }

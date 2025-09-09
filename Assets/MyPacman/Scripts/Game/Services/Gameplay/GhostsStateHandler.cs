@@ -22,7 +22,7 @@ namespace MyPacman
         private float _amountTime = 0f;
         private float _timer = 0f;
         private float _levelTimeHasPassed = 0f;         // Время с начала раунда(без пауз)
-        private float _invincibleTimer = 0f;
+        private float _pacmanInvincibleTimer = 0f;
 
         private event Action Timer;
 
@@ -51,6 +51,9 @@ namespace MyPacman
                 mapSize,
                 ghostsHomePosition);
 
+            //New
+            _pacman.DeadAnimationFinished += OnDeadAnimationFinished;
+
             InitGhostsMap(entities);
             InitGhostMovementServicesMap(entities, pacman.Position, levelConfig);
 
@@ -61,6 +64,7 @@ namespace MyPacman
         ~GhostsStateHandler()
         {
             _timeService.TimeHasTicked -= Tick;
+            _pacman.DeadAnimationFinished -= OnDeadAnimationFinished;
 
             foreach (var movementService in _ghostMovementServicesMap.Values)
                 movementService.TargetReached -= OnTargetReached;
@@ -227,16 +231,13 @@ namespace MyPacman
         private void CheckForCollisionWithPlayer()      // Засунуть в карутину?
         {
             foreach (var entity in _ghostsMap)
-                if (_pacman.Position.Value.SqrDistance(entity.Value.Position.CurrentValue) <= 1.5f)
+                if (_pacman.Position.Value.SqrDistance(entity.Value.Position.CurrentValue) <= 1.5f)         // Magic
                     OnRanIntoPacman(entity.Key);
         }
 
         // Призрак сообщает когда сталкивается с игроком
         private void OnRanIntoPacman(EntityType entityType)
         {
-            if (_invincibleTimer != 0)
-                return;
-
             // Проверяем текущее состояние/поведение призрака и в зависимости от него реагируем.
             var behaviourModeType = _ghostMovementServicesMap[entityType].BehaviorModeType;
 
@@ -249,18 +250,19 @@ namespace MyPacman
             else if (behaviourModeType != GhostBehaviorModeType.Homecomming)  // Если призрак не возвращается домой
             {
                 // Вызвать событие получения урона
-                PacmanTakeDamage();
+                if (_pacmanInvincibleTimer == 0)
+                    PacmanTakeDamage();
             }
         }
 
         private void PacmanTakeDamage()     // Вызывать отдельный обработчик состояний игрока
         {
+            _pacmanInvincibleTimer = GameConstants.PlayerInvincibleTimer;
+            _pacman.Dead.OnNext(Unit.Default);
+
             if (_pacmanLifePoints.Value > 0)
             {
                 _pacmanLifePoints.Value--;
-                _pacman.Position.Value = _pacmanSpawnPosition.CurrentValue;
-                _invincibleTimer = GameConstants.PlayerInvincibleTimer;
-                Coroutines.StartRoutine(InvulnerabilityTimer());
             }
             else
             {
@@ -273,15 +275,21 @@ namespace MyPacman
         private IEnumerator InvulnerabilityTimer()     // Оформить как корутину
         {
             // Включить мигание или уменьшение и увеличение прозрачности пакмана на время неуязвимости
-            while (_invincibleTimer > 0)
+            while (_pacmanInvincibleTimer > 0)
             {
-                _invincibleTimer -= _timeService.DeltaTime;
+                _pacmanInvincibleTimer -= _timeService.DeltaTime;
                 yield return new WaitForSeconds(0.3f);
 
                 yield return new WaitForSeconds(0.3f);
             }
 
-            _invincibleTimer = 0f;
+            _pacmanInvincibleTimer = 0f;
+        }
+
+        private void OnDeadAnimationFinished()
+        {
+            _pacman.Position.Value = _pacmanSpawnPosition.CurrentValue;
+            Coroutines.StartRoutine(InvulnerabilityTimer());
         }
     }
 }

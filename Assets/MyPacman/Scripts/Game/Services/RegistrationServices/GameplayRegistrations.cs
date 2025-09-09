@@ -17,7 +17,9 @@ namespace MyPacman
             var entities = gameStateService.GameState.Map.Value.Entities;
 
             // Регистрируем сигнал запрашивающий выход в MainMenu
-            sceneContainer.RegisterInstance(GameConstants.ExitSceneRequestTag, new Subject<Unit>());
+            sceneContainer.RegisterInstance(GameConstants.SceneExitRequestTag, new Subject<Unit>());
+            // Регистрация сигнала окончания анимации смерти пакмана
+            //sceneContainer.RegisterInstance(GameConstants.RequestTagWhenDeathAnimationEnds, new Subject<Unit>());
 
             sceneContainer.RegisterFactory(_ => new PlayerInputActions()).AsSingle();
             sceneContainer.RegisterFactory(_ => new WorldGameplayRootViewModel(entities)).AsSingle();
@@ -67,8 +69,15 @@ namespace MyPacman
             sceneContainer.RegisterFactory(_ => new GameplayInputActionsHandler(
                     viewModelsContainer.Resolve<GameplayUIManager>(),
                     sceneContainer.Resolve<PlayerInputActions>(),
-                    sceneContainer.Resolve<PlayerMovementService>()
-                    //gameStateService.GameState                          // For test
+                    sceneContainer.Resolve<PlayerMovementService>(),
+                    sceneContainer.Resolve<TextPopupService>(),
+                    sceneContainer.Resolve<TimeService>(),
+                    gameStateService.GameState.Map.CurrentValue.FruitSpawnPos
+                )).AsSingle();
+
+            sceneContainer.RegisterFactory(_ => new TextPopupService(
+                viewModelsContainer.Resolve<GameplayUIManager>(),
+                sceneContainer.Resolve<ScoringService>()
                 )).AsSingle();
         }
     }

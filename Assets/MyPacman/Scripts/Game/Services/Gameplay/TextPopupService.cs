@@ -15,13 +15,25 @@ namespace MyPacman
             scoringService.PointsReceived += OnPointsReceived;
         }
 
-        private void OnPointsReceived(int score, Vector2 position)
+        public ScorePopupTextViewModel ShowPopupText(string text, Vector2 position)
         {
             var popup = _uiManager.OpenScorePopupText();
             _popupTexts.Add(popup);
-            string text = score.ToString() + '!';                                           // Magic
             popup.SetText(text);
             popup.SetPosition(position);
+            return popup;
+        }
+
+        public void HidePopupText(ScorePopupTextViewModel popupText)
+        {
+            _popupTexts.Remove(popupText);
+            _uiManager.CloseScorePopupText(popupText);
+        }
+
+        private void OnPointsReceived(int score, Vector2 position)
+        {
+            string text = score.ToString() + '!';                                     // Magic
+            var popup = ShowPopupText(text, position);
             Coroutines.StartRoutine(ShowingPopupText(popup, position, 1f));           // Magic
         }
 
@@ -45,8 +57,7 @@ namespace MyPacman
                 scorePopup.SetPosition(nextPos);
             }
 
-            _popupTexts.Remove(scorePopup);
-            _uiManager.CloseScorePopupText(scorePopup);
+            HidePopupText(scorePopup);
         }
     }
 }
