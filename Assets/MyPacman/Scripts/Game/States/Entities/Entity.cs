@@ -30,6 +30,6 @@ namespace MyPacman
         public int UniqueId => Origin.UniqId;
         //public string ConfigId => Origin.ConfigId;        // ID конфига объека настроек ScriptableObject
         public EntityType Type => Origin.Type;
-        public string PrefabPath => Origin.PrefabPath;
+        public string PrefabPath => Origin.PrefabPath;      // Используется?
     }
 }

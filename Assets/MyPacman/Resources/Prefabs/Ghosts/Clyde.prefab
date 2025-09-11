@@ -282,6 +282,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _animatorBody: {fileID: 7072905315111499688}
   _eyes: {fileID: 7155378786915854502}
+  _body: {fileID: 844048435244249063}
   _lastState: 0
   _currentState: 0
   _path: 

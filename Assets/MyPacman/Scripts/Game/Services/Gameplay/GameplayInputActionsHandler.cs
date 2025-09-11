@@ -12,8 +12,11 @@ namespace MyPacman
         private readonly TextPopupService _textPopupService;
         private readonly TimeService _timeService;
 
+        private readonly ReadOnlyReactiveProperty<Vector2> _textSpawnPos;
         private ScorePopupTextViewModel _text;
-        private ReadOnlyReactiveProperty<Vector2> _textSpawnPos;
+
+        // New
+        //private bool _playerContorEnable;
 
         public GameplayInputActionsHandler(
             GameplayUIManager uiManager,
@@ -31,10 +34,6 @@ namespace MyPacman
             _timeService = timeService;
             _textSpawnPos = textSpawnPos;
 
-            //_inputActions.Enable();
-            //_inputActions.Keyboard.Movement.started += _playerMovement.OnMoveStarted;
-            //_inputActions.Keyboard.Movement.canceled += _playerMovement.OnMoveCanceled;
-            //_inputActions.Keyboard.Escape.performed += OnEscapePressed;
             StartInit();
         }
 
@@ -46,6 +45,32 @@ namespace MyPacman
             _inputActions.Disable();
         }
 
+        // Вынести стартовую активацию ???
+        private void StartInit()
+        {
+            _inputActions.Enable();
+            _inputActions.Keyboard.Escape.performed += OnStartGameplayEscapePressed;
+            _text = _textPopupService.ShowPopupText("READY!", _textSpawnPos.CurrentValue);  // Форматирование выводимого текста
+            _text.SetColor(Color.red);
+            _timeService.StopTime();
+            // New
+            //_timeService.IsTimeRun.Skip(1).Subscribe(OnPauseGamePressed);
+            _inputActions.Keyboard.Movement.started += _playerMovement.OnMoveStarted;
+            _inputActions.Keyboard.Movement.canceled += _playerMovement.OnMoveCanceled;
+        }
+
+        private void OnStartGameplayEscapePressed(InputAction.CallbackContext context)
+        {
+            if (_text != null)
+            {
+                _textPopupService.HidePopupText(_text);
+                _text = null;
+                _inputActions.Keyboard.Escape.performed -= OnStartGameplayEscapePressed;
+                _inputActions.Keyboard.Escape.performed += OnEscapePressed;
+                _timeService.RunTime();
+            }
+        }
+
         private void OnEscapePressed(InputAction.CallbackContext context)
         {
             if (_uiManager.IsScreenOpen)
@@ -54,28 +79,26 @@ namespace MyPacman
                 _uiManager.OpenScreenPauseMenu();
         }
 
-        // Вынести стартовую активацию ???
-        private void StartInit()
-        {
-            _inputActions.Enable();
-            _inputActions.Keyboard.Escape.performed += OnStartEscapePressed;
-            _text = _textPopupService.ShowPopupText("READY!", _textSpawnPos.CurrentValue);  // Форматирование выводимого текста
-            _text.SetColor(Color.red);
-            _timeService.StopTime();
-        }
+        //private void OnPauseGamePressed(bool isRunTime)
+        //{
+        //    if (isRunTime != _playerContorEnable)
+        //        SwitchPlayerControl();
+        //}
 
-        private void OnStartEscapePressed(InputAction.CallbackContext context)
-        {
-            if (_text != null)
-            {
-                _textPopupService.HidePopupText(_text);
-                _text = null;
-                _inputActions.Keyboard.Escape.performed -= OnStartEscapePressed;
-                _inputActions.Keyboard.Escape.performed += OnEscapePressed;
-                _inputActions.Keyboard.Movement.started += _playerMovement.OnMoveStarted;
-                _inputActions.Keyboard.Movement.canceled += _playerMovement.OnMoveCanceled;
-                _timeService.RunTime();
-            }
-        }
+        //private void SwitchPlayerControl()
+        //{
+        //    if (_playerContorEnable)
+        //    {
+        //        _playerContorEnable = false;
+        //        _inputActions.Keyboard.Movement.started -= _playerMovement.OnMoveStarted;
+        //        _inputActions.Keyboard.Movement.canceled -= _playerMovement.OnMoveCanceled;
+        //    }
+        //    else
+        //    {
+        //        _playerContorEnable = true;
+        //        _inputActions.Keyboard.Movement.started += _playerMovement.OnMoveStarted;
+        //        _inputActions.Keyboard.Movement.canceled += _playerMovement.OnMoveCanceled;
+        //    }
+        //}
     }
 }

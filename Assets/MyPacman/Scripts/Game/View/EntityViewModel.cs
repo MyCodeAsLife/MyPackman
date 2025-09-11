@@ -17,6 +17,6 @@ namespace MyPacman
             EntityId = entity.UniqueId;
         }
 
-        public string PrefabPath => Entity.PrefabPath;
+        public string PrefabPath => Entity.PrefabPath;  // Используется?
     }
 }

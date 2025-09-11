@@ -15,7 +15,7 @@
             var inputActions = projectContainer.Resolve<PlayerInputActions>();
             inputActions.Keyboard.Escape.performed += _ =>
             {
-                if (timeService.IsTimeRun)
+                if (timeService.IsTimeRun.CurrentValue)
                     timeService.StopTime();
                 else
                     timeService.RunTime();

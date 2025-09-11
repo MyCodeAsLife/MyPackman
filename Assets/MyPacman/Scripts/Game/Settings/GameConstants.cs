@@ -1,4 +1,6 @@
-﻿namespace MyPacman
+﻿using UnityEngine;
+
+namespace MyPacman
 {
     public static class GameConstants   // Разделить на GameConstants и AppConstants?
     {

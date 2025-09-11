@@ -47,6 +47,7 @@ namespace MyPacman
                 Moved += Move;
 
             _behaviorMode = behaviorMode;
+            _entity.CurrentBehaviorMode.Value = behaviorMode.Type;
             _behaviorMode.TargetPosition.Subscribe(newPos => _targetPosition = newPos);
         }
 

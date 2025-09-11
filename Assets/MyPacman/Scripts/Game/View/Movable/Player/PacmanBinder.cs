@@ -5,7 +5,9 @@ namespace MyPacman
 {
     public class PacmanBinder : EntityBinder
     {
-        private const string IsMoving = nameof(IsMoving);                                   // Вынести в константы.
+        private static int Dead = Animator.StringToHash(nameof(Dead));          // Именование? Создать отдельные static и вынести туда?
+
+        private const string IsMoving = nameof(IsMoving);                       // Вынести в константы?
 
         private Rigidbody2D _rigidbody;
         private Animator _animator;
@@ -37,7 +39,7 @@ namespace MyPacman
             pacmanViewModel.PassPositionRequestFunction(GetCurrentPosition);
 
             // Вынести в константы и преобразовать в public readonly int Dead = Animator.StringToHash(nameof(Dead));
-            pacmanViewModel.Dead.Subscribe(_ => _animator.SetTrigger("Dead"));
+            pacmanViewModel.Dead.Subscribe(_ => _animator.SetTrigger(Dead));
             pacmanViewModel.SubscribeToDeadAnimationFinish(_animationEvents.DeadAnimationFinish);
         }
 

@@ -8,10 +8,12 @@ namespace MyPacman
     // Сохранить цвет?
     public class GhostBinder : EntityBinder
     {
-        private const string BehaviorModeType = nameof(BehaviorModeType);
+        //private const string BehaviorModeType = nameof(BehaviorModeType);       // Вынести в const?
+        private static int BehaviorModeType = Animator.StringToHash(nameof(BehaviorModeType));    // Именование? Создать отдельные static и вынести туда?
 
         [SerializeField] private Animator _animatorBody;
         [SerializeField] private SpriteRenderer _eyes;
+        [SerializeField] private SpriteRenderer _body;
 
         // For test
         [SerializeField] private int _lastState;
@@ -19,6 +21,9 @@ namespace MyPacman
         [SerializeField] private string _path;
 
         private Sprite[] _eyesAll = new Sprite[4];
+
+        private bool _eyesLastState;
+        private bool _bodyLastState;
 
         public override void Bind(EntityViewModel viewModel)
         {
@@ -29,22 +34,47 @@ namespace MyPacman
             //// Добавить функцию/лямбду(подписка) на поворот в сторону движения.
             ghostViewModel.Direction.Subscribe(direction =>
             {
-                // Повернуть
+                // Повернуть глаза
                 ChangeDirection(direction);
             });
 
             //_eyes.enabled = true;             // Выкл злаза в режиме страха
             //ghostViewModel.IsMoving.Subscribe(isMoving => _animator.SetBool(IsMoving, isMoving));  // Переключение анимации движения
 
+            ghostViewModel.CurrentBehaviorMode.Subscribe(newType =>
+            {
+                // Если включается режим страха, то отключить глаза
+                _eyes.enabled = newType == GhostBehaviorModeType.Frightened ? false : true;
+                _animatorBody.SetInteger(BehaviorModeType, _currentState);
+            });
+
             ghostViewModel.Position.Subscribe(nextPosition => transform.position = nextPosition); // Функция/лямбда(подписка) на движение/смену позиции.
 
+            //ghostViewModel.PassGhostBody(_body);
+            ghostViewModel.PassFuncHideGhost(HideGhost);
+            ghostViewModel.PassFuncShowGhost(ShowGhost);
 
             // For test
-            _path = viewModel.PrefabPath;
+            _path = viewModel.PrefabPath;               // Используется?
             StartCoroutine(RandomSwitching());
         }
 
-        private void ChangeDirection(Vector2 direction)
+        private void HideGhost()
+        {
+            _eyesLastState = _eyes.enabled;
+            _bodyLastState = _body.enabled;
+
+            _eyes.enabled = false;
+            _body.enabled = false;
+        }
+
+        private void ShowGhost()
+        {
+            _eyes.enabled = _eyesLastState;
+            _body.enabled = _bodyLastState;
+        }
+
+        private void ChangeDirection(Vector2 direction) // Вынести логику?
         {
             if (direction == Vector2.down)
                 _eyes.sprite = _eyesAll[0];
@@ -55,12 +85,12 @@ namespace MyPacman
             else if (direction == Vector2.up)
                 _eyes.sprite = _eyesAll[3];
 
-            throw new System.Exception($"Unknown direction: {direction}");
+            throw new System.Exception($"Unknown direction: {direction}");      //Magic
         }
 
-        private void LoadSprites()
+        private void LoadSprites()      // Вынести логику?
         {
-            var eyes = Resources.LoadAll<Sprite>("Assets/Sprites/Eyes/");
+            var eyes = Resources.LoadAll<Sprite>("Assets/Sprites/Eyes/");       //Magic
 
             for (int i = 0; i < eyes.Length; i++)
             {
@@ -111,6 +141,7 @@ namespace MyPacman
             }
 
             // 0 - Преследование
+            // 1 - Разбегание
             // 2 - Страх
             // 3 - Возвращение домой
         }

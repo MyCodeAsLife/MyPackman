@@ -259,6 +259,13 @@ namespace MyPacman
         {
             _pacmanInvincibleTimer = GameConstants.PlayerInvincibleTimer;
             _pacman.Dead.OnNext(Unit.Default);
+            _timeService.StopTime();
+
+            // Отключаем тела всех призраков
+            foreach (var entity in _ghostsMap)
+            {
+                entity.Value.HideGhost();
+            }
 
             if (_pacmanLifePoints.Value > 0)
             {
@@ -289,6 +296,13 @@ namespace MyPacman
         private void OnDeadAnimationFinished()
         {
             _pacman.Position.Value = _pacmanSpawnPosition.CurrentValue;
+            // Включаем тела всех призраков
+            foreach (var entity in _ghostsMap)
+            {
+                entity.Value.ShowGhost();
+            }
+
+            _timeService.RunTime();
             Coroutines.StartRoutine(InvulnerabilityTimer());
         }
     }

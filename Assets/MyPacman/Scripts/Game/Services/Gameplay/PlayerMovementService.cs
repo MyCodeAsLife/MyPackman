@@ -18,6 +18,9 @@ namespace MyPacman
         private Vector2 _mapSize;
         private Vector2Int _lastDirection;
         private Vector2 _lastPosition;
+        //New
+        private bool _canMove;
+        private bool _isPressedMoveStarted;
 
         private Func<Vector2> GetMovementDirection;
 
@@ -38,6 +41,16 @@ namespace MyPacman
 
             _mapSize = new Vector2(levelConfig.Map.GetLength(1), -levelConfig.Map.GetLength(0));
             PlayerTilePosition.OnNext(Convert.ToTilePosition(_entity.Position.Value));
+            //New
+            _timeService.IsTimeRun.Skip(1).Subscribe(isTimeRun =>
+            {
+                _canMove = isTimeRun;
+
+                if (isTimeRun && _isPressedMoveStarted)
+                    StartMove();
+                else
+                    StopMove();
+            });
         }
 
         ~PlayerMovementService()
@@ -69,11 +82,25 @@ namespace MyPacman
 
         public void OnMoveStarted(InputAction.CallbackContext context)
         {
+            _isPressedMoveStarted = true;
+
+            if (_canMove)
+                StartMove();
+        }
+
+        public void OnMoveCanceled(InputAction.CallbackContext context)
+        {
+            _isPressedMoveStarted = false;
+            StopMove();
+        }
+
+        private void StartMove()
+        {
             _entity.IsMoving.OnNext(true);
             Moved += Movement;
         }
 
-        public void OnMoveCanceled(InputAction.CallbackContext context)
+        private void StopMove()
         {
             Moved -= Movement;
             _entity.IsMoving.OnNext(false);
