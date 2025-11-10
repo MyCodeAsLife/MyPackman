@@ -88,7 +88,7 @@ namespace MyPacman
             return directions;
         }
 
-        public bool IsCenterTail(Vector2 position)
+        public bool IsCenterOfTile(Vector2 position)
         {
             var valueX = position.x - Mathf.Floor(position.x);
             var valueY = position.y - Mathf.Floor(position.y);

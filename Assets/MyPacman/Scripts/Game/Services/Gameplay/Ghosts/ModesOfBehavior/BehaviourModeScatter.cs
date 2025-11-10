@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 namespace MyPacman
@@ -8,7 +7,7 @@ namespace MyPacman
     // Режим разбегания
     public class BehaviourModeScatter : GhostBehaviorMode
     {
-        private readonly IReadOnlyList<Vector2> _gatePositions;
+        private bool _isCorral;
 
         private Func<List<Vector2>, Dictionary<float, Vector2>> CalculateDirections;
 
@@ -16,28 +15,20 @@ namespace MyPacman
             MapHandlerService mapHandlerService,
             Ghost self,
             Vector2 targetPosition,
-            GhostBehaviorModeType behaviorModeType)
+            GhostBehaviorModeType behaviorModeType,
+            bool isCorral)
             : base(mapHandlerService, self, behaviorModeType)
         {
             _targetPosition.OnNext(targetPosition);
-            _gatePositions = mapHandlerService.GatePositions;
-            //_gatePositions = mapHandlerService.GetTilePositions(GameConstants.GateTile);  // Зачем у каждого призрака хранить копию позиций врат
-            CalculateDirections = CalculateDirectionsToGatePosition;
+            _isCorral = isCorral;
+            BehaviorInitialization();
         }
 
         protected override Vector2 CalculateDirection(List<Vector2> availableDirections = null)     // Похожа на себя в классе GhostBehaviorMode
         {
-            if (availableDirections == null)
+            if (_isCorral)
                 availableDirections = _mapHandlerService.GetDirectionsWithoutWalls(_selfPosition);
 
-            //if (availableDirections.Count == 1)
-            //    return -_selfDirection;
-            //else if (availableDirections.Count == 2)
-            //    return availableDirections.First(value => value != -_selfDirection);
-            //else if (_mapHandlerService.CheckTileForObstacle(_selfPosition))
-            //    return _selfDirection;
-
-            //return CalculateDirectionInSelectedMode(availableDirections);
             return base.CalculateDirection(availableDirections);
         }
 
@@ -47,42 +38,30 @@ namespace MyPacman
             return SelectRandomDirection(directionsMap);
         }
 
+        private void BehaviorInitialization()
+        {
+            if (_isCorral)
+            {
+                var behavior = new BehaviorModePassageThroughGate(_mapHandlerService, _self, Type);
+                behavior.GateReached += ChangeTargetBehavior;
+                CalculateDirections = behavior.CalculateDirectionsToGatePosition;
+            }
+            else
+            {
+                CalculateDirections = CalculateDirectionsToScatterPosition;
+            }
+        }
+
+        private void ChangeTargetBehavior()
+        {
+            _isCorral = false;
+            CalculateDirections = CalculateDirectionsToScatterPosition;
+        }
+
         private Dictionary<float, Vector2> CalculateDirectionsToScatterPosition(List<Vector2> availableDirections)
         {
             var calculateDirections = CalculateDirectionsClosestToTarget(availableDirections, _targetPosition.Value);
             return RemoveWrongDirection(calculateDirections, ItFar);
-        }
-
-        private Dictionary<float, Vector2> CalculateDirectionsToGatePosition(List<Vector2> availableDirections)
-        {
-            CheckNeighboringTilesForGates();
-            Vector2 targetPosition = CalculatePositionNearestGate();
-            var calculateDirections = CalculateDirectionsClosestToTarget(availableDirections, targetPosition);
-            return RemoveWrongDirection(calculateDirections, ItFar);
-        }
-
-        private void CheckNeighboringTilesForGates()
-        {
-            var lastPosition = _selfPosition + -_selfDirection;
-
-            if (_mapHandlerService.CheckTile(lastPosition, GameConstants.GateTile))
-                CalculateDirections = CalculateDirectionsToScatterPosition;
-        }
-
-        private Vector2 CalculatePositionNearestGate()
-        {
-            Vector2 targetPosition = _gatePositions.First();
-            float minDistance = targetPosition.SqrDistance(_selfPosition);
-
-            foreach (var gatePosition in _gatePositions)
-            {
-                float distance = gatePosition.SqrDistance(_selfPosition);
-
-                if (distance < minDistance)
-                    targetPosition = gatePosition;
-            }
-
-            return targetPosition;
         }
     }
 }

@@ -154,7 +154,7 @@ namespace MyPacman
         private float MoveOnAxis(float currentPositionOnAxis, float direction)
         {
             direction = Mathf.Round(direction);
-            float nextPosOnAxis = currentPositionOnAxis + (GameConstants.PlayerSpeed * Time.fixedDeltaTime * direction);
+            float nextPosOnAxis = currentPositionOnAxis + (GameConstants.PlayerSpeed * /*Time.fixedDeltaTime*/ _timeService.DeltaTime * direction);
 
             return nextPosOnAxis;
         }

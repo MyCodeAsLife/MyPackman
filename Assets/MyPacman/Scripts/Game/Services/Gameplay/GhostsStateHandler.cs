@@ -21,7 +21,7 @@ namespace MyPacman
         private GhostBehaviorModeType _globalStateOfGhosts;     // Это лишнее?
         private float _amountTime = 0f;
         private float _timer = 0f;
-        private float _levelTimeHasPassed = 0f;         // Время с начала раунда(без пауз)
+        private float _levelTimeHasPassed = 0f;         // Время с начала раунда(без пауз). Перенести в сохранения?
         private float _pacmanInvincibleTimer = 0f;
 
         private event Action Timer;
@@ -52,7 +52,7 @@ namespace MyPacman
                 ghostsHomePosition);
 
             //New
-            _pacman.DeadAnimationFinished += OnDeadAnimationFinished;
+            _pacman.DeadAnimationFinished += OnDeadAnimationFinished;           // Почему это в обработчике состояний призраков?
 
             InitGhostsMap(entities);
             InitGhostMovementServicesMap(entities, pacman.Position, levelConfig);
@@ -230,9 +230,9 @@ namespace MyPacman
 
         private void CheckForCollisionWithPlayer()      // Засунуть в карутину?
         {
-            foreach (var entity in _ghostsMap)
-                if (_pacman.Position.Value.SqrDistance(entity.Value.Position.CurrentValue) <= 1.5f)         // Magic
-                    OnRanIntoPacman(entity.Key);
+            foreach (var ghost in _ghostsMap)
+                if (_pacman.Position.Value.SqrDistance(ghost.Value.Position.CurrentValue) < 1.5f)// Magic (расстояние между призраком и игроком меньше указанного)
+                    OnRanIntoPacman(ghost.Key);
         }
 
         // Призрак сообщает когда сталкивается с игроком
@@ -255,6 +255,7 @@ namespace MyPacman
             }
         }
 
+        // Почему это в обработчике состояний призраков??
         private void PacmanTakeDamage()     // Вызывать отдельный обработчик состояний игрока
         {
             _pacmanInvincibleTimer = GameConstants.PlayerInvincibleTimer;
@@ -276,26 +277,13 @@ namespace MyPacman
                 // если равно нулю или меньше то вызываем конец игры
                 Debug.Log("Player lifes is end!");              //++++++++++++++++++++++++++++++++++++++++++++++++
             }
-
         }
 
-        private IEnumerator InvulnerabilityTimer()     // Оформить как корутину
-        {
-            // Включить мигание или уменьшение и увеличение прозрачности пакмана на время неуязвимости
-            while (_pacmanInvincibleTimer > 0)
-            {
-                _pacmanInvincibleTimer -= _timeService.DeltaTime;
-                yield return new WaitForSeconds(0.3f);
-
-                yield return new WaitForSeconds(0.3f);
-            }
-
-            _pacmanInvincibleTimer = 0f;
-        }
-
+        // Почему это в обработчике состояний призраков??
         private void OnDeadAnimationFinished()
         {
             _pacman.Position.Value = _pacmanSpawnPosition.CurrentValue;
+
             // Включаем тела всех призраков
             foreach (var entity in _ghostsMap)
             {
@@ -304,6 +292,20 @@ namespace MyPacman
 
             _timeService.RunTime();
             Coroutines.StartRoutine(InvulnerabilityTimer());
+        }
+
+        private IEnumerator InvulnerabilityTimer()     // Неуязвимость игрока
+        {
+            // Включить мигание или уменьшение и увеличение прозрачности пакмана на время неуязвимости
+            while (_pacmanInvincibleTimer > 0)
+            {
+                _pacmanInvincibleTimer -= _timeService.DeltaTime + 0.6f;  // сумма двух следующих задержек
+                yield return new WaitForSeconds(0.3f);              // Magic - задержка в мигании
+
+                yield return new WaitForSeconds(0.3f);              // Magic - задержка в мигании
+            }
+
+            _pacmanInvincibleTimer = 0f;
         }
     }
 }

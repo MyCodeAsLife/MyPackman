@@ -34,7 +34,7 @@ namespace MyPacman
         public bool CheckTileForObstacle(Vector2 position) => _tilemapHandler.CheckTileForObstacle(position);
         public List<Vector2> GetDirectionsWithoutObstacles(Vector2 position) => _tilemapHandler.GetDirectionsWithoutObstacles(position);
         public List<Vector2> GetDirectionsWithoutWalls(Vector2 position) => _tilemapHandler.GetDirectionsWithoutWalls(position);
-        public bool IsCenterTail(Vector2 position) => _tilemapHandler.IsCenterTail(position);
+        public bool IsCenterOfTile(Vector2 position) => _tilemapHandler.IsCenterOfTile(position);
         public bool CheckTile(Vector2 position, int numTile) => _tilemapHandler.CheckTile(position, numTile);
 
         private void PlayerTileChanged(Vector3Int position)

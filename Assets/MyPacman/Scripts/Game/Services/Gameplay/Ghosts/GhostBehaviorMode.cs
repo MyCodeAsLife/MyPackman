@@ -8,6 +8,7 @@ namespace MyPacman
 {
     public abstract class GhostBehaviorMode
     {
+        // Подкорректировать именование переменных (с большой буквы protect?)
         protected readonly MapHandlerService _mapHandlerService;
         protected readonly Ghost _self;
         protected readonly IReadOnlyList<Vector2> _speedModifierPositions;
@@ -33,7 +34,7 @@ namespace MyPacman
             _selfPosition = _self.Position.Value;
             _selfDirection = _self.Direction.Value;
 
-            if (_mapHandlerService.IsCenterTail(_selfPosition) == false)
+            if (_mapHandlerService.IsCenterOfTile(_selfPosition) == false)
                 return _selfDirection;
 
             return CalculateDirection();

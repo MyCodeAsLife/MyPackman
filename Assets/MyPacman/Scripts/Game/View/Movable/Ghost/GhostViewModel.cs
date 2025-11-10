@@ -18,12 +18,12 @@ namespace MyPacman
         //    (Entity as Ghost).PassGhostBody(ghostBody);
         //}
 
-        internal void PassFuncHideGhost(Action hideGhost)
+        public void PassFuncHideGhost(Action hideGhost)
         {
             (Entity as Ghost).PassFuncHideGhost(hideGhost);
         }
 
-        internal void PassFuncShowGhost(Action showGhost)
+        public void PassFuncShowGhost(Action showGhost)
         {
             (Entity as Ghost).PassFuncShowGhost(showGhost);
         }
