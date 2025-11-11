@@ -29,18 +29,7 @@ namespace MyPacman
         public ReadOnlyReactiveProperty<Vector2> TargetPosition => _targetPosition;
         public GhostBehaviorModeType Type { get; private set; }
 
-        public Vector2 CalculateDirectionOfMovement()
-        {
-            _selfPosition = _self.Position.Value;
-            _selfDirection = _self.Direction.Value;
-
-            if (_mapHandlerService.IsCenterOfTile(_selfPosition) == false)
-                return _selfDirection;
-
-            return CalculateDirection();
-        }
-
-        public void CheckSurfaceModifier()      // Вынести в GhostsStateHandler ?
+        public void CheckSurfaceModifier()      // Вынести в MovementService ?
         {
             foreach (var modifierPosition in _speedModifierPositions)
             {
@@ -54,8 +43,19 @@ namespace MyPacman
             }
         }
 
-        protected abstract Vector2 CalculateDirectionInSelectedMode(List<Vector2> availableDirections);
+        public Vector2 CalculateDirectionOfMovement()
+        {
+            _selfPosition = _self.Position.Value;
+            _selfDirection = _self.Direction.Value;
 
+            if (_mapHandlerService.IsCenterOfTile(_selfPosition) == false)
+                return _selfDirection;
+
+            return CalculateDirection();
+        }
+
+        protected abstract Vector2 CalculateDirectionInSelectedMode(List<Vector2> availableDirections);
+        // Доделать
         protected virtual Vector2 CalculateDirection(List<Vector2> availableDirections = null)
         {
             if (availableDirections == null)
@@ -69,6 +69,44 @@ namespace MyPacman
                 return _selfDirection;
 
             return CalculateDirectionInSelectedMode(availableDirections);
+        }
+
+        //protected virtual Vector2 CalculateDirectionInSelectedMode(List<Vector2> availableDirections = null)
+        //{
+        //    //List<Vector2> availableDirections = _mapHandlerService.GetDirectionsWithoutObstacles(_selfPosition);
+        //    //----------------------------------
+        //    if (availableDirections == null)
+        //        availableDirections = _mapHandlerService.GetDirectionsWithoutObstacles(_selfPosition);
+
+        //    if (availableDirections.Count == 1)
+        //        return -_selfDirection;
+        //    else if (availableDirections.Count == 2)
+        //        return availableDirections.First(value => value != -_selfDirection);
+        //    else if (_mapHandlerService.CheckTileForObstacle(_selfPosition))
+        //        return _selfDirection;
+            
+        //    var calculatedDirections = CalculateDirectionsClosestToTarget(availableDirections, _targetPosition.Value);
+        //    //----------------------------------
+        //    var directionsMap = RemoveWrongDirection(calculatedDirections, ItFar);
+        //    return SelectNearestDirection(directionsMap);
+        //}
+
+        // Создает карту всех направлений с показанием веса(расстояние от выбранного направления до целевой точки)
+        // исключая направление назад
+        protected Dictionary<float, Vector2> CalculateDirectionsClosestToTarget(List<Vector2> directions, Vector2 targetPosition)
+        {
+            Dictionary<float, Vector2> directionsMap = new();
+
+            foreach (var direction in directions)
+            {
+                if (direction == -_selfDirection)
+                    continue;
+
+                float distance = targetPosition.SqrDistance(_selfPosition + direction);
+                directionsMap[distance] = direction;
+            }
+
+            return directionsMap;
         }
 
         protected Vector2 SelectRandomDirection(Dictionary<float, Vector2> directionsMap)
@@ -91,22 +129,15 @@ namespace MyPacman
             return direction;
         }
 
-        // Создает карту всех направлений с показанием веса(расстояние от выбранного направления до целевой точки)
-        // исключая направление назад
-        protected Dictionary<float, Vector2> CalculateDirectionsClosestToTarget(List<Vector2> directions, Vector2 targetPosition)
+        protected Vector2 SelectNearestDirection(Dictionary<float, Vector2> directionsMap)
         {
-            Dictionary<float, Vector2> directionsMap = new();
+            float minDistance = float.MaxValue;
 
-            foreach (var direction in directions)
-            {
-                if (direction == -_selfDirection)
-                    continue;
+            foreach (var direction in directionsMap)
+                if (direction.Key < minDistance)
+                    minDistance = direction.Key;
 
-                float distance = targetPosition.SqrDistance(_selfPosition + direction);
-                directionsMap[distance] = direction;
-            }
-
-            return directionsMap;
+            return directionsMap[minDistance];
         }
 
         protected Dictionary<float, Vector2> RemoveWrongDirection(

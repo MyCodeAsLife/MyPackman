@@ -87,13 +87,19 @@ namespace MyPacman
                     IsMoving = false;
 
                 yield return null;
-
-                // Возможное место фиксации столкновения с игроком
-                //if (_entity.Position.Value.SqrDistance(_targetPosition) < 1f)       // Если расстояние до цели меньше размера тайла
+            }
+            // Old variant - работает
+            if (_entity.Position.Value == _targetPosition)
+            {
+                TargetReached?.Invoke(_entity.Type);
             }
 
-            if (_entity.Position.Value == _targetPosition)
-                TargetReached?.Invoke(_entity.Type);
+            //// New variant
+            //if (_entity.Position.Value.IsEnoughClose(_targetPosition, 0.1f))
+            //{
+            //    TargetReached?.Invoke(_entity.Type);
+            //    Debug.Log($"New variant. EntityType{_entity.Type}");            //+++++++++++++++++++++++++++
+            //}
 
             _moving = null;
             Moved += Move;

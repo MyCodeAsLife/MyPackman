@@ -8,6 +8,6 @@
         Inky = EntityType.Inky,
         Clyde = EntityType.Clyde,
 
-        Fruit = -19,
+        Fruit = -19,                        // Выносить в константы ненужно
     }
 }

@@ -1,5 +1,4 @@
 ﻿using R3;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace MyPacman
@@ -18,25 +17,12 @@ namespace MyPacman
             _pacmanPosition = pacmanPosition;
         }
 
-        protected override Vector2 CalculateDirectionInSelectedMode(List<Vector2> availableDirections)
+        protected override Vector2 CalculateDirectionInSelectedMode()
         {
             _targetPosition.OnNext(GetTarget());
-            var calculateDirections = CalculateDirectionsClosestToTarget(availableDirections, _targetPosition.Value);
-            //calculateDirections = RemoveWrongDirection(calculateDirections, ItFar);
-            return SelectNearestDirection(calculateDirections);
+            return base.CalculateDirectionInSelectedMode();
         }
 
         protected abstract Vector2 GetTarget();
-
-        private Vector2 SelectNearestDirection(Dictionary<float, Vector2> availableDirections)
-        {
-            float maxDistance = float.MaxValue;
-
-            foreach (var direction in availableDirections)
-                if (direction.Key < maxDistance)
-                    maxDistance = direction.Key;
-
-            return availableDirections[maxDistance];
-        }
     }
 }

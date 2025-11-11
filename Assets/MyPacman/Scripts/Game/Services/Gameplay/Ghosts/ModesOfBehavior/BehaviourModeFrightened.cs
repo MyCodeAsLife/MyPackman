@@ -13,11 +13,25 @@ namespace MyPacman
             pacmanPosition.Subscribe(newPos => _targetPosition.OnNext(newPos)); // Будет ли ошибка если этот класс удалится а данная лямбда останется подписанна?
         }
 
-        protected override Vector2 CalculateDirectionInSelectedMode(List<Vector2> availableDirections)  // Похожа на такуюже в BehaviourModeScatter
-        {
-            Dictionary<float, Vector2> directionsMap = CalculateDirectionsClosestToTarget(availableDirections, _targetPosition.Value);
-            directionsMap = RemoveWrongDirection(directionsMap, ItNear);
-            return SelectRandomDirection(directionsMap);
-        }
+        //protected override Vector2 CalculateDirectionInSelectedMode()  // Похожа на такуюже в BehaviourModeScatter
+        //{
+        //    // New
+        //    List<Vector2> availableDirections = _mapHandlerService.GetDirectionsWithoutObstacles(_selfPosition);
+
+        //    Dictionary<float, Vector2> directionsMap = CalculateDirectionsClosestToTarget(availableDirections, _targetPosition.Value);
+        //    directionsMap = RemoveWrongDirection(directionsMap, ItNear);
+        //    return SelectRandomDirection(directionsMap);
+        //}
+
+        //protected override Vector2 CalculateDirectionInSelectedMode()
+        //{
+        //    _targetPosition.OnNext(GetTarget());
+        //    return base.CalculateDirectionInSelectedMode();
+        //}
+
+        //protected Vector2 GetTarget()
+        //{
+        //    return _pacmanPosition.CurrentValue;
+        //}
     }
 }

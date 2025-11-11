@@ -42,8 +42,8 @@ namespace MyPacman
                         _mapHandlerService,
                         self,
                         _scatterPositions[self.Type],
-                        behaviorModeType,
-                        self.Type != EntityType.Blinky);    // Жество вписанно что только красный начинает игру вне загона
+                        behaviorModeType
+                        /*self.Type != EntityType.Blinky*/);    // Жество вписанно что только красный начинает игру вне загона
 
                 case GhostBehaviorModeType.Frightened:
                     return new BehaviourModeFrightened(_mapHandlerService, self, _pacmanPosition);
@@ -53,8 +53,8 @@ namespace MyPacman
                         _mapHandlerService,
                         self,
                         _homePosition.CurrentValue,
-                        behaviorModeType,
-                        self.Type != EntityType.Blinky);    // Жество вписанно что только красный начинает игру вне загона
+                        behaviorModeType
+                        /*self.Type != EntityType.Blinky*/);    // Жество вписанно что только красный начинает игру вне загона
 
                 default:
                     throw new System.Exception($"Unknown ghost behavior mode type: {behaviorModeType}");    // Magic
