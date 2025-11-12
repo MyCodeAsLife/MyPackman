@@ -1,4 +1,5 @@
 ﻿using R3;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace MyPacman
@@ -17,10 +18,10 @@ namespace MyPacman
             _pacmanPosition = pacmanPosition;
         }
 
-        protected override Vector2 CalculateDirectionInSelectedMode()
+        protected override Vector2 CalculateDirectionInSelectedMode(List<Vector2> availableDirections)
         {
             _targetPosition.OnNext(GetTarget());
-            return base.CalculateDirectionInSelectedMode();
+            return base.CalculateDirectionInSelectedMode(availableDirections);
         }
 
         protected abstract Vector2 GetTarget();

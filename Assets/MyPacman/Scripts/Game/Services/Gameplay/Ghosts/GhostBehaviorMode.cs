@@ -6,7 +6,8 @@ using UnityEngine;
 
 namespace MyPacman
 {
-    public abstract class GhostBehaviorMode
+    // Переименовать в класс простого движения, "кротчайшим" путем к указанной точке
+    public class GhostBehaviorMode
     {
         // Подкорректировать именование переменных (с большой буквы protect?)
         protected readonly MapHandlerService _mapHandlerService;
@@ -14,15 +15,14 @@ namespace MyPacman
         protected readonly IReadOnlyList<Vector2> _speedModifierPositions;
         protected readonly ReactiveProperty<Vector2> _targetPosition = new();
 
-        protected Vector2 _selfPosition;                // Для кеширования _self.Position?
-        protected Vector2 _selfDirection;
+        private Vector2 _selfPosition;                // Для кеширования _self.Position?
+        private Vector2 _selfDirection;
 
         public GhostBehaviorMode(MapHandlerService mapHandlerService, Ghost self, GhostBehaviorModeType behaviorModeType)
         {
             _mapHandlerService = mapHandlerService;
             _self = self;
             Type = behaviorModeType;
-
             _speedModifierPositions = mapHandlerService.SpeedModifierPositions;
         }
 
@@ -54,8 +54,6 @@ namespace MyPacman
             return CalculateDirection();
         }
 
-        protected abstract Vector2 CalculateDirectionInSelectedMode(List<Vector2> availableDirections);
-        // Доделать
         protected virtual Vector2 CalculateDirection(List<Vector2> availableDirections = null)
         {
             if (availableDirections == null)
@@ -71,28 +69,13 @@ namespace MyPacman
             return CalculateDirectionInSelectedMode(availableDirections);
         }
 
-        //protected virtual Vector2 CalculateDirectionInSelectedMode(List<Vector2> availableDirections = null)
-        //{
-        //    //List<Vector2> availableDirections = _mapHandlerService.GetDirectionsWithoutObstacles(_selfPosition);
-        //    //----------------------------------
-        //    if (availableDirections == null)
-        //        availableDirections = _mapHandlerService.GetDirectionsWithoutObstacles(_selfPosition);
+        protected virtual Vector2 CalculateDirectionInSelectedMode(List<Vector2> availableDirections)
+        {
+            var calculatedDirections = CalculateDirectionsClosestToTarget(availableDirections, _targetPosition.Value);
+            var directionsMap = RemoveWrongDirection(calculatedDirections, ItFar);
+            return SelectNearestDirection(directionsMap);
+        }
 
-        //    if (availableDirections.Count == 1)
-        //        return -_selfDirection;
-        //    else if (availableDirections.Count == 2)
-        //        return availableDirections.First(value => value != -_selfDirection);
-        //    else if (_mapHandlerService.CheckTileForObstacle(_selfPosition))
-        //        return _selfDirection;
-            
-        //    var calculatedDirections = CalculateDirectionsClosestToTarget(availableDirections, _targetPosition.Value);
-        //    //----------------------------------
-        //    var directionsMap = RemoveWrongDirection(calculatedDirections, ItFar);
-        //    return SelectNearestDirection(directionsMap);
-        //}
-
-        // Создает карту всех направлений с показанием веса(расстояние от выбранного направления до целевой точки)
-        // исключая направление назад
         protected Dictionary<float, Vector2> CalculateDirectionsClosestToTarget(List<Vector2> directions, Vector2 targetPosition)
         {
             Dictionary<float, Vector2> directionsMap = new();
@@ -140,12 +123,11 @@ namespace MyPacman
             return directionsMap[minDistance];
         }
 
-        protected Dictionary<float, Vector2> RemoveWrongDirection(
+        protected Dictionary<float, Vector2> RemoveWrongDirection(  // Удаляет самое "долгое" направление, если направлений больше 2х
             Dictionary<float, Vector2> calculateDirections,
             Func<float, float, bool> compare)
         {
-            // Направление назад уже убранно
-            while (calculateDirections.Count > 2)
+            while (calculateDirections.Count > 2)   // Направление назад уже убранно
             {
                 float wrongDistance = 0;
 

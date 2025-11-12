@@ -7,60 +7,80 @@ namespace MyPacman
     // Режим разбегания
     public class BehaviourModeScatter : GhostBehaviorMode
     {
+        private readonly Vector2 _scatterPos;
+        private readonly Vector2 _blinkySpawnPos;
+
         private Func<List<Vector2>, Dictionary<float, Vector2>> CurrentAlgorithmForCalculatingDirections;
+        private Func<Vector2, List<Vector2>> GetAvailableDirections;
 
         public BehaviourModeScatter(
             MapHandlerService mapHandlerService,
             Ghost self,
-            Vector2 targetPosition,
-            GhostBehaviorModeType behaviorModeType
+            Vector2 scatterPosition,
+            GhostBehaviorModeType behaviorModeType,
+            Vector2 blinkySpawnPos
             ) : base(mapHandlerService, self, behaviorModeType)
         {
-            _targetPosition.OnNext(targetPosition);
-            BehaviorInitialization();
+            _scatterPos = scatterPosition;
+            _blinkySpawnPos = blinkySpawnPos;
+            BehaviourInitialize();
         }
-        // Остановился тут
-        // 1. Проверить Достигнута ли точка спавна красного
-        // 1.1 Если да то выбрать алгоритм движения к целевой точке (проход через ворота невозможен)
-        // 1.2 Если нет то выбрать алгоритм движения к точке спавна красного (приоритет на движение в сторону ворот)
-        // 1.2.1 Каждый цикл начала движения проверять, достигну та ли точка спавна красного
-        // 1.2.1.1 Если да то 1.1
 
-        // Доделать
         protected override Vector2 CalculateDirection(List<Vector2> availableDirections = null)
         {
-            availableDirections = _mapHandlerService.GetDirectionsWithoutWalls(_selfPosition);
+            availableDirections = GetAvailableDirections(_self.Position.Value);
             return base.CalculateDirection(availableDirections);
         }
-        // Доделать
+
         protected override Vector2 CalculateDirectionInSelectedMode(List<Vector2> availableDirections)  // Похожа на такуюже в BehaviourModeFrightened
         {
             Dictionary<float, Vector2> directionsMap = CurrentAlgorithmForCalculatingDirections(availableDirections);
-            return SelectRandomDirection(directionsMap);
+            return SelectNearestDirection(directionsMap);
         }
-        // Доделать
-        private Dictionary<float, Vector2> CalculateDirectionsToScatterPosition(List<Vector2> availableDirections)
+
+        private void BehaviourInitialize()
+        {
+            if (_self.Position.Value == _blinkySpawnPos)
+            {
+                ChangeAlgorithm(
+                    _scatterPos,
+                    _mapHandlerService.GetDirectionsWithoutObstacles,
+                    CalculateDirectionsToTargetPos);
+            }
+            else
+            {
+                ChangeAlgorithm(
+                    _blinkySpawnPos,
+                    _mapHandlerService.GetDirectionsWithoutWalls,
+                    CalculateDirectionsToBlinkySpawnPos);
+            }
+        }
+
+        private void ChangeAlgorithm(
+            Vector2 targetPoint,
+            Func<Vector2, List<Vector2>> GetAvailableDirectionsAlg,
+            Func<List<Vector2>, Dictionary<float, Vector2>> CalculateDirectionsToTargetAlg)
+        {
+            _targetPosition.OnNext(targetPoint);
+            GetAvailableDirections = GetAvailableDirectionsAlg;
+            CurrentAlgorithmForCalculatingDirections = CalculateDirectionsToTargetAlg;
+        }
+
+        private Dictionary<float, Vector2> CalculateDirectionsToTargetPos(List<Vector2> availableDirections)
         {
             var calculateDirections = CalculateDirectionsClosestToTarget(availableDirections, _targetPosition.Value);
             return RemoveWrongDirection(calculateDirections, ItFar);
         }
-        // Доделать
-        private void BehaviorInitialization()
+
+        private Dictionary<float, Vector2> CalculateDirectionsToBlinkySpawnPos(List<Vector2> availableDirections)
         {
-            if (_isCorral)
-                CurrentAlgorithmForCalculatingDirections = behavior.CalculateDirectionsToGatePosition;
-            else
-                CurrentAlgorithmForCalculatingDirections = CalculateDirectionsToScatterPosition;
+            if (_self.Position.Value.IsEnoughClose(_blinkySpawnPos, 0.5f)) // Magic    Данный метод срабатывает только когд движение достигает центра клетки, а позиция спавна находится на ее краю
+                ChangeAlgorithm(
+                    _scatterPos,
+                    _mapHandlerService.GetDirectionsWithoutObstacles,
+                    CalculateDirectionsToTargetPos);
+
+            return CalculateDirectionsToTargetPos(availableDirections);
         }
-
-        //protected override Dictionary<float, Vector2> CalculateDirectionInSelectedMode(
-        //    List<Vector2> availableDirections = null)
-        //{
-        //    availableDirections = _mapHandlerService.GetDirectionsWithoutObstacles(_selfPosition);
-        //    var calculatedDirections = base.CalculateDirectionInSelectedMode(availableDirections);
-
-        //    var directionsMap = RemoveWrongDirection(calculatedDirections, ItFar);
-        //    return SelectRandomDirection(directionsMap);
-        //}
     }
 }

@@ -34,7 +34,8 @@ namespace MyPacman
             TimeService timeService,
             MapHandlerService mapHandlerService,
             ILevelConfig levelConfig,
-            ReadOnlyReactiveProperty<Vector2> ghostsHomePosition) // Или выбирать homePosition для каждого призрака отдельно?
+            ReadOnlyReactiveProperty<Vector2> ghostsHomePosition,
+            ReadOnlyReactiveProperty<Vector2> blinkySpawnPosition) // Или выбирать homePosition для каждого призрака отдельно?
         {
             _pacman = pacman;
             _pacmanLifePoints = pacmanLifePoints;
@@ -49,7 +50,8 @@ namespace MyPacman
                 pacman.Position,
                 pacman.Direction,
                 mapSize,
-                ghostsHomePosition);
+                ghostsHomePosition,
+                blinkySpawnPosition);
 
             //New
             _pacman.DeadAnimationFinished += OnDeadAnimationFinished;           // Почему это в обработчике состояний призраков?
@@ -100,6 +102,7 @@ namespace MyPacman
             if (_amountTime < _timer)
             {
                 Timer -= OnTimer;
+                Debug.Log("CheckTimerTest");          //++++++++++++++++++++++
 
                 switch (_globalStateOfGhosts)        // У каждого призрака может быть свое состояние
                 {

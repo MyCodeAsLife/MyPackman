@@ -25,7 +25,7 @@ namespace MyPacman
             else if (type <= EntityType.Cherry && type >= EntityType.Key)
                 entityData = new FruitData();
             else
-                throw new System.Exception($"Unsuported entity type: {type}");       // Magic
+                throw new Exception($"Unsuported entity type: {type}");       // Magic
 
             entityData.Type = type;
             return entityData;

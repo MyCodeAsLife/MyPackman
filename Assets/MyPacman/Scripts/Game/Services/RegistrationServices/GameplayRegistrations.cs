@@ -63,7 +63,8 @@ namespace MyPacman
                     sceneContainer.Resolve<TimeService>(),
                     sceneContainer.Resolve<MapHandlerService>(),
                     sceneContainer.Resolve<ILevelConfig>(),
-                    gameStateService.GameState.Map.Value.InkySpawnPos       // Временное решение?  Бирюзовый(-9)
+                    gameStateService.GameState.Map.Value.InkySpawnPos,       // Временное решение?  Бирюзовый(-9)
+                    gameStateService.GameState.Map.Value.BlinkySpawnPos      // Временное решение?  Красный(-7)
                 )).AsSingle();
 
             sceneContainer.RegisterFactory(_ => new GameplayInputActionsHandler(
