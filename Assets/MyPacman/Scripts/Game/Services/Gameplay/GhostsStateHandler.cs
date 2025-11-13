@@ -102,7 +102,6 @@ namespace MyPacman
             if (_amountTime < _timer)
             {
                 Timer -= OnTimer;
-                Debug.Log("CheckTimerTest");          //++++++++++++++++++++++
 
                 switch (_globalStateOfGhosts)        // У каждого призрака может быть свое состояние
                 {
