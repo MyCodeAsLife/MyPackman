@@ -59,12 +59,10 @@ namespace MyPacman
                     entities,
                     sceneContainer.Resolve<Entity>(EntityType.Pacman.ToString()) as Pacman,
                     gameStateService.GameState.LifePoints,
-                    gameStateService.GameState.Map.CurrentValue.PacmanSpawnPos,
+                    gameStateService.GameState.Map.CurrentValue.GetSpawnPosition,
                     sceneContainer.Resolve<TimeService>(),
                     sceneContainer.Resolve<MapHandlerService>(),
-                    sceneContainer.Resolve<ILevelConfig>(),
-                    gameStateService.GameState.Map.Value.InkySpawnPos,       // Временное решение?  Бирюзовый(-9)
-                    gameStateService.GameState.Map.Value.BlinkySpawnPos      // Временное решение?  Красный(-7)
+                    sceneContainer.Resolve<ILevelConfig>()
                 )).AsSingle();
 
             sceneContainer.RegisterFactory(_ => new GameplayInputActionsHandler(

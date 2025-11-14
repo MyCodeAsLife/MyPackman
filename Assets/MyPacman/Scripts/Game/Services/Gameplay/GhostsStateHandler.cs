@@ -16,7 +16,6 @@ namespace MyPacman
         private readonly TimeService _timeService;
         private readonly Pacman _pacman;
         private readonly ReactiveProperty<int> _pacmanLifePoints;
-        private readonly ReadOnlyReactiveProperty<Vector2> _pacmanSpawnPosition;
 
         private GhostBehaviorModeType _globalStateOfGhosts;     // Это лишнее?
         private float _amountTime = 0f;
@@ -24,22 +23,22 @@ namespace MyPacman
         private float _levelTimeHasPassed = 0f;         // Время с начала раунда(без пауз). Перенести в сохранения?
         private float _pacmanInvincibleTimer = 0f;
 
+        private Func<SpawnPointType, Vector2> GetSpawnPosition;
+
         private event Action Timer;
 
         public GhostsStateHandler(
             IObservableCollection<Entity> entities,
             Pacman pacman,
             ReactiveProperty<int> pacmanLifePoints,
-            ReadOnlyReactiveProperty<Vector2> pacmanSpawnPosition,
+            Func<SpawnPointType, Vector2> getSpawnPosition,
             TimeService timeService,
             MapHandlerService mapHandlerService,
-            ILevelConfig levelConfig,
-            ReadOnlyReactiveProperty<Vector2> ghostsHomePosition,
-            ReadOnlyReactiveProperty<Vector2> blinkySpawnPosition) // Или выбирать homePosition для каждого призрака отдельно?
+            ILevelConfig levelConfig)
         {
             _pacman = pacman;
             _pacmanLifePoints = pacmanLifePoints;
-            _pacmanSpawnPosition = pacmanSpawnPosition;
+            GetSpawnPosition = getSpawnPosition;
             Vector2 mapSize = new Vector2(levelConfig.Map.GetLength(1), -levelConfig.Map.GetLength(0));
             _timeService = timeService;
             _timeService.TimeHasTicked += Tick;
@@ -50,8 +49,7 @@ namespace MyPacman
                 pacman.Position,
                 pacman.Direction,
                 mapSize,
-                ghostsHomePosition,
-                blinkySpawnPosition);
+                getSpawnPosition);
 
             //New
             _pacman.DeadAnimationFinished += OnDeadAnimationFinished;           // Почему это в обработчике состояний призраков?
@@ -284,7 +282,8 @@ namespace MyPacman
         // Почему это в обработчике состояний призраков??
         private void OnDeadAnimationFinished()
         {
-            _pacman.Position.Value = _pacmanSpawnPosition.CurrentValue;
+            //_pacman.Position.Value = _pacmanSpawnPosition.CurrentValue;
+            _pacman.Position.Value = GetSpawnPosition(SpawnPointType.Pacman);
 
             // Включаем тела всех призраков
             foreach (var entity in _ghostsMap)

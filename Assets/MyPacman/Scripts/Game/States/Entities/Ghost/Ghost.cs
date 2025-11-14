@@ -20,7 +20,6 @@ namespace MyPacman
             // New
             CurrentBehaviorMode = new ReactiveProperty<GhostBehaviorModeType>(data.CurrentBehaviorMode);
             CurrentBehaviorMode.Subscribe(newBehaviorMode => data.CurrentBehaviorMode = newBehaviorMode);
-            SpawnPosition = data.SpawnPosition;
         }
 
         //public SpriteRenderer GhostBody { get; private set; }
@@ -29,7 +28,7 @@ namespace MyPacman
         public ReactiveProperty<float> SpeedModifier { get; private set; }
         //New
         public ReactiveProperty<GhostBehaviorModeType> CurrentBehaviorMode { get; private set; }        // Переименовать
-        public Vector2 SpawnPosition { get; private set; }          // Нужно ли его делать реактивным?
+        //public Vector2 SpawnPosition { get; private set; }          // Нужно ли его делать реактивным?
 
         //public void PassGhostBody(SpriteRenderer ghostBody)             // Переименовать ?
         //{

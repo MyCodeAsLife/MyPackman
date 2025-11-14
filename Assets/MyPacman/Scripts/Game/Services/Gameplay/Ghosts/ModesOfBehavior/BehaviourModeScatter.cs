@@ -9,6 +9,7 @@ namespace MyPacman
     {
         private readonly Vector2 _scatterPos;
         private readonly Vector2 _blinkySpawnPos;
+        private readonly Vector2 _paddockCenter;
 
         private Func<List<Vector2>, Dictionary<float, Vector2>> CurrentAlgorithmForCalculatingDirections;
         private Func<Vector2, List<Vector2>> GetAvailableDirections;
@@ -16,12 +17,14 @@ namespace MyPacman
         public BehaviourModeScatter(
             MapHandlerService mapHandlerService,
             Ghost self,
-            Vector2 scatterPosition,
-            GhostBehaviorModeType behaviorModeType,
-            Vector2 blinkySpawnPos
+            Vector2 scatterPos,
+            Vector2 paddockCenter,
+            Vector2 blinkySpawnPos,
+            GhostBehaviorModeType behaviorModeType
             ) : base(mapHandlerService, self, behaviorModeType)
         {
-            _scatterPos = scatterPosition;
+            _scatterPos = scatterPos;
+            _paddockCenter = paddockCenter;
             _blinkySpawnPos = blinkySpawnPos;
             BehaviourInitialize();
         }
@@ -32,28 +35,29 @@ namespace MyPacman
             return base.CalculateDirection(availableDirections);
         }
 
-        protected override Vector2 CalculateDirectionInSelectedMode(List<Vector2> availableDirections)  // Похожа на такуюже в BehaviourModeFrightened
-        {
-            Dictionary<float, Vector2> directionsMap = CurrentAlgorithmForCalculatingDirections(availableDirections);
-            return SelectNearestDirection(directionsMap);
-        }
-
         private void BehaviourInitialize()
         {
-            if (_self.Position.Value == _blinkySpawnPos && _self.Position.Value != _self.)
-            {
-                ChangeAlgorithm(
-                    _scatterPos,
-                    _mapHandlerService.GetDirectionsWithoutObstacles,
-                    CalculateDirectionsToTargetPos);
-            }
-            else
+            if (_self.Position.Value.IsEnoughClose(_paddockCenter, 2.5f))   // Magic    Если расстояние до центра загона больше 2.5, то мы вне загона
             {
                 ChangeAlgorithm(
                     _blinkySpawnPos,
                     _mapHandlerService.GetDirectionsWithoutWalls,
                     CalculateDirectionsToBlinkySpawnPos);
             }
+            else
+            {
+                ChangeAlgorithm(
+                    _scatterPos,
+                    _mapHandlerService.GetDirectionsWithoutObstacles,
+                    CalculateDirectionsToTargetPos);
+
+            }
+        }
+
+        protected override Vector2 CalculateDirectionInSelectedMode(List<Vector2> availableDirections)  // Похожа на такуюже в BehaviourModeFrightened
+        {
+            Dictionary<float, Vector2> directionsMap = CurrentAlgorithmForCalculatingDirections(availableDirections);
+            return SelectNearestDirection(directionsMap);
         }
 
         private void ChangeAlgorithm(
@@ -74,7 +78,7 @@ namespace MyPacman
 
         private Dictionary<float, Vector2> CalculateDirectionsToBlinkySpawnPos(List<Vector2> availableDirections)
         {
-            if (_self.Position.Value.IsEnoughClose(_blinkySpawnPos, 0.5f)) // Magic    Данный метод срабатывает только когд движение достигает центра клетки, а позиция спавна находится на ее краю
+            if (_self.Position.Value.IsEnoughClose(_paddockCenter, 2.5f) == false)  // Magic    Если расстояние до центра загона больше 2.5, то мы вне загона
                 ChangeAlgorithm(
                     _scatterPos,
                     _mapHandlerService.GetDirectionsWithoutObstacles,

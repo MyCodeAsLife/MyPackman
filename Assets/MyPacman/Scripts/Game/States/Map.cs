@@ -10,6 +10,7 @@ namespace MyPacman
         public readonly ReactiveProperty<int> LevelNumber;
         public readonly ReactiveProperty<int> NumberOfPellets;
         public readonly ReactiveProperty<int> NumberOfCollectedPellets;
+
         public readonly ReactiveProperty<Vector2> PacmanSpawnPos;
         public readonly ReactiveProperty<Vector2> BlinkySpawnPos;
         public readonly ReactiveProperty<Vector2> PinkySpawnPos;
@@ -40,23 +41,69 @@ namespace MyPacman
             NumberOfCollectedPellets = new ReactiveProperty<int>(mapData.NumberOfCollectedPellets);
         }
 
-        private ReactiveProperty<Vector2> InitPacmanSpawnPos()
-        {
-            var pacmanSpawnPos = new ReactiveProperty<Vector2>(new Vector2(
-                OriginData.PacmanSpawnPosX,
-                OriginData.PacmanSpawnPosY));
-            pacmanSpawnPos.Subscribe(newPos =>
-            {
-                OriginData.PacmanSpawnPosX = newPos.x;
-                OriginData.PacmanSpawnPosY = newPos.y;
-            });
-
-            return pacmanSpawnPos;
-        }
-
         public MapData OriginData { get; }
         public string MapTag { get; }
         public ObservableList<Entity> Entities { get; } = new();
+
+        public void SetSpawnPosition(SpawnPointType entityType, Vector2 spawnPosition)
+        {
+            switch (entityType)
+            {
+                case SpawnPointType.Pacman:
+                    PacmanSpawnPos.Value = spawnPosition;
+                    break;
+
+                case SpawnPointType.Blinky:
+                    BlinkySpawnPos.Value = spawnPosition;
+                    break;
+
+                case SpawnPointType.Pinky:
+                    PinkySpawnPos.Value = spawnPosition;
+                    break;
+
+                case SpawnPointType.Inky:
+                    InkySpawnPos.Value = spawnPosition;
+                    break;
+
+                case SpawnPointType.Clyde:
+                    ClydeSpawnPos.Value = spawnPosition;
+                    break;
+
+                case SpawnPointType.Fruit:
+                    FruitSpawnPos.Value = spawnPosition;
+                    break;
+
+                default:
+                    throw new System.Exception($"Undefined type: {entityType}");            // Magic
+            }
+        }
+
+        public Vector2 GetSpawnPosition(SpawnPointType entityType)
+        {
+            switch ((SpawnPointType)entityType)
+            {
+                case SpawnPointType.Pacman:
+                    return PacmanSpawnPos.Value;
+
+                case SpawnPointType.Blinky:
+                    return BlinkySpawnPos.Value;
+
+                case SpawnPointType.Pinky:
+                    return PinkySpawnPos.Value;
+
+                case SpawnPointType.Inky:
+                    return InkySpawnPos.Value;
+
+                case SpawnPointType.Clyde:
+                    return ClydeSpawnPos.Value;
+
+                case SpawnPointType.Fruit:
+                    return FruitSpawnPos.Value;
+
+                default:
+                    throw new System.Exception($"Undefined type: {entityType}");            // Magic
+            }
+        }
 
         private void InitCounters()
         {
@@ -99,6 +146,20 @@ namespace MyPacman
                                                     entityData.UniqId == removedEntity.UniqueId);
                 mapData.Entities.Remove(removedEntityData);
             });
+        }
+
+        private ReactiveProperty<Vector2> InitPacmanSpawnPos()
+        {
+            var pacmanSpawnPos = new ReactiveProperty<Vector2>(new Vector2(
+                OriginData.PacmanSpawnPosX,
+                OriginData.PacmanSpawnPosY));
+            pacmanSpawnPos.Subscribe(newPos =>
+            {
+                OriginData.PacmanSpawnPosX = newPos.x;
+                OriginData.PacmanSpawnPosY = newPos.y;
+            });
+
+            return pacmanSpawnPos;
         }
 
         private ReactiveProperty<Vector2> InitBlinkySpawnPos()

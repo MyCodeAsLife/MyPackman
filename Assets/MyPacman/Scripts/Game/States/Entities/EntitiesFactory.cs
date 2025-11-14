@@ -13,13 +13,6 @@ namespace MyPacman
             _createEntityId = createEntityId;
         }
 
-        //public Entity CreateEntity(EntityType entityType)
-        //{
-        //    var entityData = _entitiesDataFactory.CreateEntityData(_createEntityId, Vector2.zero, entityType);
-
-        //    return CreateEntity(entityData);
-        //}
-
         public Entity CreateEntity(Vector2 position, EntityType entityType)
         {
             var entityData = _entitiesDataFactory.CreateEntityData(_createEntityId, position, entityType);

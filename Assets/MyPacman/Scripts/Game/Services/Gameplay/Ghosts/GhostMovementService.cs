@@ -161,6 +161,13 @@ namespace MyPacman
                 TargetReached?.Invoke(_entity.Type);
             }
 
+            // New. Если это вызовет смену поведения, нужна ли будет корректировка движения как при загрузке?
+            if (_entity.Position.Value.IsEnoughClose(_targetPosition, 0.1f))
+            {
+                TargetReached?.Invoke(_entity.Type);
+            }
+
+
             _moving = null;
             Moved += Move;
         }
