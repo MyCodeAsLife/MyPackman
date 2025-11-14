@@ -40,7 +40,7 @@ namespace MyPacman
 
         private void BehaviourInitialize()
         {
-            if (_self.Position.Value == _blinkySpawnPos)
+            if (_self.Position.Value == _blinkySpawnPos && _self.Position.Value != _self.)
             {
                 ChangeAlgorithm(
                     _scatterPos,

@@ -9,5 +9,6 @@ namespace MyPacman
         public float SpeedModifier { get; set; } = GameConstants.GhostNormalSpeed​​Modifier;
         // New
         public GhostBehaviorModeType CurrentBehaviorMode { get; set; }          // Переименовать
+        public Vector2 SpawnPosition { get; set; }
     }
 }
