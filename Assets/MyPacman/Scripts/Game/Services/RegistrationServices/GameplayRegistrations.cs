@@ -33,10 +33,10 @@ namespace MyPacman
                     gameStateService.GameState,
                     sceneContainer.Resolve<ILevelConfig>(),
                     sceneContainer.Resolve<Tilemap>(GameConstants.Obstacle),
-                    sceneContainer.Resolve<PlayerMovementService>()
+                    sceneContainer.Resolve<PacmanMovementService>()
                 )).AsSingle();
 
-            sceneContainer.RegisterFactory(_ => new PlayerMovementService(
+            sceneContainer.RegisterFactory(_ => new PacmanMovementService(
                     sceneContainer.Resolve<Entity>(EntityType.Pacman.ToString()) as Pacman,
                     sceneContainer.Resolve<PlayerInputActions>(),
                     sceneContainer.Resolve<IGameStateService>(),
@@ -55,7 +55,7 @@ namespace MyPacman
                     sceneContainer.Resolve<IUIGameplayViewModel>()
                 )).AsSingle();
 
-            sceneContainer.RegisterFactory(_ => new GhostsStateHandler(
+            sceneContainer.RegisterFactory(_ => new EntitiesStateHandler(
                     entities,
                     sceneContainer.Resolve<Entity>(EntityType.Pacman.ToString()) as Pacman,
                     gameStateService.GameState.LifePoints,
@@ -68,7 +68,7 @@ namespace MyPacman
             sceneContainer.RegisterFactory(_ => new GameplayInputActionsHandler(
                     viewModelsContainer.Resolve<GameplayUIManager>(),
                     sceneContainer.Resolve<PlayerInputActions>(),
-                    sceneContainer.Resolve<PlayerMovementService>(),
+                    sceneContainer.Resolve<PacmanMovementService>(),
                     sceneContainer.Resolve<TextPopupService>(),
                     sceneContainer.Resolve<TimeService>(),
                     gameStateService.GameState.Map.CurrentValue.FruitSpawnPos

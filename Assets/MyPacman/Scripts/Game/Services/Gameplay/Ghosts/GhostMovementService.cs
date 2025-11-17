@@ -42,7 +42,6 @@ namespace MyPacman
         }
 
         public GhostBehaviorModeType BehaviorModeType => _behaviorMode.Type;
-        public EntityType EntityType => _entity.Type;
 
         public void BindBehaviorMode(GhostBehaviorMode behaviorMode)
         {
@@ -54,21 +53,10 @@ namespace MyPacman
             _behaviorMode.TargetPosition.Subscribe(newPos => _targetPosition = newPos);
         }
 
-        private float CorrectionTargetPosition(float startPos, float axis)
-        {
-            float temp = startPos - (int)startPos;
-
-            if (axis > 0)
-                temp = temp > 0.5f ? 1f : 0.5f;         // Magic        Half direction(movement step)
-            else
-                temp = temp > 0.5f ? 0.5f : 0f;         // Magic        Half direction(movement step)
-
-            return (int)startPos + temp;
-        }
-
         private void Tick()
         {
             Moved?.Invoke();
+            CheckPosition(_targetPosition);
         }
 
         private void Move()
@@ -133,6 +121,24 @@ namespace MyPacman
             return targetPositionOnAxis;
         }
 
+        private float CorrectionTargetPosition(float startPos, float axis)
+        {
+            float offset = startPos - (int)startPos;
+
+            if (axis > 0)
+                offset = offset > 0.5f ? 1f : 0.5f;         // Magic        Half direction(movement step)
+            else
+                offset = offset > 0.5f ? 0.5f : 0f;         // Magic        Half direction(movement step)
+
+            return (int)startPos + offset;
+        }
+
+        private void CheckPosition(Vector2 target)
+        {
+            if (target.SqrDistance(_entity.Position.CurrentValue) < 1.2f)// Magic (расстояние между призраком и целевой точкой)
+                TargetReached?.Invoke(_entity.Type);
+        }
+
         private IEnumerator Moving(Vector2 nextPosition)
         {
             bool IsMoving = true;
@@ -155,18 +161,6 @@ namespace MyPacman
 
                 yield return null;
             }
-            // Old variant - работает
-            if (_entity.Position.Value == _targetPosition)
-            {
-                TargetReached?.Invoke(_entity.Type);
-            }
-
-            // New. Если это вызовет смену поведения, нужна ли будет корректировка движения как при загрузке?
-            if (_entity.Position.Value.IsEnoughClose(_targetPosition, 0.1f))
-            {
-                TargetReached?.Invoke(_entity.Type);
-            }
-
 
             _moving = null;
             Moved += Move;

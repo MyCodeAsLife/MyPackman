@@ -5,7 +5,7 @@ using UnityEngine.InputSystem;
 
 namespace MyPacman
 {
-    public class PlayerMovementService
+    public class PacmanMovementService
     {
         public readonly ReactiveProperty<Vector3Int> PlayerTilePosition = new();
 
@@ -26,7 +26,7 @@ namespace MyPacman
 
         private event Action Moved;
 
-        public PlayerMovementService(
+        public PacmanMovementService(
             Pacman entity,
             PlayerInputActions inputActions,            // Нужно передавать или создать здесь?
             IGameStateService gameStateService,
@@ -53,7 +53,7 @@ namespace MyPacman
             });
         }
 
-        ~PlayerMovementService()
+        ~PacmanMovementService()
         {
             _timeService.TimeHasTicked -= Tick;
         }

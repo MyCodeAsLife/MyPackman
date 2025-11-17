@@ -51,14 +51,8 @@ namespace MyPacman
                 case GhostBehaviorModeType.Frightened:
                     return new BehaviourModeFrightened(_mapHandlerService, self, _pacmanPosition);
 
-                case GhostBehaviorModeType.Homecomming: // Поменять на поведения возврата в загон
-                    return new BehaviourModeScatter(
-                        _mapHandlerService,
-                        self,
-                        _scatterPositions[self.Type],
-                        GetSpawnPosition(SpawnPointType.Inky),
-                        GetSpawnPosition(SpawnPointType.Blinky),
-                        behaviorModeType);
+                case GhostBehaviorModeType.Homecomming:
+                    return new BehaviourModeHomecomming(_mapHandlerService, self, GetSpawnPosition(SpawnPointType.Inky));
 
                 default:
                     throw new System.Exception($"Unknown ghost behavior mode type: {behaviorModeType}");    // Magic

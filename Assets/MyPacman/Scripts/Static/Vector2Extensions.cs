@@ -9,7 +9,7 @@ namespace MyPacman
             return (end - start).sqrMagnitude;
         }
 
-        public static bool IsEnoughClose(this Vector2 start, Vector2 end, float distance)
+        public static bool IsEnoughClose(this Vector2 start, Vector2 end, float distance)   // Зачем это? SqrDistance достаточно
         {
             return start.SqrDistance(end) <= distance * distance;
         }

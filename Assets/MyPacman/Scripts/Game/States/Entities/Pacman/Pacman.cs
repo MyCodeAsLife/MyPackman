@@ -34,6 +34,16 @@ namespace MyPacman
             request.Subscribe(_ => OnDeadAnimationFinished());
         }
 
+        public void SubscribeToDeadAnimationFinish(Action func)
+        {
+            DeadAnimationFinished += func;
+        }
+
+        public void UnsubscribeFromDeadAnimationFinish(Action func)
+        {
+            DeadAnimationFinished -= func;
+        }
+
         private void OnDeadAnimationFinished()
         {
             DeadAnimationFinished?.Invoke();

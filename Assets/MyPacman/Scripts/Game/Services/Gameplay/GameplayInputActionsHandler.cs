@@ -8,7 +8,7 @@ namespace MyPacman
     {
         private readonly GameplayUIManager _uiManager;
         private readonly PlayerInputActions _inputActions;
-        private readonly PlayerMovementService _playerMovement;
+        private readonly PacmanMovementService _playerMovement;
         private readonly TextPopupService _textPopupService;
         private readonly TimeService _timeService;
 
@@ -21,7 +21,7 @@ namespace MyPacman
         public GameplayInputActionsHandler(
             GameplayUIManager uiManager,
             PlayerInputActions inputActions,
-            PlayerMovementService playerMovement,
+            PacmanMovementService playerMovement,
             TextPopupService textPopupService,
             TimeService timeService,
             ReadOnlyReactiveProperty<Vector2> textSpawnPos
