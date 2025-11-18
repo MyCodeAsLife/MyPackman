@@ -13,10 +13,10 @@ namespace MyPacman
             _targetPosition.OnNext(targetPosition);
         }
 
-        // Доделать
-        protected override Vector2 CalculateDirectionInSelectedMode(List<Vector2> availableDirections)
-        {
-            throw new NotImplementedException();
-        }
+        //// Доделать
+        //protected override Vector2 CalculateDirectionInSelectedMode(List<Vector2> availableDirections)
+        //{
+        //    throw new NotImplementedException();
+        //}
     }
 }

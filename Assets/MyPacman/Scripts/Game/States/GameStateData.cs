@@ -11,6 +11,8 @@ namespace MyPacman
         public int Score { get; set; }
         public int LifePoints { get; set; }
         public List<EntityType> PickedFruits { get; set; } = new();
+        // New
+        public float LevelTimeHasPassed {  get; set; }
 
         public int CreateEntityId()
         {

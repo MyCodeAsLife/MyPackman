@@ -62,7 +62,8 @@ namespace MyPacman
                     gameStateService.GameState.Map.CurrentValue.GetSpawnPosition,
                     sceneContainer.Resolve<TimeService>(),
                     sceneContainer.Resolve<MapHandlerService>(),
-                    sceneContainer.Resolve<ILevelConfig>()
+                    sceneContainer.Resolve<ILevelConfig>(),
+                    gameStateService.GameState.LevelTimeHasPassed
                 )).AsSingle();
 
             sceneContainer.RegisterFactory(_ => new GameplayInputActionsHandler(

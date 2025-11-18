@@ -65,6 +65,15 @@ namespace MyPacman
             }
         }
 
+        public void SetBehaviourModeEveryone(GhostBehaviorModeType behaviorModeType)
+        {
+            Debug.Log($"Last: {GlobalStateOfGhosts}. New: {behaviorModeType}");             //++++++++++++++++++++++++++++++
+            GlobalStateOfGhosts = behaviorModeType;
+
+            foreach (var ghost in GhostsMap)
+                SetBehaviourMode(ghost.Key, behaviorModeType);
+        }
+
         public void SetBehaviourMode(EntityType entityType, GhostBehaviorModeType behaviorModeType)
         {
             var movementService = GhostMovementServicesMap[entityType];

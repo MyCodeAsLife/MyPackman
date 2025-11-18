@@ -1,5 +1,4 @@
 ﻿using R3;
-using System.Collections;
 using UnityEngine;
 
 namespace MyPacman
@@ -16,9 +15,9 @@ namespace MyPacman
         [SerializeField] private SpriteRenderer _body;
 
         // For test
-        [SerializeField] private int _lastState;
-        [SerializeField] private int _currentState;
-        [SerializeField] private string _path;
+        //[SerializeField] private GhostBehaviorModeType _lastBehaviorModeType;
+        //[SerializeField] private GhostBehaviorModeType _currentBehaviorModeType;
+        //[SerializeField] private string _path;
 
         private Sprite[] _eyesAll = new Sprite[4];
 
@@ -31,32 +30,24 @@ namespace MyPacman
             var ghostViewModel = viewModel as GhostViewModel;
             LoadSprites();
 
-            //// Добавить функцию/лямбду(подписка) на поворот в сторону движения.
-            ghostViewModel.Direction.Subscribe(direction =>
+            ghostViewModel.Direction.Subscribe(direction =>              // Повернуть глаза
             {
-                // Повернуть глаза
                 ChangeDirection(direction);
             });
 
-            //_eyes.enabled = true;             // Выкл злаза в режиме страха
-            //ghostViewModel.IsMoving.Subscribe(isMoving => _animator.SetBool(IsMoving, isMoving));  // Переключение анимации движения
-
-            ghostViewModel.CurrentBehaviorMode.Subscribe(newType =>
+            ghostViewModel.CurrentBehaviorMode.Subscribe(newType =>     // Если включается режим страха, то отключить глаза
             {
-                // Если включается режим страха, то отключить глаза
                 _eyes.enabled = newType == GhostBehaviorModeType.Frightened ? false : true;
-                _animatorBody.SetInteger(BehaviorModeType, _currentState);
+                _animatorBody.SetInteger(BehaviorModeType, (int)newType);
             });
 
             ghostViewModel.Position.Subscribe(nextPosition => transform.position = nextPosition); // Функция/лямбда(подписка) на движение/смену позиции.
-
-            //ghostViewModel.PassGhostBody(_body);
             ghostViewModel.PassFuncHideGhost(HideGhost);
             ghostViewModel.PassFuncShowGhost(ShowGhost);
 
-            // For test
-            _path = viewModel.PrefabPath;               // Используется?
-            StartCoroutine(RandomSwitching());
+            //// For test
+            //_path = viewModel.PrefabPath;               // Используется?
+            //StartCoroutine(RandomSwitching());
         }
 
         private void HideGhost()
@@ -96,54 +87,6 @@ namespace MyPacman
             {
                 _eyesAll[i] = eyes[i];
             }
-        }
-
-        // For test
-        // Нормальное переключение между состояниями
-        private IEnumerator RandomSwitching()
-        {
-            _lastState = 0;
-
-            while (true)
-            {
-                float delay = Random.Range(0f, 3f);
-                yield return new WaitForSeconds(delay);
-                _currentState = Random.Range(0, 4);
-
-                if (_currentState == 1)
-                    continue;
-
-                if (_lastState == 2) // Если был Страх
-                {
-                    if (_currentState == 0 || _currentState == 3)       // Преследование
-                    {
-                        _eyes.enabled = true;
-                        _animatorBody.SetInteger(BehaviorModeType, _currentState);
-                        _lastState = _currentState;
-                    }
-                }
-                else
-                {
-                    if (_currentState == 2 && _lastState != 3) // Страх
-                    {
-                        _eyes.enabled = false;
-                        _animatorBody.SetInteger(BehaviorModeType, _currentState);
-                        _lastState = _currentState;
-                    }
-                    else if (_currentState != 2)  // Возвращение домой
-                    {
-                        _eyes.enabled = true;
-                        _animatorBody.SetInteger(BehaviorModeType, _currentState);
-                        _lastState = _currentState;
-                    }
-                }
-
-            }
-
-            // 0 - Преследование
-            // 1 - Разбегание
-            // 2 - Страх
-            // 3 - Возвращение домой
         }
     }
 }

@@ -123,13 +123,13 @@ namespace MyPacman
             return directionsMap[minDistance];
         }
 
-        protected Dictionary<float, Vector2> RemoveWrongDirection(  // Удаляет самое "долгое" направление, если направлений больше 2х
+        protected Dictionary<float, Vector2> RemoveWrongDirection(  // Удаляет направление, наименее удовлетворяющее "compare"
             Dictionary<float, Vector2> calculateDirections,
             Func<float, float, bool> compare)
         {
             while (calculateDirections.Count > 2)   // Направление назад уже убранно
             {
-                float wrongDistance = 0;
+                float wrongDistance = calculateDirections.First().Key;
 
                 foreach (var direction in calculateDirections)
                     if (compare(direction.Key, wrongDistance))

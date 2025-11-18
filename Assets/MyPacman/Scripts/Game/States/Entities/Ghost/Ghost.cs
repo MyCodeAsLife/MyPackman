@@ -20,6 +20,8 @@ namespace MyPacman
             // New
             CurrentBehaviorMode = new ReactiveProperty<GhostBehaviorModeType>(data.CurrentBehaviorMode);
             CurrentBehaviorMode.Subscribe(newBehaviorMode => data.CurrentBehaviorMode = newBehaviorMode);
+            BehaviorTimer = new ReactiveProperty<float>(data.BehaviorTimer);
+            BehaviorTimer.Subscribe(newTime => data.BehaviorTimer = newTime);
         }
 
         //public SpriteRenderer GhostBody { get; private set; }
@@ -28,6 +30,7 @@ namespace MyPacman
         public ReactiveProperty<float> SpeedModifier { get; private set; }
         //New
         public ReactiveProperty<GhostBehaviorModeType> CurrentBehaviorMode { get; private set; }        // Переименовать
+        public ReactiveProperty<float> BehaviorTimer { get; private set; }
         //public Vector2 SpawnPosition { get; private set; }          // Нужно ли его делать реактивным?
 
         //public void PassGhostBody(SpriteRenderer ghostBody)             // Переименовать ?

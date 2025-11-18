@@ -10,6 +10,8 @@ namespace MyPacman
         public readonly ReactiveProperty<int> Score;
         public readonly ReactiveProperty<int> LifePoints;
         public readonly ObservableList<EntityType> PickedFruits = new();
+        // New
+        public readonly ReactiveProperty<float> LevelTimeHasPassed;
 
         private readonly GameStateData _gameStateData;
 
@@ -22,6 +24,8 @@ namespace MyPacman
             Score = new ReactiveProperty<int>(_gameStateData.Score);
             LifePoints = new ReactiveProperty<int>(_gameStateData.LifePoints);
             PickedFruits = new ObservableList<EntityType>(_gameStateData.PickedFruits);
+            // New
+            LevelTimeHasPassed = new ReactiveProperty<float>(_gameStateData.LevelTimeHasPassed);
 
             InitMap();
             //InitResources();
@@ -42,9 +46,10 @@ namespace MyPacman
             // Вынести из этой функции ???
             Score.Subscribe(value => _gameStateData.Score = value);
             LifePoints.Subscribe(value => _gameStateData.LifePoints = value);
-            //_gameStateData.PickedFruits.ForEach(value => PickedFruits.Add(value));
             PickedFruits.ObserveRemove().Subscribe(e => _gameStateData.PickedFruits.Remove(e.Value));
             PickedFruits.ObserveAdd().Subscribe(e => _gameStateData.PickedFruits.Add(e.Value));
+            // New
+            LevelTimeHasPassed.Subscribe(value => _gameStateData.LevelTimeHasPassed = value);
         }
 
         //private void InitResources()
