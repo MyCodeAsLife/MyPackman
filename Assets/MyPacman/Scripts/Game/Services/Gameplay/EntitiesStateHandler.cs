@@ -1,7 +1,6 @@
 ﻿using ObservableCollections;
 using R3;
 using System;
-using System.Collections;
 using UnityEngine;
 
 namespace MyPacman
@@ -13,8 +12,8 @@ namespace MyPacman
         private readonly TimeService _timeService;
         private readonly ReactiveProperty<float> _levelTimeHasPassed;                 // Время с начала раунда(без пауз). Перенести в сохранения?
 
-        //private float _amountTime = 0f;
-        //private float _timer = 0f;
+        private float _amountTime = 0f;
+        private float _timer = 0f;
 
         private event Action Timer;
 
@@ -39,8 +38,8 @@ namespace MyPacman
             SubscribeToTargetReachingEvent();
 
             //// For test
-            _ghostsStateHandler.SetBehaviourModeEveryone(GhostBehaviorModeType.Scatter);
-            //Coroutines.StartRoutine(RandomSwitching());
+            //_ghostsStateHandler.SetBehaviourModeEveryone(GhostBehaviorModeType.Scatter);
+            SwitchBehaviorModes(GhostBehaviorModeType.Scatter);
         }
 
         ~EntitiesStateHandler()
@@ -110,111 +109,50 @@ namespace MyPacman
             }
         }
 
-        private IEnumerator RandomSwitching()
+        // Регулировка поведения призраков
+        private void SwitchBehaviorModes(GhostBehaviorModeType behaviorModeType)
         {
-            while (true)
+            _ghostsStateHandler.GlobalStateOfGhosts = behaviorModeType;
+            _ghostsStateHandler.SetBehaviourModeEveryone(behaviorModeType);
+
+            if (behaviorModeType == GhostBehaviorModeType.Chase || behaviorModeType == GhostBehaviorModeType.Scatter)
             {
-                float delay = UnityEngine.Random.Range(2f, 3f);
-                yield return new WaitForSeconds(delay);
-                var newBehaviorModeType = (GhostBehaviorModeType)UnityEngine.Random.Range(0, 4);
-                _ghostsStateHandler.SetBehaviourModeEveryone(newBehaviorModeType);
+                _amountTime = _ghostsStateHandler.GetTimerForBehaviorType(behaviorModeType);
             }
+            else
+            {
+                _amountTime = 3f;
+            }
+
+            _timer = 0f;
+            Timer += CheckTimerTest;
         }
 
-        //// Регулировка поведения призраков
-        //private void SwitchBehaviorModes(GhostBehaviorModeType behaviorModeType)
-        //{
-        //    _ghostsStateHandler.GlobalStateOfGhosts = behaviorModeType;
+        // For test
+        private void CheckTimerTest()
+        {
+            _timer += _timeService.DeltaTime;
 
-        //    foreach (var ghost in _ghostsStateHandler.GhostsMap)
-        //        _ghostsStateHandler.SetBehaviourMode(ghost.Key, behaviorModeType);
+            if (_amountTime < _timer)
+            {
+                Timer -= CheckTimerTest;
 
-        //    //if (behaviorModeType > GhostBehaviorModeType.Chase && behaviorModeType < GhostBehaviorModeType.Homecomming)
-        //    //{
-        //    //    _timer = 0f;
-        //    //    _amountTime = _ghostsStateHandler.GetTimerForBehaviorType(behaviorModeType);
-        //    //    Timer += CheckTimerTest;
-        //    //}
-        //}
+                //switch (_ghostsStateHandler.GlobalStateOfGhosts)        // У каждого призрака может быть свое состояние
+                //{
+                //    case GhostBehaviorModeType.Scatter:
+                //        SwitchBehaviorModes(GhostBehaviorModeType.Chase);
+                //        break;
 
-        //// For test
-        //private void CheckTimerTest()
-        //{
-        //    _timer += _timeService.DeltaTime;
+                //    case GhostBehaviorModeType.Chase:
+                //        SwitchBehaviorModes(GhostBehaviorModeType.Frightened);
+                //        break;
 
-        //    if (_amountTime < _timer)
-        //    {
-        //        Timer -= CheckTimerTest;
+                //    default:
+                //        throw new Exception(GameConstants.NoSwitchingDefined /*+ _ghostState*/);
+                //}
 
-        //        switch (_ghostsStateHandler.GlobalStateOfGhosts)        // У каждого призрака может быть свое состояние
-        //        {
-        //            case GhostBehaviorModeType.Scatter:
-        //                SwitchBehaviorModes(GhostBehaviorModeType.Chase);
-        //                break;
-
-        //            case GhostBehaviorModeType.Chase:
-        //                SwitchBehaviorModes(GhostBehaviorModeType.Frightened);
-        //                break;
-
-        //            default:
-        //                throw new Exception(GameConstants.NoSwitchingDefined /*+ _ghostState*/);
-        //        }
-        //    }
-        //}
-        //// For test
-        //// Нормальное переключение между состояниями
-        //private IEnumerator RandomSwitching()   // Вынести в EntitiesStateHandler
-        //{
-        //    _lastBehaviorModeType = 0;
-
-        //    while (true)
-        //    {
-        //        float delay = Random.Range(0f, 3f);
-        //        yield return new WaitForSeconds(delay);
-        //        _currentBehaviorModeType = (GhostBehaviorModeType)Random.Range(0, 4);
-
-        //        if ((int)_currentBehaviorModeType == 1)
-        //            continue;
-
-        //        if ((int)_lastBehaviorModeType == 2) // Если был Страх
-        //        {
-        //            if ((int)_currentBehaviorModeType == 0 || (int)_currentBehaviorModeType == 3)       // Преследование
-        //            {
-        //                _eyes.enabled = true;
-        //                _animatorBody.SetInteger(BehaviorModeType, (int)_currentBehaviorModeType);
-        //                _lastBehaviorModeType = _currentBehaviorModeType;
-        //            }
-        //        }
-        //        else
-        //        {
-        //            if ((int)_currentBehaviorModeType == 2 && (int)_lastBehaviorModeType != 3) // Страх
-        //            {
-        //                _eyes.enabled = false;
-        //                _animatorBody.SetInteger(BehaviorModeType, (int)_currentBehaviorModeType);
-        //                _lastBehaviorModeType = _currentBehaviorModeType;
-        //            }
-        //            else if ((int)_currentBehaviorModeType != 2)  // Возвращение домой
-        //            {
-        //                _eyes.enabled = true;
-        //                _animatorBody.SetInteger(BehaviorModeType, (int)_currentBehaviorModeType);
-        //                _lastBehaviorModeType = _currentBehaviorModeType;
-        //            }
-        //        }
-
-        //    }
-
-        //    // Old
-        //    // 0 - Преследование
-        //    // 1 - Разбегание
-        //    // 2 - Страх
-        //    // 3 - Возвращение домой
-
-        //    //// New Переделать на это?
-        //    //// 0 - Отсутствует
-        //    //// 1 - Преследование
-        //    //// 2 - Разбегание
-        //    //// 3 - Страх
-        //    //// 4 - Возвращение домой
-        //}
+                _ghostsStateHandler.SetBehaviourModeEveryone(GhostBehaviorModeType.Frightened);
+            }
+        }
     }
 }

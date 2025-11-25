@@ -50,8 +50,8 @@ namespace MyPacman
         // Gameplay settings
         public const float PlayerSpeed = 6f;
         public const float PlayerInvincibleTimer = 2.5f;
-        public const float ScatterTimer = 10f;                      // База 6
-        public const float ChaseTimer = 10f;                        // База 6
+        public const float ScatterTimer = 6f;                      // База 6
+        public const float ChaseTimer = 6f;                        // База 6
         public const float GhostSpeed = 6f;
         public const float GhostNormalSpeed​​Modifier = 1f;
         public const float GhostTunelSpeed​​Modifier = 0.6f;

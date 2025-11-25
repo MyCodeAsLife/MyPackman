@@ -5,7 +5,7 @@ namespace MyPacman
 {
     public class GameState
     {
-        public readonly EntitiesFactory EntitiesFactory;
+        public readonly EntitiesFactory EntitiesFactory;        // Нужно тут?
         public readonly ReactiveProperty<Map> Map;
         public readonly ReactiveProperty<int> Score;
         public readonly ReactiveProperty<int> LifePoints;

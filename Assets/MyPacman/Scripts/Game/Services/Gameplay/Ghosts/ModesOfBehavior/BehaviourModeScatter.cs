@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace MyPacman
 {
-    // Режим разбегания
+    // Режим разбегания (работает)
     public class BehaviourModeScatter : GhostBehaviorMode
     {
         private readonly Vector2 _scatterPos;
@@ -72,12 +72,14 @@ namespace MyPacman
 
         private Dictionary<float, Vector2> CalculateDirectionsToTargetPos(List<Vector2> availableDirections)
         {
-            var calculateDirections = CalculateDirectionsClosestToTarget(availableDirections, _targetPosition.Value);
+            availableDirections = RemoveReverseDirection(availableDirections);
+            var calculateDirections = CalculateDirectionsMap(availableDirections, _targetPosition.Value);
             return RemoveWrongDirection(calculateDirections, ItFar);
         }
 
         private Dictionary<float, Vector2> CalculateDirectionsToBlinkySpawnPos(List<Vector2> availableDirections)
         {
+            // Заменить IsEnoughClose на sqrDistance ???
             if (_self.Position.Value.IsEnoughClose(_paddockCenter, 2.5f) == false)  // Magic    Если расстояние до центра загона больше 2.5, то мы вне загона
                 ChangeAlgorithm(
                     _scatterPos,

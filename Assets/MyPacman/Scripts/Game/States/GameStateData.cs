@@ -10,13 +10,10 @@ namespace MyPacman
         public MapData Map { get; set; }
         public int Score { get; set; }
         public int LifePoints { get; set; }
-        public List<EntityType> PickedFruits { get; set; } = new();
+        public List<EntityType> PickedFruits { get; set; } = new();  // Зачем "съеденные" фрукты хранить как список? Не проше ли просто посчитать как int?
         // New
-        public float LevelTimeHasPassed {  get; set; }
+        public float LevelTimeHasPassed { get; set; }
 
-        public int CreateEntityId()
-        {
-            return GlobalEntityId++;
-        }
+        public int CreateEntityId() => GlobalEntityId++;
     }
 }

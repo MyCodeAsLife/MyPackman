@@ -61,8 +61,6 @@ namespace MyPacman
 
             if (availableDirections.Count == 1)
                 return -_selfDirection;
-            else if (availableDirections.Count == 2)
-                return availableDirections.First(value => value != -_selfDirection);
             else if (_mapHandlerService.CheckTileForObstacle(_selfPosition))
                 return _selfDirection;
 
@@ -71,25 +69,37 @@ namespace MyPacman
 
         protected virtual Vector2 CalculateDirectionInSelectedMode(List<Vector2> availableDirections)
         {
-            var calculatedDirections = CalculateDirectionsClosestToTarget(availableDirections, _targetPosition.Value);
-            var directionsMap = RemoveWrongDirection(calculatedDirections, ItFar);
+            availableDirections = RemoveReverseDirection(availableDirections);
+            var directionsMap = CalculateDirectionsMap(availableDirections, _targetPosition.Value);
+            directionsMap = RemoveWrongDirection(directionsMap, ItFar);
             return SelectNearestDirection(directionsMap);
         }
 
-        protected Dictionary<float, Vector2> CalculateDirectionsClosestToTarget(List<Vector2> directions, Vector2 targetPosition)
+        protected Dictionary<float, Vector2> CalculateDirectionsMap(List<Vector2> directions, Vector2 targetPosition)
         {
             Dictionary<float, Vector2> directionsMap = new();
 
             foreach (var direction in directions)
             {
-                if (direction == -_selfDirection)
-                    continue;
-
                 float distance = targetPosition.SqrDistance(_selfPosition + direction);
                 directionsMap[distance] = direction;
             }
 
             return directionsMap;
+        }
+
+        protected List<Vector2> RemoveReverseDirection(List<Vector2> directions)
+        {
+            foreach (var direction in directions)
+            {
+                if (direction == -_selfDirection)     // Убирает направление движения назад
+                {
+                    directions.Remove(direction);
+                    return directions;
+                }
+            }
+
+            return directions;
         }
 
         protected Vector2 SelectRandomDirection(Dictionary<float, Vector2> directionsMap)
@@ -123,11 +133,12 @@ namespace MyPacman
             return directionsMap[minDistance];
         }
 
+        // Переименовать.
         protected Dictionary<float, Vector2> RemoveWrongDirection(  // Удаляет направление, наименее удовлетворяющее "compare"
             Dictionary<float, Vector2> calculateDirections,
             Func<float, float, bool> compare)
         {
-            while (calculateDirections.Count > 2)   // Направление назад уже убранно
+            if (calculateDirections.Count > 1)
             {
                 float wrongDistance = calculateDirections.First().Key;
 

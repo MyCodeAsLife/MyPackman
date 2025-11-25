@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace MyPacman
 {
-    // Режим преследования
+    // Режим преследования (неправильно работает с Clyde смотреть в его реализации)
     public abstract class BehaviourModeChase : GhostBehaviorMode
     {
         protected readonly ReadOnlyReactiveProperty<Vector2> _pacmanPosition;

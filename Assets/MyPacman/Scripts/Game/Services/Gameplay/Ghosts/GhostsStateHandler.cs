@@ -67,7 +67,7 @@ namespace MyPacman
 
         public void SetBehaviourModeEveryone(GhostBehaviorModeType behaviorModeType)
         {
-            Debug.Log($"Last: {GlobalStateOfGhosts}. New: {behaviorModeType}");             //++++++++++++++++++++++++++++++
+            Debug.Log($"Global states. Last: {GlobalStateOfGhosts}. New: {behaviorModeType}");             //++++++++++++++++++++++++++++++
             GlobalStateOfGhosts = behaviorModeType;
 
             foreach (var ghost in GhostsMap)
