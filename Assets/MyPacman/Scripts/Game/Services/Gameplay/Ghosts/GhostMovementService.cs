@@ -45,12 +45,28 @@ namespace MyPacman
 
         public void BindBehaviorMode(GhostBehaviorMode behaviorMode)
         {
+            Debug.Log($"{_entity.Type} bind {behaviorMode.Type}");      //+++++++++++++++++++++++++++++++
+
             if (_behaviorMode == null)
                 Moved += Move;
 
             _behaviorMode = behaviorMode;
             _entity.CurrentBehaviorMode.Value = behaviorMode.Type;
             _behaviorMode.TargetPosition.Subscribe(newPos => _targetPosition = newPos);
+            ChangeSpeedModifier(behaviorMode.Type);
+        }
+
+        private void ChangeSpeedModifier(GhostBehaviorModeType behaviorType)
+        {
+            if (behaviorType == GhostBehaviorModeType.Scatter
+                && _entity.SpeedModifier.CurrentValue == GameConstants.GhostHomecommingSpeedModifier)
+            {
+                _entity.SpeedModifier.Value = GameConstants.GhostNormalSpeedModifier;
+            }
+            else if (behaviorType == GhostBehaviorModeType.Homecomming)
+            {
+                _entity.SpeedModifier.Value = GameConstants.GhostHomecommingSpeedModifier;
+            }
         }
 
         private void Tick()
@@ -62,7 +78,6 @@ namespace MyPacman
         private void Move()
         {
             Moved -= Move;
-            _behaviorMode.CheckSurfaceModifier();
             _entity.Direction.Value = _behaviorMode.CalculateDirectionOfMovement();
             MoveAccordingSelectedAlgorithm();
         }

@@ -35,6 +35,12 @@ namespace MyPacman
             return base.CalculateDirection(availableDirections);
         }
 
+        protected override Vector2 CalculateDirectionInSelectedMode(List<Vector2> availableDirections)  // Похожа на такуюже в BehaviourModeFrightened
+        {
+            Dictionary<float, Vector2> directionsMap = CurrentAlgorithmForCalculatingDirections(availableDirections);
+            return SelectNearestDirection(directionsMap);
+        }
+
         private void BehaviourInitialize()
         {
             if (_self.Position.Value.IsEnoughClose(_paddockCenter, 2.5f))   // Magic    Если расстояние до центра загона больше 2.5, то мы вне загона
@@ -52,12 +58,6 @@ namespace MyPacman
                     CalculateDirectionsToTargetPos);
 
             }
-        }
-
-        protected override Vector2 CalculateDirectionInSelectedMode(List<Vector2> availableDirections)  // Похожа на такуюже в BehaviourModeFrightened
-        {
-            Dictionary<float, Vector2> directionsMap = CurrentAlgorithmForCalculatingDirections(availableDirections);
-            return SelectNearestDirection(directionsMap);
         }
 
         private void ChangeAlgorithm(

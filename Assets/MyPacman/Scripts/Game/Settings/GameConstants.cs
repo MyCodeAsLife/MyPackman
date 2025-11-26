@@ -55,7 +55,7 @@ namespace MyPacman
         public const float GhostSpeed = 6f;
         public const float GhostNormalSpeed​​Modifier = 1f;
         public const float GhostTunelSpeed​​Modifier = 0.6f;
-        public const float GhosHomecommingSpeed​​Modifier = 2f;
+        public const float GhostHomecommingSpeedModifier = 3f;
         public const int StartLifePointsAmount = 3;
         public const int StartingDifficultyLevel = 1;
         public const int CollectedPelletsForFirstFruitSpawn = 10;           // 70       Переделать под процент от всех пеллетов на уровне

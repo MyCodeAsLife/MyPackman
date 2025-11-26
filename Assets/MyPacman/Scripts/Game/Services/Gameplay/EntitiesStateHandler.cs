@@ -135,7 +135,7 @@ namespace MyPacman
 
             if (_amountTime < _timer)
             {
-                Timer -= CheckTimerTest;
+
 
                 //switch (_ghostsStateHandler.GlobalStateOfGhosts)        // У каждого призрака может быть свое состояние
                 //{
@@ -151,7 +151,21 @@ namespace MyPacman
                 //        throw new Exception(GameConstants.NoSwitchingDefined /*+ _ghostState*/);
                 //}
 
-                _ghostsStateHandler.SetBehaviourModeEveryone(GhostBehaviorModeType.Frightened);
+                //_ghostsStateHandler.SetBehaviourModeEveryone(GhostBehaviorModeType.Homecomming);
+
+
+                if (_ghostsStateHandler.GlobalStateOfGhosts == GhostBehaviorModeType.Scatter)
+                {
+                    _ghostsStateHandler.SetBehaviourModeEveryone(GhostBehaviorModeType.Frightened);
+
+                    _timer = 0f;
+                }
+                else if (_ghostsStateHandler.GlobalStateOfGhosts == GhostBehaviorModeType.Frightened)
+                {
+                    _ghostsStateHandler.SetBehaviourModeEveryone(GhostBehaviorModeType.Homecomming);
+
+                    Timer -= CheckTimerTest;
+                }
             }
         }
     }

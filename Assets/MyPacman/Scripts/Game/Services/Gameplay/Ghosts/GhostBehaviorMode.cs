@@ -29,24 +29,11 @@ namespace MyPacman
         public ReadOnlyReactiveProperty<Vector2> TargetPosition => _targetPosition;
         public GhostBehaviorModeType Type { get; private set; }
 
-        public void CheckSurfaceModifier()      // Вынести в MovementService ?
-        {
-            foreach (var modifierPosition in _speedModifierPositions)
-            {
-                if (modifierPosition == _selfPosition)
-                {
-                    if (_self.SpeedModifier.Value == GameConstants.GhostTunelSpeedModifier)
-                        _self.SpeedModifier.Value = GameConstants.GhostNormalSpeed​​Modifier;
-                    else
-                        _self.SpeedModifier.Value = GameConstants.GhostTunelSpeedModifier;
-                }
-            }
-        }
-
         public Vector2 CalculateDirectionOfMovement()
         {
             _selfPosition = _self.Position.Value;
             _selfDirection = _self.Direction.Value;
+            CheckSurfaceModifier();
 
             if (_mapHandlerService.IsCenterOfTile(_selfPosition) == false)
                 return _selfDirection;
@@ -154,5 +141,20 @@ namespace MyPacman
 
         protected bool ItFar(float value1, float value2) => value1 > value2;
         protected bool ItNear(float value1, float value2) => value1 < value2;
+
+        private void CheckSurfaceModifier()      // Вынести в MovementService ?
+        {
+            foreach (var modifierPosition in _speedModifierPositions)
+            {
+                if (modifierPosition == _selfPosition &&
+                    _self.SpeedModifier.Value != GameConstants.GhostHomecommingSpeedModifier)
+                {
+                    if (_self.SpeedModifier.Value == GameConstants.GhostTunelSpeedModifier)
+                        _self.SpeedModifier.Value = GameConstants.GhostNormalSpeed​​Modifier;
+                    else
+                        _self.SpeedModifier.Value = GameConstants.GhostTunelSpeedModifier;
+                }
+            }
+        }
     }
 }
