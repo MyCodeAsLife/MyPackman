@@ -38,7 +38,6 @@ namespace MyPacman
             SubscribeToTargetReachingEvent();
 
             //// For test
-            //_ghostsStateHandler.SetBehaviourModeEveryone(GhostBehaviorModeType.Scatter);
             SwitchBehaviorModes(GhostBehaviorModeType.Scatter);
         }
 
@@ -51,7 +50,7 @@ namespace MyPacman
                 movementService.TargetReached -= OnTargetReached;
         }
 
-        private void SubscribeToTargetReachingEvent()
+        private void SubscribeToTargetReachingEvent()    // ghostsStateHandler ?
         {
             foreach (var movementService in _ghostsStateHandler.GhostMovementServicesMap.Values)
                 movementService.TargetReached += OnTargetReached;
@@ -63,7 +62,7 @@ namespace MyPacman
             Timer?.Invoke();
         }
 
-        private void OnTargetReached(EntityType entityType)
+        private void OnTargetReached(EntityType entityType)     // ghostsStateHandler ?
         {
             // -1. Преследование
             // -Проверять дистаницию до цели, если достигнута то пакман съеден
@@ -87,7 +86,7 @@ namespace MyPacman
             // Нужно добавить (таймер?) на переключение поведения при выходе из загона.
         }
 
-        private void OnRanIntoPacman(EntityType entityType) // Призрак сообщает когда сталкивается с игроком
+        private void OnRanIntoPacman(EntityType entityType)
         {
             // Проверяем текущее состояние/поведение призрака и в зависимости от него реагируем.
             var behaviourModeType = _ghostsStateHandler.GhostMovementServicesMap[entityType].BehaviorModeType;
@@ -110,7 +109,7 @@ namespace MyPacman
         }
 
         // Регулировка поведения призраков
-        private void SwitchBehaviorModes(GhostBehaviorModeType behaviorModeType)
+        private void SwitchBehaviorModes(GhostBehaviorModeType behaviorModeType)    // global ghost state handler
         {
             _ghostsStateHandler.GlobalStateOfGhosts = behaviorModeType;
             _ghostsStateHandler.SetBehaviourModeEveryone(behaviorModeType);
@@ -135,25 +134,6 @@ namespace MyPacman
 
             if (_amountTime < _timer)
             {
-
-
-                //switch (_ghostsStateHandler.GlobalStateOfGhosts)        // У каждого призрака может быть свое состояние
-                //{
-                //    case GhostBehaviorModeType.Scatter:
-                //        SwitchBehaviorModes(GhostBehaviorModeType.Chase);
-                //        break;
-
-                //    case GhostBehaviorModeType.Chase:
-                //        SwitchBehaviorModes(GhostBehaviorModeType.Frightened);
-                //        break;
-
-                //    default:
-                //        throw new Exception(GameConstants.NoSwitchingDefined /*+ _ghostState*/);
-                //}
-
-                //_ghostsStateHandler.SetBehaviourModeEveryone(GhostBehaviorModeType.Homecomming);
-
-
                 if (_ghostsStateHandler.GlobalStateOfGhosts == GhostBehaviorModeType.Scatter)
                 {
                     _ghostsStateHandler.SetBehaviourModeEveryone(GhostBehaviorModeType.Frightened);

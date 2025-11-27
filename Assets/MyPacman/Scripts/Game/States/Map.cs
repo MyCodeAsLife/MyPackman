@@ -8,8 +8,9 @@ namespace MyPacman
     public class Map
     {
         public readonly ReactiveProperty<int> LevelNumber;
+        public readonly ReactiveProperty<int> ScoreForRound;
         public readonly ReactiveProperty<int> NumberOfPellets;
-        public readonly ReactiveProperty<int> NumberOfCollectedPellets;
+        public readonly ReactiveProperty<int> NumberOfCollectedPellets;     // Очищать при сменен уровня?
 
         public readonly ReactiveProperty<Vector2> PacmanSpawnPos;
         public readonly ReactiveProperty<Vector2> BlinkySpawnPos;
@@ -26,8 +27,10 @@ namespace MyPacman
             MapTag = mapData.MapTag;
             _entitiesFactory = entitiesFactory;
 
-            InitCounters();
-            InitEntities(mapData);
+            LevelNumber = InitLevelNumber();
+            ScoreForRound = InitScoreForRound();
+            NumberOfPellets = InitNumberOfPellets();
+            NumberOfCollectedPellets = InitNumberOfCollectedPellets();
 
             PacmanSpawnPos = InitPacmanSpawnPos();
             BlinkySpawnPos = InitBlinkySpawnPos();
@@ -36,9 +39,8 @@ namespace MyPacman
             ClydeSpawnPos = InitClydeSpawnPos();
             FruitSpawnPos = InitFruitSpawnPos();
 
-            LevelNumber = new ReactiveProperty<int>(mapData.LevelNumber);
-            NumberOfPellets = new ReactiveProperty<int>(mapData.NumberOfPellets);
-            NumberOfCollectedPellets = new ReactiveProperty<int>(mapData.NumberOfCollectedPellets);
+            InitEntityCounting();
+            InitEntities(mapData);
         }
 
         public MapData OriginData { get; }
@@ -80,7 +82,7 @@ namespace MyPacman
 
         public Vector2 GetSpawnPosition(SpawnPointType entityType)
         {
-            switch ((SpawnPointType)entityType)
+            switch (entityType)
             {
                 case SpawnPointType.Pacman:
                     return PacmanSpawnPos.Value;
@@ -105,47 +107,33 @@ namespace MyPacman
             }
         }
 
-        private void InitCounters()
+        private ReactiveProperty<int> InitNumberOfCollectedPellets()
         {
-            Entities.ObserveAdd().Subscribe(collectionAddEvent =>
-            {
-                var addedEntity = collectionAddEvent.Value;
-
-                if (addedEntity.Type <= EntityType.SmallPellet && addedEntity.Type >= EntityType.LargePellet)
-                    NumberOfPellets.Value++;
-            });
-
-            Entities.ObserveRemove().Subscribe(collectionRemovedEvent =>
-            {
-                var removedEntity = collectionRemovedEvent.Value;
-
-                if (removedEntity.Type <= EntityType.SmallPellet && removedEntity.Type >= EntityType.LargePellet)
-                {
-                    NumberOfPellets.Value--;
-                    NumberOfCollectedPellets.Value++;
-                }
-            });
+            var NumberOfCollectedPellets = new ReactiveProperty<int>(OriginData.NumberOfCollectedPellets);
+            NumberOfCollectedPellets.Subscribe(value => OriginData.NumberOfCollectedPellets = value);
+            return NumberOfCollectedPellets;
         }
 
-        private void InitEntities(MapData mapData)
+        private ReactiveProperty<int> InitNumberOfPellets()
         {
-            mapData.Entities.ForEach(entityData => Entities.Add(_entitiesFactory.CreateEntity(entityData)));
+            OriginData.NumberOfPellets = 0;
+            var NumberOfPellets = new ReactiveProperty<int>(OriginData.NumberOfPellets);
+            NumberOfPellets.Subscribe(value => OriginData.NumberOfPellets = value);
+            return NumberOfPellets;
+        }
 
-            // При добавлении элемента в Entities текущего класса, добавится элемент в Entities класса MapData
-            Entities.ObserveAdd().Subscribe(collectionAddEvent =>
-            {
-                var addedEntity = collectionAddEvent.Value;
-                mapData.Entities.Add(addedEntity.Origin);
-            });
+        private ReactiveProperty<int> InitScoreForRound()
+        {
+            var ScoreForRound = new ReactiveProperty<int>(OriginData.ScoreForRound);
+            ScoreForRound.Subscribe(value => OriginData.ScoreForRound = value);
+            return ScoreForRound;
+        }
 
-            // При удалении элемента из Entities текущего класса, также удалится элемент из Entities класса MapData
-            Entities.ObserveRemove().Subscribe(collectionRemovedEvent =>
-            {
-                var removedEntity = collectionRemovedEvent.Value;
-                var removedEntityData = mapData.Entities.FirstOrDefault(entityData =>
-                                                    entityData.UniqId == removedEntity.UniqueId);
-                mapData.Entities.Remove(removedEntityData);
-            });
+        private ReactiveProperty<int> InitLevelNumber()
+        {
+            var LevelNumber = new ReactiveProperty<int>(OriginData.LevelNumber);
+            LevelNumber.Subscribe(value => OriginData.LevelNumber = value);
+            return LevelNumber;
         }
 
         private ReactiveProperty<Vector2> InitPacmanSpawnPos()
@@ -231,6 +219,49 @@ namespace MyPacman
             });
 
             return fruitSpawnPos;
+        }
+
+        private void InitEntityCounting()
+        {
+            Entities.ObserveAdd().Subscribe(collectionAddEvent =>
+            {
+                var addedEntity = collectionAddEvent.Value;
+
+                if (addedEntity.Type <= EntityType.SmallPellet && addedEntity.Type >= EntityType.LargePellet)
+                    NumberOfPellets.Value++;
+            });
+
+            Entities.ObserveRemove().Subscribe(collectionRemovedEvent =>
+            {
+                var removedEntity = collectionRemovedEvent.Value;
+
+                if (removedEntity.Type <= EntityType.SmallPellet && removedEntity.Type >= EntityType.LargePellet)
+                {
+                    NumberOfPellets.Value--;
+                    NumberOfCollectedPellets.Value++;
+                }
+            });
+        }
+
+        private void InitEntities(MapData mapData)
+        {
+            mapData.Entities.ForEach(entityData => Entities.Add(_entitiesFactory.CreateEntity(entityData)));
+
+            // При добавлении элемента в Entities текущего класса, добавится элемент в Entities класса MapData
+            Entities.ObserveAdd().Subscribe(collectionAddEvent =>
+            {
+                var addedEntity = collectionAddEvent.Value;
+                mapData.Entities.Add(addedEntity.Origin);
+            });
+
+            // При удалении элемента из Entities текущего класса, также удалится элемент из Entities класса MapData
+            Entities.ObserveRemove().Subscribe(collectionRemovedEvent =>
+            {
+                var removedEntity = collectionRemovedEvent.Value;
+                var removedEntityData = mapData.Entities.FirstOrDefault(entityData =>
+                                                    entityData.UniqId == removedEntity.UniqueId);
+                mapData.Entities.Remove(removedEntityData);
+            });
         }
     }
 }

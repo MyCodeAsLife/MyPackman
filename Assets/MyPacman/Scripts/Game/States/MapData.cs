@@ -9,6 +9,7 @@ namespace MyPacman
         public string MapTag { get; set; }                  // Тэг используемой карты       Допилить загрузку из сохранения
         public List<EntityData> Entities { get; set; } = new();
         public int LevelNumber { get; set; }                // Уровень сложности
+        public int ScoreForRound { get; set; }              // Очков за раунд
         public int NumberOfPellets { get; set; }           // Кол-во гранул на уровень
         public int NumberOfCollectedPellets { get; set; }   // Кол-во подобранных за уровень гранул
         public float PacmanSpawnPosX { get; set; }

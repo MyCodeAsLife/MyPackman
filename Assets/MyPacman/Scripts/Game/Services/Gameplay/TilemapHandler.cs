@@ -9,7 +9,7 @@ namespace MyPacman
         private readonly Tilemap _obstaclesTileMap;
         private readonly ILevelConfig _levelConfig;
         // New
-        private readonly List<Vector2> _gatePositions = new();
+        //private readonly List<Vector2> _gatePositions = new();
         private readonly List<Vector2> _speedModifierPositions = new();
 
         public TilemapHandler(Tilemap obstaclesTileMap, ILevelConfig levelConfig)
@@ -20,7 +20,7 @@ namespace MyPacman
             InitPositions();
         }
 
-        public IReadOnlyList<Vector2> GatePositions => _gatePositions;
+        //public IReadOnlyList<Vector2> GatePositions => _gatePositions;
         public IReadOnlyList<Vector2> SpeedModifierPositions => _speedModifierPositions;
 
         private void InitPositions()
@@ -34,9 +34,9 @@ namespace MyPacman
                 {
                     int numTile = _levelConfig.Map[y, x];
 
-                    if (numTile == GameConstants.GateTile)
-                        _gatePositions.Add(new Vector2(x + GameConstants.Half, -y - GameConstants.Half + 1));
-                    else if (numTile == GameConstants.SpeedModifierTile)
+                    //if (numTile == GameConstants.GateTile)
+                    //    _gatePositions.Add(new Vector2(x + GameConstants.Half, -y - GameConstants.Half + 1));
+                    /*else*/ if (numTile == GameConstants.SpeedModifierTile)
                         _speedModifierPositions.Add(new Vector2(x + GameConstants.Half, -y - GameConstants.Half + 1));
                 }
             }

@@ -29,7 +29,7 @@ namespace MyPacman
             InitEdibleEntityMap();
         }
 
-        public IReadOnlyList<Vector2> GatePositions => _tilemapHandler.GatePositions;
+        //public IReadOnlyList<Vector2> GatePositions => _tilemapHandler.GatePositions;
         public IReadOnlyList<Vector2> SpeedModifierPositions => _tilemapHandler.SpeedModifierPositions;
         public bool CheckTileForObstacle(Vector2 position) => _tilemapHandler.CheckTileForObstacle(position);   // Упразднить, перевести на CheckTile?
         public bool CheckTile(Vector2 position, int numTile) => _tilemapHandler.CheckTile(position, numTile);

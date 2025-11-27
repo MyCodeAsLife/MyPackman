@@ -45,8 +45,6 @@ namespace MyPacman
 
         public void BindBehaviorMode(GhostBehaviorMode behaviorMode)
         {
-            Debug.Log($"{_entity.Type} bind {behaviorMode.Type}");      //+++++++++++++++++++++++++++++++
-
             if (_behaviorMode == null)
                 Moved += Move;
 

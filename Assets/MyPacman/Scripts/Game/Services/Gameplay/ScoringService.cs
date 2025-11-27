@@ -9,15 +9,9 @@ namespace MyPacman
         private readonly GameState _gameState;
         private readonly IUIGameplayViewModel _uiGameplay;
 
-        private int _scoreForRound;
+        //private readonly ReactiveProperty<int> ScoreForRound;
         // For test
         private Coroutine _lifeUpShowing;
-
-        // Массив подобранных фруктов
-        // 1. Полноценное сохранение и загрузка данного массива
-        // 2. Автоподписки на создание\удаление значков на панели согласно содержимому массива
-        // 3. Автоподписка на создание\удаление значков на панели согласно кол-ву жизней игрока
-
 
         public event Action<int, Vector2> PointsReceived;            // для подписи сервиса который будет создавать\уничтожать view c сообщениями на экране
 
@@ -26,13 +20,14 @@ namespace MyPacman
             _gameState = gameState;
             mapHandlerService.EntityEaten += OnEntityEaten;
             _uiGameplay = uiGameplay;
+            //ScoreForRound = gameState.Map.Value.ScoreForRound;
         }
 
         private void OnEntityEaten(EdibleEntityPoints enumPoints, Vector2 position)
         {
             int points = (int)enumPoints;
             _gameState.Score.Value += points;
-            _scoreForRound += points;
+            _gameState.Map.Value.ScoreForRound.Value += points;
             PointsReceived?.Invoke(points, position);
 
             CheckTheRequiredConditions();
@@ -44,10 +39,10 @@ namespace MyPacman
 
         private void CheckTheRequiredConditions()
         {
-            if (_scoreForRound >= GameConstants.PriceLifePoint)
+            if (_gameState.Map.Value.ScoreForRound.Value >= GameConstants.PriceLifePoint)
                 _gameState.LifePoints.Value++;
         }
-
+        // Мигание отображения кол-ва жизней на UI
         private IEnumerator LifeUpFlickering(float duration)           // Вынести логику в GameplayUIManager ??
         {
             // Проблема в том что данный скрипт будет срабатывать не только 

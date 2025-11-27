@@ -50,7 +50,7 @@ namespace MyPacman
         public Dictionary<EntityType, GhostMovementService> GhostMovementServicesMap
             => _ghostMovementServicesHandler.GhostMovementServicesMap;
 
-        public float GetTimerForBehaviorType(GhostBehaviorModeType behaviorModeType)
+        public float GetTimerForBehaviorType(GhostBehaviorModeType behaviorModeType)    // global ghost state handler
         {
             switch (behaviorModeType)
             {
@@ -65,7 +65,7 @@ namespace MyPacman
             }
         }
 
-        public void SetBehaviourModeEveryone(GhostBehaviorModeType behaviorModeType)
+        public void SetBehaviourModeEveryone(GhostBehaviorModeType behaviorModeType)    // global ghost state handler
         {
             GlobalStateOfGhosts = behaviorModeType;
 
@@ -81,19 +81,19 @@ namespace MyPacman
             movementService.BindBehaviorMode(behaviourMode);
         }
 
-        public void ShowGhosts()
+        public void ShowGhosts()       // global ghost state handler
         {
             foreach (var shost in GhostsMap)
                 shost.Value.ShowGhost();
         }
 
-        public void HideGhosts()
+        public void HideGhosts()        // global ghost state handler
         {
             foreach (var shost in GhostsMap)
                 shost.Value.HideGhost();
         }
 
-        public bool IsPacmanReached(EntityType ghostType)
+        public bool IsPacmanReached(EntityType ghostType)   // PacmanStateHandler ?
         {
             return GhostsMap[ghostType].Position.CurrentValue.SqrDistance(_pacman.Position.CurrentValue) < 1.2f;// Magic (расстояние между призраком и игроком)
         }
