@@ -9,23 +9,26 @@ namespace MyPacman
         private readonly GameState _gameState;
         private readonly IUIGameplayViewModel _uiGameplay;
 
-        //private readonly ReactiveProperty<int> ScoreForRound;
         // For test
         private Coroutine _lifeUpShowing;
 
         public event Action<int, Vector2> PointsReceived;            // для подписи сервиса который будет создавать\уничтожать view c сообщениями на экране
 
-        public ScoringService(GameState gameState, MapHandlerService mapHandlerService, IUIGameplayViewModel uiGameplay)
+        public ScoringService(
+            GameState gameState,
+            MapHandlerService mapHandlerService,
+            EntitiesStateHandler entitiesStateHandler,
+            IUIGameplayViewModel uiGameplay)
         {
             _gameState = gameState;
-            mapHandlerService.EntityEaten += OnEntityEaten;
             _uiGameplay = uiGameplay;
-            //ScoreForRound = gameState.Map.Value.ScoreForRound;
+
+            mapHandlerService.EntityEaten += OnEntityEaten;
+            entitiesStateHandler.GhostEaten += OnEntityEaten;
         }
 
-        private void OnEntityEaten(EdibleEntityPoints enumPoints, Vector2 position)
+        private void OnEntityEaten(int points, Vector2 position)
         {
-            int points = (int)enumPoints;
             _gameState.Score.Value += points;
             _gameState.Map.Value.ScoreForRound.Value += points;
             PointsReceived?.Invoke(points, position);

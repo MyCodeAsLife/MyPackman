@@ -49,12 +49,6 @@ namespace MyPacman
                     gameStateService.GameState
                 )).AsSingle();
 
-            sceneContainer.RegisterFactory(_ => new ScoringService(
-                    gameStateService.GameState,
-                    sceneContainer.Resolve<MapHandlerService>(),
-                    sceneContainer.Resolve<IUIGameplayViewModel>()
-                )).AsSingle();
-
             sceneContainer.RegisterFactory(_ => new EntitiesStateHandler(
                     entities,
                     sceneContainer.Resolve<Entity>(EntityType.Pacman.ToString()) as Pacman,
@@ -64,6 +58,13 @@ namespace MyPacman
                     sceneContainer.Resolve<MapHandlerService>(),
                     sceneContainer.Resolve<ILevelConfig>(),
                     gameStateService.GameState.LevelTimeHasPassed
+                )).AsSingle();
+
+            sceneContainer.RegisterFactory(_ => new ScoringService(
+                    gameStateService.GameState,
+                    sceneContainer.Resolve<MapHandlerService>(),
+                    sceneContainer.Resolve<EntitiesStateHandler>(),
+                    sceneContainer.Resolve<IUIGameplayViewModel>()
                 )).AsSingle();
 
             sceneContainer.RegisterFactory(_ => new GameplayInputActionsHandler(

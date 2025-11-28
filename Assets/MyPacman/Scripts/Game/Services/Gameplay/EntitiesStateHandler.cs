@@ -7,15 +7,18 @@ namespace MyPacman
 {
     public class EntitiesStateHandler
     {
+        private readonly ReactiveProperty<float> _levelTimeHasPassed;                 // Время с начала раунда(без пауз). Перенести в сохранения?
         private readonly GhostsStateHandler _ghostsStateHandler;
         private readonly PacmanStateHandler _pacmanStateHandler;
         private readonly TimeService _timeService;
-        private readonly ReactiveProperty<float> _levelTimeHasPassed;                 // Время с начала раунда(без пауз). Перенести в сохранения?
 
+        private int _numberOfGhostsEaten = 0;
         private float _amountTime = 0f;
         private float _timer = 0f;
 
         private event Action Timer;
+
+        public event Action<int, Vector2> GhostEaten;
 
         public EntitiesStateHandler(
             IObservableCollection<Entity> entities,
@@ -62,31 +65,30 @@ namespace MyPacman
             Timer?.Invoke();
         }
 
-        private void OnTargetReached(EntityType entityType)     // ghostsStateHandler ?
+        private void OnTargetReached(EntityType entityType, Vector2 position)     // ghostsStateHandler ?
         {
-            // -1. Преследование
-            // -Проверять дистаницию до цели, если достигнута то пакман съеден
-            // -2. Страх
-            // -Проверять дистаницию до цели, если достигнута то призрак съеден
-            // -3. Возврат
-            // При добегании до точки(в загоне) запускать таймер - таймер будет вести призрак?
-            // -4. Разбегание
-            // При выходе из загона запускать таймер - таймер будет вести призрак?
+            // 1. Проверка поведения
             var behaviourModeType = _ghostsStateHandler.GhostMovementServicesMap[entityType].BehaviorModeType;
+            // 1.1. Если возврат домой, то проверка расстояния до "дома".(если true то переключение в разбегание иначе ничего не делать)
+            // 1.2. Если страх, то проверка до игрока. (если true то событие поедания иначе ничего)
+            // 1.3. Если все остальное, то проверка до игрока. (если true то попытатся нанести урон игроку)
 
+            //if (behaviourModeType == GhostBehaviorModeType.Homecomming)
+            //{
+            //    if()
+            //}
+            //--------------------------------------------------------------------------------------------------
             if (behaviourModeType == GhostBehaviorModeType.Homecomming)  // Смена поведения при возврате в загон
             {
                 _ghostsStateHandler.SetBehaviourMode(entityType, GhostBehaviorModeType.Scatter);
             }
             else if (_ghostsStateHandler.IsPacmanReached(entityType))
             {
-                OnRanIntoPacman(entityType);
+                OnRanIntoPacman(entityType, position);
             }
-
-            // Нужно добавить (таймер?) на переключение поведения при выходе из загона.
         }
 
-        private void OnRanIntoPacman(EntityType entityType)
+        private void OnRanIntoPacman(EntityType entityType, Vector2 position)
         {
             // Проверяем текущее состояние/поведение призрака и в зависимости от него реагируем.
             var behaviourModeType = _ghostsStateHandler.GhostMovementServicesMap[entityType].BehaviorModeType;
@@ -96,6 +98,9 @@ namespace MyPacman
                 // Переключаем его в режим возвращения домой
                 _ghostsStateHandler.SetBehaviourMode(entityType, GhostBehaviorModeType.Homecomming);
                 // Увеличить кол-во очков (в зависимости от того какой по счету съеден призрак за время работы страха)
+                _numberOfGhostsEaten++;
+                int score = (int)EdibleEntityPoints.Ghost * _numberOfGhostsEaten;
+                GhostEaten?.Invoke(score, position);
             }
             else if (behaviourModeType != GhostBehaviorModeType.Homecomming)  // Если призрак не возвращается домой
             {

@@ -8,6 +8,7 @@ namespace MyPacman
     public class GhostMovementService
     {
         private readonly Ghost _entity;
+        private readonly ReadOnlyReactiveProperty<Vector2> _pacmanPosition;
         private readonly TimeService _timeService;
         private readonly Vector2 _mapSize;
 
@@ -17,7 +18,7 @@ namespace MyPacman
 
         private Action MoveAccordingSelectedAlgorithm;     //Движение со стартовой проверкой и без
 
-        public event Action<EntityType> TargetReached;
+        public event Action<EntityType, Vector2> TargetReached;
 
         private event Action Moved;
 
@@ -28,6 +29,7 @@ namespace MyPacman
             ILevelConfig levelConfig)
         {
             _entity = entity;
+            _pacmanPosition = pacmanPosition;
             _timeService = timeService;
             _mapSize = new Vector2(levelConfig.Map.GetLength(1), -levelConfig.Map.GetLength(0));    //Передать сюда только вектор с размером карты
 
@@ -146,10 +148,22 @@ namespace MyPacman
             return (int)startPos + offset;
         }
 
-        private void CheckPosition(Vector2 target)
+        private void CheckPosition(Vector2 target)  // Расширить до постоянной проверки столкновения с игроком а не только с целью
         {
+            // New
+            if (BehaviorModeType == GhostBehaviorModeType.Scatter)
+            {
+                // проверять столкнулся ли с игроком
+                if (_pacmanPosition.CurrentValue.SqrDistance(_entity.Position.CurrentValue) < 1.2f)// Magic (расстояние между призраком и целевой точкой)
+                {
+                    TargetReached?.Invoke(_entity.Type, _entity.Position.CurrentValue);
+                    return;
+                }
+            }
+
+            // Old
             if (target.SqrDistance(_entity.Position.CurrentValue) < 1.2f)// Magic (расстояние между призраком и целевой точкой)
-                TargetReached?.Invoke(_entity.Type);
+                TargetReached?.Invoke(_entity.Type, _entity.Position.CurrentValue);
         }
 
         private IEnumerator Moving(Vector2 nextPosition)

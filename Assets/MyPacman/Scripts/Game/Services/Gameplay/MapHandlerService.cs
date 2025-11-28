@@ -15,7 +15,7 @@ namespace MyPacman
         private readonly ReadOnlyReactiveProperty<Vector2> _fruitSpawnPosition;
         private readonly Dictionary<Vector3Int, Entity> _edibleEntityMap = new();
 
-        public event Action<EdibleEntityPoints, Vector2> EntityEaten;
+        public event Action<int, Vector2> EntityEaten;
 
         public MapHandlerService(GameState gameState, ILevelConfig levelConfig, Tilemap obstaclesTileMap, PacmanMovementService player)
         {
@@ -41,9 +41,9 @@ namespace MyPacman
         {
             if (_edibleEntityMap.TryGetValue(position, out Entity entity))
             {
-                var edibleEntity = entity as Edible;            // Нужен ли класс Edible ???
+                var edibleEntity = entity as Edible;
                 _entities.Remove(edibleEntity);
-                EntityEaten?.Invoke(edibleEntity.Points, edibleEntity.Position.Value);
+                EntityEaten?.Invoke((int)edibleEntity.Points, edibleEntity.Position.Value);
             }
         }
 

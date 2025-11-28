@@ -8,9 +8,9 @@ namespace MyPacman
     public class Map
     {
         public readonly ReactiveProperty<int> LevelNumber;
-        public readonly ReactiveProperty<int> ScoreForRound;
+        public readonly ReactiveProperty<int> ScoreForRound;                // Обнулять при сменен уровня
         public readonly ReactiveProperty<int> NumberOfPellets;
-        public readonly ReactiveProperty<int> NumberOfCollectedPellets;     // Очищать при сменен уровня?
+        public readonly ReactiveProperty<int> NumberOfCollectedPellets;     // Обнулять при сменен уровня ????
 
         public readonly ReactiveProperty<Vector2> PacmanSpawnPos;
         public readonly ReactiveProperty<Vector2> BlinkySpawnPos;

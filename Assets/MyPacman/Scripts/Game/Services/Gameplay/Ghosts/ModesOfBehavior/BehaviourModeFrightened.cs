@@ -8,17 +8,20 @@ namespace MyPacman
     // Режим страха (работает)
     public class BehaviourModeFrightened : GhostBehaviorMode
     {
+        private readonly ReadOnlyReactiveProperty<Vector2> _pacmanPosition;
+
         private Func<List<Vector2>, Vector2> DirectionCaliculation;
 
         public BehaviourModeFrightened(MapHandlerService mapHandlerService, Ghost self, ReadOnlyReactiveProperty<Vector2> pacmanPosition)
             : base(mapHandlerService, self, GhostBehaviorModeType.Frightened)
         {
-            pacmanPosition.Subscribe(newPos => _targetPosition.OnNext(newPos)); // Будет ли ошибка если этот класс удалится а данная лямбда останется подписанна?
+            _pacmanPosition = pacmanPosition;
             DirectionCaliculation = FirstDirectionCalculation;         // Подменить DirectionCaliculation при первом прогоне, чтобы можно было сменить направление на противоположное от игрока
         }
 
         protected override Vector2 CalculateDirectionInSelectedMode(List<Vector2> availableDirections)
         {
+            _targetPosition.OnNext(_pacmanPosition.CurrentValue);
             return DirectionCaliculation(availableDirections);
         }
 
@@ -38,10 +41,5 @@ namespace MyPacman
             directionsMap = RemoveWrongDirection(directionsMap, ItNear);
             return SelectRandomDirection(directionsMap);
         }
-
-        //protected Vector2 GetTarget()
-        //{
-        //    return _pacmanPosition.CurrentValue;
-        //}
     }
 }
