@@ -11,18 +11,27 @@ namespace MyPacman
     {
         private readonly GameState _gameState;
         private readonly TilemapHandler _tilemapHandler;
-        private readonly ObservableList<Entity> _entities;
+        private readonly TimeService _timeService;
+        private readonly IObservableCollection<Entity> _entities;
         private readonly ReadOnlyReactiveProperty<Vector2> _fruitSpawnPosition;
         private readonly Dictionary<Vector3Int, Entity> _edibleEntityMap = new();
 
+        private EntityType _currentFruitType;
+
         public event Action<int, Vector2> EntityEaten;
 
-        public MapHandlerService(GameState gameState, ILevelConfig levelConfig, Tilemap obstaclesTileMap, PacmanMovementService player)
+        public MapHandlerService(
+            GameState gameState,
+            ILevelConfig levelConfig,
+            Tilemap obstaclesTileMap,
+            PacmanMovementService player,
+            TimeService timeService)
         {
             _gameState = gameState;
             _entities = gameState.Map.CurrentValue.Entities;
             _fruitSpawnPosition = _gameState.Map.Value.FruitSpawnPos;
             _tilemapHandler = new TilemapHandler(obstaclesTileMap, levelConfig);
+            _timeService = timeService;
             player.PlayerTilePosition.Subscribe(PlayerTileChanged);
             gameState.Map.CurrentValue.NumberOfCollectedPellets.Subscribe(OnCollectedPellet);
 
@@ -41,7 +50,7 @@ namespace MyPacman
             if (_edibleEntityMap.TryGetValue(position, out Entity entity))
             {
                 var edibleEntity = entity as Edible;
-                _entities.Remove(edibleEntity);
+                _gameState.Map.CurrentValue.RemoveEntity(edibleEntity);
                 EntityEaten?.Invoke((int)edibleEntity.Points, edibleEntity.Position.Value);
             }
         }
@@ -50,28 +59,28 @@ namespace MyPacman
         {
             foreach (var entity in _entities)
                 if (entity.Type > EntityType.Pacman || entity.Type < EntityType.Clyde)
-                    AddEntity(entity);
+                    AddEdibleEntity(entity);
 
             _entities.ObserveAdd().Subscribe(e =>
             {
                 if (e.Value.Type != EntityType.Pacman)
-                    AddEntity(e.Value);
+                    AddEdibleEntity(e.Value);
             });
 
             _entities.ObserveRemove().Subscribe(e =>
             {
                 if (e.Value.Type != EntityType.Pacman)
-                    RemoveEntity(e.Value);
+                    RemoveEdibleEntity(e.Value);
             });
         }
 
-        private void RemoveEntity(Entity entity)
+        private void RemoveEdibleEntity(Entity entity)
         {
             var position = Convert.ToTilePosition(entity.Position.Value);
             _edibleEntityMap.Remove(position);
         }
 
-        private void AddEntity(Entity entity)
+        private void AddEdibleEntity(Entity entity)
         {
             var position = Convert.ToTilePosition(entity.Position.Value);
             _edibleEntityMap[position] = entity;
@@ -86,12 +95,40 @@ namespace MyPacman
 
         private void SpawnFruit()
         {
-            int numFruitType = (int)EntityType.Cherry - _gameState.PickedFruits.Count;  // Если игрок не будет подбирать бонусы, то они не будут улучшатся
+            _currentFruitType = (EntityType)((int)EntityType.Cherry - _gameState.PickedFruits.Count);  // Если игрок не будет подбирать бонусы, то они не будут улучшатся
 
-            if (numFruitType < (int)EntityType.Key)
-                numFruitType = (int)EntityType.Key;
+            if (_currentFruitType < EntityType.Key)
+                _currentFruitType = EntityType.Key;
 
-            _gameState.Map.CurrentValue.CreateEntity(_fruitSpawnPosition.CurrentValue, (EntityType)numFruitType);
+            _gameState.Map.CurrentValue.CreateEntity(_fruitSpawnPosition.CurrentValue, _currentFruitType);
+            _timeService.TimeHasTicked += FruitLifeTimer;
+        }
+
+        private Entity GetFruit(EntityType fruitType)
+        {
+            foreach (var fruit in _edibleEntityMap.Values)
+                if (fruit.Type == fruitType)
+                    return fruit;
+
+            throw new Exception($"Invalid fruit type: {fruitType}");        // Magic
+        }
+
+        private void FruitLifeTimer()
+        {
+            float timer = 0f;
+
+            while (GameConstants.FruitLifespan > timer)
+            {
+                timer += _timeService.DeltaTime;
+
+                // Если продолжительность меньше 30% то включить мигание фрукта
+                // Мигание включить во вьюмодели?
+                // ++По окончанию таймера удалить фрукт
+            }
+
+            var fruit = GetFruit(_currentFruitType);
+            _gameState.Map.CurrentValue.RemoveEntity(fruit);
+            _timeService.TimeHasTicked -= FruitLifeTimer;
         }
     }
 }

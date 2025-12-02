@@ -54,6 +54,11 @@ namespace MyPacman
             Entities.Add(entity);
         }
 
+        public void RemoveEntity(Entity entity)
+        {
+            Entities.Remove(entity);
+        }
+
         public void SetSpawnPosition(SpawnPointType entityType, Vector2 spawnPosition)
         {
             switch (entityType)

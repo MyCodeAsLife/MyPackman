@@ -33,7 +33,8 @@ namespace MyPacman
                     gameStateService.GameState,
                     sceneContainer.Resolve<ILevelConfig>(),
                     sceneContainer.Resolve<Tilemap>(GameConstants.Obstacle),
-                    sceneContainer.Resolve<PacmanMovementService>()
+                    sceneContainer.Resolve<PacmanMovementService>(),
+                    sceneContainer.Resolve<TimeService>()
                 )).AsSingle();
 
             sceneContainer.RegisterFactory(_ => new PacmanMovementService(

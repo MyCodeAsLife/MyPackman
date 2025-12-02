@@ -6,8 +6,8 @@ namespace MyPacman
 {
     public class Ghost : Edible, IMovable
     {
-        public Action HideGhost { get; private set; }
-        public Action ShowGhost { get; private set; }
+        public Action HideGhost { get; private set; }   // Как и у Fruit, перенести в Entity чтобы убрать дублирование
+        public Action ShowGhost { get; private set; }   // Как и у Fruit, перенести в Entity чтобы убрать дублирование
 
         public Ghost(GhostData data) : base(data)
         {
@@ -24,25 +24,18 @@ namespace MyPacman
             BehaviorTimer.Subscribe(newTime => data.BehaviorTimer = newTime);
         }
 
-        //public SpriteRenderer GhostBody { get; private set; }
         public ReactiveProperty<bool> IsMoving { get; private set; }
         public ReactiveProperty<Vector2> Direction { get; private set; }
         public ReactiveProperty<float> SpeedModifier { get; private set; }
         //New
         public ReactiveProperty<GhostBehaviorModeType> CurrentBehaviorMode { get; private set; }        // Переименовать
         public ReactiveProperty<float> BehaviorTimer { get; private set; }
-        //public Vector2 SpawnPosition { get; private set; }          // Нужно ли его делать реактивным?
-
-        //public void PassGhostBody(SpriteRenderer ghostBody)             // Переименовать ?
-        //{
-        //    GhostBody = ghostBody;
-        //}
-
+        // Взять теже методы у Fruit, и перенести в Entity, тем самым убрав дублирование
         public void PassFuncHideGhost(Action hideGhost)
         {
             HideGhost = hideGhost;
         }
-
+        // Взять теже методы у Fruit, и перенести в Entity, тем самым убрав дублирование
         public void PassFuncShowGhost(Action showGhost)
         {
             ShowGhost = showGhost;

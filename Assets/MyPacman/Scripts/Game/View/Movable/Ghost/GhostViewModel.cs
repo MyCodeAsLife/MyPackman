@@ -13,11 +13,6 @@ namespace MyPacman
             CurrentBehaviorMode = ghost.CurrentBehaviorMode;
         }
 
-        //public void PassGhostBody(SpriteRenderer ghostBody)
-        //{
-        //    (Entity as Ghost).PassGhostBody(ghostBody);
-        //}
-
         public void PassFuncHideGhost(Action hideGhost)
         {
             (Entity as Ghost).PassFuncHideGhost(hideGhost);

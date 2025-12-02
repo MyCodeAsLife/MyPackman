@@ -5,8 +5,8 @@ namespace MyPacman
 {
     public class EntitiesFactory
     {
-        private EntitiesDataFactory _entitiesDataFactory = new();
-        private Func<int> _createEntityId;
+        private readonly EntitiesDataFactory _entitiesDataFactory = new();
+        private readonly Func<int> _createEntityId;                         // Как именуются функции?
 
         public EntitiesFactory(Func<int> createEntityId)
         {

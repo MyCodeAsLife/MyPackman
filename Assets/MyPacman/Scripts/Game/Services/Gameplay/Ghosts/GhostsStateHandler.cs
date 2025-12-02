@@ -89,8 +89,8 @@ namespace MyPacman
 
         public void HideGhosts()        // global ghost state handler
         {
-            foreach (var shost in GhostsMap)
-                shost.Value.HideGhost();
+            foreach (var ghost in GhostsMap)
+                ghost.Value.HideGhost();
         }
 
         public bool IsPacmanReached(EntityType ghostType)   // PacmanStateHandler ?
