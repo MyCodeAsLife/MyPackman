@@ -13,14 +13,13 @@ namespace MyPacman
             _createEntityId = createEntityId;
         }
 
-        public Entity CreateEntity(Vector2 position, EntityType entityType)
+        public Entity CreateNewEntity(Vector2 position, EntityType entityType)
         {
             var entityData = _entitiesDataFactory.CreateEntityData(_createEntityId, position, entityType);
-
-            return CreateEntity(entityData);
+            return CreateEntityBasedOnData(entityData);
         }
 
-        public Entity CreateEntity(EntityData entityData)    // Ресурсоемкие процессы, но делаются редко
+        public Entity CreateEntityBasedOnData(EntityData entityData)    // Ресурсоемкие процессы, но делаются редко
         {
             switch (entityData.Type)
             {

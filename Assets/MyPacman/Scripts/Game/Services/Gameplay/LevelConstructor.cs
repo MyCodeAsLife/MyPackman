@@ -8,11 +8,9 @@ namespace MyPacman
     {
         private readonly Tilemap _obstacleTileMap;                  // Получать через DI 
         private readonly Tile[] _obstacleTiles;                     // Получать через DI ?
-        private readonly int[,] _map;                               // Получать через DI ?
-
         private readonly GameState _gameState;
-        private readonly EntitiesFactory _entitiesFactory;          // Получать через DI ?
 
+        private readonly int[,] _map;                               // Получать через DI ?
         private readonly bool _isLoaded = false;
 
         public LevelConstructor(DIContainer sceneContainer, ILevelConfig levelConfig)
@@ -22,7 +20,6 @@ namespace MyPacman
             var gameStateService = sceneContainer.Resolve<IGameStateService>();
             _map = levelConfig.Map;
             _gameState = gameStateService.GameState;
-            _entitiesFactory = _gameState.EntitiesFactory;
             _isLoaded = gameStateService.GameStateIsLoaded;
 
             ConstructLevel();
@@ -99,8 +96,7 @@ namespace MyPacman
 
             if (entity == null)
             {
-                entity = _entitiesFactory.CreateEntity(pos, entityType);
-                _gameState.Map.Value.Entities.Add(entity);
+                _gameState.Map.CurrentValue.CreateEntity(pos, entityType);
             }
         }
 

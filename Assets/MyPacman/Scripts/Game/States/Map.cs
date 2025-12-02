@@ -1,5 +1,6 @@
 ﻿using ObservableCollections;
 using R3;
+using System;
 using System.Linq;
 using UnityEngine;
 
@@ -21,11 +22,11 @@ namespace MyPacman
 
         private readonly EntitiesFactory _entitiesFactory;
 
-        public Map(MapData mapData, EntitiesFactory entitiesFactory)
+        public Map(MapData mapData, Func<int> createEntityId)
         {
             OriginData = mapData;
             MapTag = mapData.MapTag;
-            _entitiesFactory = entitiesFactory;
+            _entitiesFactory = new EntitiesFactory(createEntityId);
 
             LevelNumber = InitLevelNumber();
             ScoreForRound = InitScoreForRound();
@@ -46,6 +47,12 @@ namespace MyPacman
         public MapData OriginData { get; }
         public string MapTag { get; }
         public ObservableList<Entity> Entities { get; } = new();
+
+        public void CreateEntity(Vector2 position, EntityType entityType)
+        {
+            var entity = _entitiesFactory.CreateNewEntity(position, entityType);
+            Entities.Add(entity);
+        }
 
         public void SetSpawnPosition(SpawnPointType entityType, Vector2 spawnPosition)
         {
@@ -245,7 +252,7 @@ namespace MyPacman
 
         private void InitEntities(MapData mapData)
         {
-            mapData.Entities.ForEach(entityData => Entities.Add(_entitiesFactory.CreateEntity(entityData)));
+            mapData.Entities.ForEach(entityData => Entities.Add(_entitiesFactory.CreateEntityBasedOnData(entityData)));
 
             // При добавлении элемента в Entities текущего класса, добавится элемент в Entities класса MapData
             Entities.ObserveAdd().Subscribe(collectionAddEvent =>
