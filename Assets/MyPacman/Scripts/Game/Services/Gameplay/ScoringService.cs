@@ -16,7 +16,7 @@ namespace MyPacman
 
         public ScoringService(
             GameState gameState,
-            HandlerOfPickedEntities mapHandlerService,
+            PickableEntityHandler mapHandlerService,
             EntitiesStateHandler entitiesStateHandler,
             IUIGameplayViewModel uiGameplay)
         {

@@ -10,7 +10,7 @@ namespace MyPacman
         protected readonly ReadOnlyReactiveProperty<Vector2> _pacmanPosition;
 
         public BehaviourModeChase(
-            HandlerOfPickedEntities mapHandlerService,
+            PickableEntityHandler mapHandlerService,
             Ghost self,
             ReadOnlyReactiveProperty<Vector2> pacmanPosition)
             : base(mapHandlerService, self, GhostBehaviorModeType.Chase)

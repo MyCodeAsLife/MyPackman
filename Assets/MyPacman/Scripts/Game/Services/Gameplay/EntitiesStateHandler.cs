@@ -26,7 +26,7 @@ namespace MyPacman
             ReactiveProperty<int> pacmanLifePoints,             // Регулировка поведения Игрока
             Func<SpawnPointType, Vector2> getSpawnPosition,
             TimeService timeService,
-            HandlerOfPickedEntities mapHandlerService,
+            PickableEntityHandler mapHandlerService,
             ILevelConfig levelConfig,
             ReactiveProperty<float> levelTimeHasPassed)
         {

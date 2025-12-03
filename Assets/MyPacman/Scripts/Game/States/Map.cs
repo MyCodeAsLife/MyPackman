@@ -48,10 +48,11 @@ namespace MyPacman
         public string MapTag { get; }
         public ObservableList<Entity> Entities { get; } = new();
 
-        public void CreateEntity(Vector2 position, EntityType entityType)
+        public Entity CreateEntity(Vector2 position, EntityType entityType)
         {
             var entity = _entitiesFactory.CreateNewEntity(position, entityType);
             Entities.Add(entity);
+            return entity;
         }
 
         public void RemoveEntity(Entity entity)

@@ -7,7 +7,7 @@ namespace MyPacman
 {
     public class BehaviourModesFactory
     {
-        private readonly HandlerOfPickedEntities _mapHandlerService;
+        private readonly PickableEntityHandler _mapHandlerService;
         private readonly Dictionary<EntityType, Vector2> _scatterPositions = new();
         private readonly ReadOnlyReactiveProperty<Vector2> _blinkyPosition;
         private readonly ReadOnlyReactiveProperty<Vector2> _pacmanPosition;
@@ -16,7 +16,7 @@ namespace MyPacman
         private Func<SpawnPointType, Vector2> GetSpawnPosition;
 
         public BehaviourModesFactory(
-            HandlerOfPickedEntities mapHandlerService,
+            PickableEntityHandler mapHandlerService,
             ReadOnlyReactiveProperty<Vector2> blinkyPosition,
             ReadOnlyReactiveProperty<Vector2> pacmanPosition,
             ReadOnlyReactiveProperty<Vector2> pacmanDirection,

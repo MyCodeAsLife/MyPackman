@@ -15,7 +15,7 @@ namespace MyPacman
         private Func<Vector2, List<Vector2>> GetAvailableDirections;
 
         public BehaviourModeScatter(
-            HandlerOfPickedEntities mapHandlerService,
+            PickableEntityHandler mapHandlerService,
             Ghost self,
             Vector2 scatterPos,
             Vector2 paddockCenter,

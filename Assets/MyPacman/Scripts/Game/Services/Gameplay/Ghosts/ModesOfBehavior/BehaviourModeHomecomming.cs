@@ -7,7 +7,7 @@ namespace MyPacman
     public class BehaviourModeHomecomming : GhostBehaviorMode       // Вроде как ненужен этот класс
     {
         public BehaviourModeHomecomming(
-            HandlerOfPickedEntities mapHandlerService,
+            PickableEntityHandler mapHandlerService,
             Ghost self,
             Vector2 targetPosition
             ) : base(mapHandlerService, self, GhostBehaviorModeType.Homecomming)

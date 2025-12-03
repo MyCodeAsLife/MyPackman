@@ -34,10 +34,10 @@ namespace MyPacman
 
         private void InitWorld(DIContainer viewsContainer)
         {
-            var mapHandler = _sceneContainer.Resolve<HandlerOfPickedEntities>();
             CreateViewRootBinder(viewsContainer);
             var player = _sceneContainer.Resolve<PacmanMovementService>();
             var ghostsStateHandler = _sceneContainer.Resolve<EntitiesStateHandler>();
+            var mapHandler = _sceneContainer.Resolve<PickableEntityHandler>();
         }
 
         private void InitUI(DIContainer viewsContainer)

@@ -8,7 +8,7 @@ namespace MyPacman
         private readonly ReadOnlyReactiveProperty<Vector2> _pacmanDirection;
 
         public PinkyBehaviourModeChase(
-            HandlerOfPickedEntities mapHandlerService,
+            PickableEntityHandler mapHandlerService,
             Ghost self,
             ReadOnlyReactiveProperty<Vector2> pacmanPosition,
             ReadOnlyReactiveProperty<Vector2> pacmanDirection)

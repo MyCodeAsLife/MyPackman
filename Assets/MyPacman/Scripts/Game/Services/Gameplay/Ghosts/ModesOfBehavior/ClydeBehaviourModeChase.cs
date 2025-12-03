@@ -8,7 +8,7 @@ namespace MyPacman
         private readonly Vector2 _scatterPosition;
 
         public ClydeBehaviourModeChase(
-            HandlerOfPickedEntities mapHandlerService,
+            PickableEntityHandler mapHandlerService,
             Ghost self,
             ReadOnlyReactiveProperty<Vector2> pacmanPosition,
             Vector2 scatterPosition)

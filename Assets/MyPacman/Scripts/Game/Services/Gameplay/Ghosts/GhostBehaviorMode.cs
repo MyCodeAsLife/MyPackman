@@ -10,7 +10,7 @@ namespace MyPacman
     public class GhostBehaviorMode
     {
         // Подкорректировать именование переменных (с большой буквы protect?)
-        protected readonly HandlerOfPickedEntities _mapHandlerService;
+        protected readonly PickableEntityHandler _mapHandlerService;
         protected readonly Ghost _self;
         protected readonly IReadOnlyList<Vector2> _speedModifierPositions;
         protected readonly ReactiveProperty<Vector2> _targetPosition = new();
@@ -18,7 +18,7 @@ namespace MyPacman
         private Vector2 _selfPosition;                // Для кеширования _self.Position?
         private Vector2 _selfDirection;
 
-        public GhostBehaviorMode(HandlerOfPickedEntities mapHandlerService, Ghost self, GhostBehaviorModeType behaviorModeType)
+        public GhostBehaviorMode(PickableEntityHandler mapHandlerService, Ghost self, GhostBehaviorModeType behaviorModeType)
         {
             _mapHandlerService = mapHandlerService;
             _self = self;

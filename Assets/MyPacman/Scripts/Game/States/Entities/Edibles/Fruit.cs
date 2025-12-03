@@ -1,63 +1,65 @@
 ﻿using R3;
 using System;
-using UnityEngine;
 
 namespace MyPacman
 {
     public class Fruit : Edible
     {
-        public readonly ReactiveProperty<float> TimeExists;     // Сколько времени существует данный объект
-        public readonly ReactiveProperty<bool> IsFlashing;      // Мигание объекта
+        public readonly ReactiveProperty<float> TimeExists;
+        public readonly ReactiveProperty<bool> IsFlashing;
 
         private readonly FruitData _data;
-        private readonly TimeService _timeService;
 
+        private TimeService _timeService;
 
-        public event Action<Fruit> TimeOfLifeIsOver;
+        public event Action<Fruit> TimeOfLifeIsOver;        // Переименовать под ивент
+        public event Action Timer;                          // Переименовать под ивент
 
-        public Fruit(FruitData data, TimeService timeService) : base(data)
+        public Fruit(FruitData data) : base(data)
         {
             _data = data;
-            _timeService = timeService;
             TimeExists = new ReactiveProperty<float>(_data.TimeExists);
             TimeExists.Subscribe(value => _data.TimeExists = value);
             IsFlashing = new ReactiveProperty<bool>(false);
-
-            _timeService.TimeHasTicked += Tick;
         }
 
-        ~Fruit()            // Выяснить почему во время уровня не удаляется фрукт
+        ~Fruit()            // Выяснить почему во время уровня(после съедания) не удаляется фрукт
         {
             _timeService.TimeHasTicked -= Tick;
-            Debug.Log("Destroy Fruit");         //++++++++++++++++++++++++++++++
         }
 
-        public Action HideGhost { get; private set; }       // Как и у Ghost, перенести в Entity чтобы убрать дублирование
-        public Action ShowGhost { get; private set; }       // Как и у Ghost, перенести в Entity чтобы убрать дублирование
-
-        // Взять теже методы у Ghost, и перенести в Entity, тем самым убрав дублирование
-        public void PassFuncHideGhost(Action hideGhost)
+        public void Init(TimeService timeService)
         {
-            HideGhost = hideGhost;
-        }
-        // Взять теже методы у Ghost, и перенести в Entity, тем самым убрав дублирование
-        public void PassFuncShowGhost(Action showGhost)
-        {
-            ShowGhost = showGhost;
+            _timeService = timeService;
+            _timeService.TimeHasTicked += Tick;
+            Timer += CheckTimeBeforeFlashing;
+            Timer += CheckTimeBeforeEndOfLifetime;
         }
 
         private void Tick()
         {
-            TimeExists.Value += _timeService.DeltaTime;
-            float percent = TimeExists.Value / GameConstants.FruitLifespan * 100f;
+            Timer?.Invoke();
+        }
 
-            if (percent > GameConstants.PercentageForFruitFlashing)
-                IsFlashing.OnNext(true);                                // Включить мигание
+        private void CheckTimeBeforeEndOfLifetime()
+        {
+            TimeExists.Value += _timeService.DeltaTime;
 
             if (GameConstants.FruitLifespan < TimeExists.Value)
             {
-                TimeOfLifeIsOver?.Invoke(this);                         // Сообщить что свое время жизни вышло
                 _timeService.TimeHasTicked -= Tick;
+                TimeOfLifeIsOver?.Invoke(this);
+            }
+        }
+
+        private void CheckTimeBeforeFlashing()
+        {
+            float percent = TimeExists.Value / GameConstants.FruitLifespan * 100f;
+
+            if (percent > GameConstants.PercentageForFruitFlashing)
+            {
+                Timer -= CheckTimeBeforeFlashing;
+                IsFlashing.OnNext(true);
             }
         }
     }

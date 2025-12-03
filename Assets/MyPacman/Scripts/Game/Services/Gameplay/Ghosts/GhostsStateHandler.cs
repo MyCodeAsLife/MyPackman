@@ -23,7 +23,7 @@ namespace MyPacman
             ReactiveProperty<int> pacmanLifePoints,
             Func<SpawnPointType, Vector2> getSpawnPosition,
             TimeService timeService,
-            HandlerOfPickedEntities mapHandlerService,
+            PickableEntityHandler mapHandlerService,
             ILevelConfig levelConfig)
         {
             var blinkyPosition = entities.First(e => e.Type == EntityType.Blinky).Position;
