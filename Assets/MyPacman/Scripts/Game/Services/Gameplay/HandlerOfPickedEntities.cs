@@ -52,6 +52,9 @@ namespace MyPacman
                 var edibleEntity = entity as Edible;
                 _gameState.Map.CurrentValue.RemoveEntity(edibleEntity);
                 EntityEaten?.Invoke((int)edibleEntity.Points, edibleEntity.Position.Value);
+
+                if (edibleEntity.Type <= EntityType.Cherry)
+                    _gameState.PickedFruits.Add(edibleEntity.Type);
             }
         }
 

@@ -6,10 +6,12 @@ namespace MyPacman
     public class EntitiesFactory
     {
         private readonly EntitiesDataFactory _entitiesDataFactory = new();
+        private readonly TimeService _timeService;
         private readonly Func<int> _createEntityId;                         // Как именуются функции?
 
-        public EntitiesFactory(Func<int> createEntityId)
+        public EntitiesFactory(TimeService timeService, Func<int> createEntityId)
         {
+            _timeService = timeService;
             _createEntityId = createEntityId;
         }
 
@@ -45,7 +47,7 @@ namespace MyPacman
                 case EntityType.GalaxianStarship:
                 case EntityType.Bell:
                 case EntityType.Key:
-                    return new Fruit(entityData as FruitData);
+                    return new Fruit(entityData as FruitData, _timeService);
 
                 default:
                     throw new System.Exception($"Unsuported entity type: {entityData.Type}");       // Magic

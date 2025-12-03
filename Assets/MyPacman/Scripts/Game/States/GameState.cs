@@ -31,13 +31,13 @@ namespace MyPacman
 
         private void InitMap()
         {
-            Map.CurrentValue.Entities.ObserveRemove().Subscribe(collectionRemovedEvent =>
-            {
-                var removedEntity = collectionRemovedEvent.Value;
+            //Map.CurrentValue.Entities.ObserveRemove().Subscribe(collectionRemovedEvent =>
+            //{
+            //    var removedEntity = collectionRemovedEvent.Value;
 
-                if (removedEntity.Type <= EntityType.Cherry)
-                    PickedFruits.Add(removedEntity.Type);
-            });
+            //    if (removedEntity.Type <= EntityType.Cherry)
+            //        PickedFruits.Add(removedEntity.Type);
+            //});
 
             Score.Subscribe(value => _gameStateData.Score = value);
             LifePoints.Subscribe(value => _gameStateData.LifePoints = value);

@@ -10,17 +10,20 @@ namespace MyPacman
         public readonly ReactiveProperty<bool> IsFlashing;      // Мигание объекта
 
         private readonly FruitData _data;
+        private readonly TimeService _timeService;
 
-        private TimeService _timeService;
 
         public event Action<Fruit> TimeOfLifeIsOver;
 
-        public Fruit(FruitData data) : base(data)
+        public Fruit(FruitData data, TimeService timeService) : base(data)
         {
             _data = data;
+            _timeService = timeService;
             TimeExists = new ReactiveProperty<float>(_data.TimeExists);
             TimeExists.Subscribe(value => _data.TimeExists = value);
             IsFlashing = new ReactiveProperty<bool>(false);
+
+            _timeService.TimeHasTicked += Tick;
         }
 
         ~Fruit()            // Выяснить почему во время уровня не удаляется фрукт
@@ -41,12 +44,6 @@ namespace MyPacman
         public void PassFuncShowGhost(Action showGhost)
         {
             ShowGhost = showGhost;
-        }
-
-        public void Init(TimeService timeService)
-        {
-            _timeService = timeService;
-            _timeService.TimeHasTicked += Tick;
         }
 
         private void Tick()
