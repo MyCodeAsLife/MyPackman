@@ -8,7 +8,7 @@ namespace MyPacman
         private readonly ReadOnlyReactiveProperty<Vector2> _blinkyPosition;
 
         public InkyBehaviourModeChase(
-            MapHandlerService mapHandlerService,
+            HandlerOfPickedEntities mapHandlerService,
             Ghost self,
             ReadOnlyReactiveProperty<Vector2> pacmanPosition,
             ReadOnlyReactiveProperty<Vector2> blinkyPosition)

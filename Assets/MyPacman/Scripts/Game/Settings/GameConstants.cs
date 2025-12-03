@@ -49,7 +49,7 @@ namespace MyPacman
 
         // Gameplay settings
         public const float FruitLifespan = 6f;
-        public const float PercentageForFruitFlashing = 40f;
+        public const float PercentageForFruitFlashing = 60f;
         public const float PlayerSpeed = 6f;
         public const float PlayerInvincibleTimer = 2.5f;
         public const float ScatterTimer = 6f;                      // База 6

@@ -6,7 +6,7 @@ namespace MyPacman
     public class BlinkyBehaviourModeChase : BehaviourModeChase
     {
         public BlinkyBehaviourModeChase(
-            MapHandlerService mapHandlerService,
+            HandlerOfPickedEntities mapHandlerService,
             Ghost self,
             ReadOnlyReactiveProperty<Vector2> pacmanPosition)
             : base(mapHandlerService, self, pacmanPosition)

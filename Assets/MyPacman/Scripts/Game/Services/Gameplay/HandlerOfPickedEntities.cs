@@ -7,7 +7,7 @@ using UnityEngine.Tilemaps;
 
 namespace MyPacman
 {
-    public class MapHandlerService
+    public class HandlerOfPickedEntities
     {
         private readonly GameState _gameState;
         private readonly TilemapHandler _tilemapHandler;
@@ -20,7 +20,7 @@ namespace MyPacman
 
         public event Action<int, Vector2> EntityEaten;
 
-        public MapHandlerService(
+        public HandlerOfPickedEntities(
             GameState gameState,
             ILevelConfig levelConfig,
             Tilemap obstaclesTileMap,
@@ -90,7 +90,10 @@ namespace MyPacman
         {
             if (numberOfCollectedPellets == GameConstants.CollectedPelletsForFirstFruitSpawn ||
                 numberOfCollectedPellets == GameConstants.CollectedPelletsForSecondFruitSpawn)
+            {
                 SpawnFruit();
+                InitFruit();
+            }
         }
 
         private void SpawnFruit()
@@ -101,34 +104,28 @@ namespace MyPacman
                 _currentFruitType = EntityType.Key;
 
             _gameState.Map.CurrentValue.CreateEntity(_fruitSpawnPosition.CurrentValue, _currentFruitType);
-            _timeService.TimeHasTicked += FruitLifeTimer;
         }
 
-        private Entity GetFruit(EntityType fruitType)
+        private void InitFruit()
+        {
+            Fruit fruit = GetFruit(_currentFruitType);
+            fruit.Init(_timeService);
+            fruit.TimeOfLifeIsOver += OnFruitTimeOfLifeOver;
+        }
+
+        private Fruit GetFruit(EntityType fruitType)
         {
             foreach (var fruit in _edibleEntityMap.Values)
                 if (fruit.Type == fruitType)
-                    return fruit;
+                    return (Fruit)fruit;
 
             throw new Exception($"Invalid fruit type: {fruitType}");        // Magic
         }
 
-        private void FruitLifeTimer()
+        private void OnFruitTimeOfLifeOver(Fruit fruit)
         {
-            float timer = 0f;
-
-            while (GameConstants.FruitLifespan > timer)
-            {
-                timer += _timeService.DeltaTime;
-
-                // Если продолжительность меньше 30% то включить мигание фрукта
-                // Мигание включить во вьюмодели?
-                // ++По окончанию таймера удалить фрукт
-            }
-
-            var fruit = GetFruit(_currentFruitType);
-            _gameState.Map.CurrentValue.RemoveEntity(fruit);
-            _timeService.TimeHasTicked -= FruitLifeTimer;
+            fruit.TimeOfLifeIsOver -= OnFruitTimeOfLifeOver;
+            _gameState.Map.CurrentValue.RemoveEntity(fruit);    // Зачисление на панель съеденного фрукта подписанно на его удаление? Переделать на здешний ивент по подбору
         }
     }
 }

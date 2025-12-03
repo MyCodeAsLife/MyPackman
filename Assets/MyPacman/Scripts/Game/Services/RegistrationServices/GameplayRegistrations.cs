@@ -29,7 +29,7 @@ namespace MyPacman
                 gameplayEnterParams.LevelConfig
                 )).AsSingle();
 
-            sceneContainer.RegisterFactory(_ => new MapHandlerService(
+            sceneContainer.RegisterFactory(_ => new HandlerOfPickedEntities(
                     gameStateService.GameState,
                     sceneContainer.Resolve<ILevelConfig>(),
                     sceneContainer.Resolve<Tilemap>(GameConstants.Obstacle),
@@ -56,14 +56,14 @@ namespace MyPacman
                     gameStateService.GameState.LifePoints,
                     gameStateService.GameState.Map.CurrentValue.GetSpawnPosition,
                     sceneContainer.Resolve<TimeService>(),
-                    sceneContainer.Resolve<MapHandlerService>(),
+                    sceneContainer.Resolve<HandlerOfPickedEntities>(),
                     sceneContainer.Resolve<ILevelConfig>(),
                     gameStateService.GameState.LevelTimeHasPassed
                 )).AsSingle();
 
             sceneContainer.RegisterFactory(_ => new ScoringService(
                     gameStateService.GameState,
-                    sceneContainer.Resolve<MapHandlerService>(),
+                    sceneContainer.Resolve<HandlerOfPickedEntities>(),
                     sceneContainer.Resolve<EntitiesStateHandler>(),
                     sceneContainer.Resolve<IUIGameplayViewModel>()
                 )).AsSingle();

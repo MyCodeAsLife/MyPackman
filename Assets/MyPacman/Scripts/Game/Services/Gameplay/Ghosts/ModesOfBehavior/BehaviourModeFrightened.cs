@@ -12,7 +12,7 @@ namespace MyPacman
 
         private Func<List<Vector2>, Vector2> DirectionCaliculation;
 
-        public BehaviourModeFrightened(MapHandlerService mapHandlerService, Ghost self, ReadOnlyReactiveProperty<Vector2> pacmanPosition)
+        public BehaviourModeFrightened(HandlerOfPickedEntities mapHandlerService, Ghost self, ReadOnlyReactiveProperty<Vector2> pacmanPosition)
             : base(mapHandlerService, self, GhostBehaviorModeType.Frightened)
         {
             _pacmanPosition = pacmanPosition;
