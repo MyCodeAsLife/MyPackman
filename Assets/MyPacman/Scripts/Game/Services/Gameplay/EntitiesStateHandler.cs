@@ -18,7 +18,7 @@ namespace MyPacman
 
         private event Action Timer;
 
-        public event Action<int, Vector2> GhostEaten;
+        public event Action<int, Vector2> EntityEaten;
 
         public EntitiesStateHandler(
             IObservableCollection<Entity> entities,
@@ -100,7 +100,7 @@ namespace MyPacman
                 // Увеличить кол-во очков (в зависимости от того какой по счету съеден призрак за время работы страха)
                 _numberOfGhostsEaten++;
                 int score = (int)EdibleEntityPoints.Ghost * _numberOfGhostsEaten;
-                GhostEaten?.Invoke(score, position);
+                EntityEaten?.Invoke(score, position);
             }
             else if (behaviourModeType != GhostBehaviorModeType.Homecomming)  // Если призрак не возвращается домой
             {

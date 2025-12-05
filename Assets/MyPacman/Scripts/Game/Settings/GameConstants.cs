@@ -48,15 +48,15 @@ namespace MyPacman
         //public const int FieldsAtTheEdgesOfTheMap = 1;  // Отступы по краям карты
 
         // Gameplay settings
-        public const float FruitLifespan = 6f;
+        public const float FruitLifespan = 9f;                      // Normal 9
         public const float PercentageForFruitFlashing = 50f;
         public const float PlayerSpeed = 6f;
         public const float PlayerInvincibleTimer = 2.5f;
-        public const float ScatterTimer = 6f;                      // База 6
-        public const float ChaseTimer = 6f;                        // База 6
+        public const float ScatterTimer = 6f;                       // Normal 6
+        public const float ChaseTimer = 6f;                         // Normal 6
         public const float GhostSpeed = 6f;
         public const float GhostNormalSpeed​​Modifier = 1f;
-        public const float GhostTunelSpeed​​Modifier = 0.6f;
+        public const float GhostTunelSpeed​​Modifier = 0.4f;
         public const float GhostHomecommingSpeedModifier = 3f;
         public const int StartLifePointsAmount = 3;
         public const int StartingDifficultyLevel = 1;

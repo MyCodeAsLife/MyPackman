@@ -9,6 +9,7 @@ namespace MyPacman
         private readonly GameState _gameState;
         private readonly IUIGameplayViewModel _uiGameplay;
 
+        private int _lifePointCounter;          // Переименовать
         // For test
         private Coroutine _lifeUpShowing;
 
@@ -16,15 +17,16 @@ namespace MyPacman
 
         public ScoringService(
             GameState gameState,
-            PickableEntityHandler mapHandlerService,
+            PickableEntityHandler pickableEntityHandler,
             EntitiesStateHandler entitiesStateHandler,
             IUIGameplayViewModel uiGameplay)
         {
             _gameState = gameState;
             _uiGameplay = uiGameplay;
+            _lifePointCounter = _gameState.Map.Value.ScoreForRound.Value / GameConstants.PriceLifePoint;        // Производить это при запуске уровня
 
-            mapHandlerService.EntityEaten += OnEntityEaten;
-            entitiesStateHandler.GhostEaten += OnEntityEaten;
+            pickableEntityHandler.EntityEaten += OnEntityEaten;
+            entitiesStateHandler.EntityEaten += OnEntityEaten;
         }
 
         private void OnEntityEaten(int points, Vector2 position)
@@ -34,22 +36,23 @@ namespace MyPacman
             PointsReceived?.Invoke(points, position);
 
             CheckTheRequiredConditions();
-
-            //For test
-            if (_lifeUpShowing == null)
-                _lifeUpShowing = Coroutines.StartRoutine(LifeUpFlickering(5f));
         }
 
         private void CheckTheRequiredConditions()
         {
-            if (_gameState.Map.Value.ScoreForRound.Value >= GameConstants.PriceLifePoint)
+            int newNum = _gameState.Map.Value.ScoreForRound.Value / GameConstants.PriceLifePoint;
+
+            if (newNum > _lifePointCounter)
+            {
+                _lifePointCounter++;
                 _gameState.LifePoints.Value++;
+                //For test
+                _lifeUpShowing = Coroutines.StartRoutine(LifeUpFlickering(5f));     // Magic
+            }
         }
         // Мигание отображения кол-ва жизней на UI
-        private IEnumerator LifeUpFlickering(float duration)           // Вынести логику в GameplayUIManager ??
+        private IEnumerator LifeUpFlickering(float duration)           // Вынести логику в GameplayUIManager и подписать на _gameState.LifePoints.Value++ ??
         {
-            // Проблема в том что данный скрипт будет срабатывать не только 
-            // когда кол-во жизней увеличится, но и когда уменьшится
             float timer = 0f;
             float timeDelay = 0.4f;                                                                 // Magic
             var delay = new WaitForSeconds(timeDelay);
@@ -58,10 +61,10 @@ namespace MyPacman
             while (timer < duration)
             {
                 yield return delay;
-                _uiGameplay.LifeUpText.text = string.Empty;
+                _uiGameplay.LifeUpText.enabled = false;
 
                 yield return delay;
-                _uiGameplay.LifeUpText.text = text;
+                _uiGameplay.LifeUpText.enabled = true;
                 timer += (timeDelay * 2);
             }
 

@@ -2,7 +2,7 @@
 {
     public enum EdibleEntityPoints
     {
-        SmallPellet = 10,
+        SmallPellet = 1000,
         MediumPellet = 50,
         Cherry = 100,
         Ghost = 200,
