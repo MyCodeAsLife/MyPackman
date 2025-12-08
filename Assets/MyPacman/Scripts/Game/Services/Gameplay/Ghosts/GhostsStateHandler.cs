@@ -20,7 +20,7 @@ namespace MyPacman
         public GhostsStateHandler(
             IObservableCollection<Entity> entities,
             Pacman pacman,
-            ReactiveProperty<int> pacmanLifePoints,
+            //ReactiveProperty<int> pacmanLifePoints,
             Func<SpawnPointType, Vector2> getSpawnPosition,
             TimeService timeService,
             PickableEntityHandler mapHandlerService,
@@ -41,7 +41,7 @@ namespace MyPacman
             _ghostMovementServicesHandler = new GhostMovementServicesHandler(
                 timeService,
                 entities,
-                pacman.Position,
+                //pacman.Position,
                 levelConfig);
 
             InitGhostsMap(entities);

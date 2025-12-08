@@ -7,12 +7,14 @@ namespace MyPacman
 {
     public class EntitiesStateHandler
     {
-        private readonly ReactiveProperty<float> _levelTimeHasPassed;                 // Время с начала раунда(без пауз). Перенести в сохранения?
+        private readonly ReactiveProperty<float> _levelTimeHasPassed;                       // Время с начала раунда(без пауз)
+        private readonly ReactiveProperty<float> _timeUntilEndOfGlobalBehaviorMode;         // Время до окончания текущего глобального состояния поведения
+        private readonly ReactiveProperty<GhostBehaviorModeType> _globalStateOfBehavior;    // Текущее глобальное состояние поведения
         private readonly GhostsStateHandler _ghostsStateHandler;
         private readonly PacmanStateHandler _pacmanStateHandler;
         private readonly TimeService _timeService;
 
-        private int _numberOfGhostsEaten = 0;
+        private int _numberOfGhostsEaten = 0;   // Сбрасывать по окончанию режима глобального страха или при запуске?
         private float _amountTime = 0f;
         private float _timer = 0f;
 
@@ -28,20 +30,35 @@ namespace MyPacman
             TimeService timeService,
             PickableEntityHandler mapHandlerService,
             ILevelConfig levelConfig,
-            ReactiveProperty<float> levelTimeHasPassed)
+            ReactiveProperty<float> levelTimeHasPassed,
+            ReactiveProperty<float> timeUntilEndOfGlobalBehaviorMode,
+            ReactiveProperty<GhostBehaviorModeType> globalStateOfBehavior)
         {
             // New  Вынести в регистрацию? А сюда переавать уже созданный GhostsStateHandler и PacmanStateHandler ????
-            _ghostsStateHandler = new GhostsStateHandler(entities, pacman, pacmanLifePoints, getSpawnPosition, timeService, mapHandlerService, levelConfig);
+            _ghostsStateHandler = new GhostsStateHandler(entities, pacman, getSpawnPosition, timeService, mapHandlerService, levelConfig);
             _pacmanStateHandler = new PacmanStateHandler(entities, pacman, pacmanLifePoints, getSpawnPosition, timeService, mapHandlerService, levelConfig);
             _timeService = timeService;
             _timeService.TimeHasTicked += Tick;
             _pacmanStateHandler.SubscribeToDeadAnimationFinish(_ghostsStateHandler.ShowGhosts);
             _levelTimeHasPassed = levelTimeHasPassed;
+            _timeUntilEndOfGlobalBehaviorMode = timeUntilEndOfGlobalBehaviorMode;
+            _globalStateOfBehavior = globalStateOfBehavior;
 
             SubscribeToTargetReachingEvent();
 
+            StartInit();
+
             //// For test
             SwitchBehaviorModes(GhostBehaviorModeType.Scatter);
+        }
+
+        private void StartInit()
+        {
+            // 1. Проверяем текущее время раунда
+            // 1.1. Если равно нулю то это новая игра и продолжить базовый запуск таймера глобального поведения
+            // 1.2. Если неравно нулю
+            // 1.2.1. На основе времени расчитать предпологаемое поведение
+            // 1.2.2. Проверить текущее поведение и таймер его окончания
         }
 
         ~EntitiesStateHandler()

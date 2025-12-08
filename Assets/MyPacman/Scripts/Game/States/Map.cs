@@ -12,6 +12,7 @@ namespace MyPacman
         public readonly ReactiveProperty<int> ScoreForRound;                // Обнулять при сменен уровня
         public readonly ReactiveProperty<int> NumberOfPellets;
         public readonly ReactiveProperty<int> NumberOfCollectedPellets;     // Обнулять при сменен уровня ????
+        public readonly ReactiveProperty<float> TimeUntilEndOfGlobalBehaviorMode;
 
         public readonly ReactiveProperty<Vector2> PacmanSpawnPos;
         public readonly ReactiveProperty<Vector2> BlinkySpawnPos;
@@ -19,6 +20,8 @@ namespace MyPacman
         public readonly ReactiveProperty<Vector2> InkySpawnPos;
         public readonly ReactiveProperty<Vector2> ClydeSpawnPos;
         public readonly ReactiveProperty<Vector2> FruitSpawnPos;
+
+        public readonly ReactiveProperty<GhostBehaviorModeType> GlobalStateOfBehavior;
 
         private readonly EntitiesFactory _entitiesFactory;
 
@@ -32,6 +35,7 @@ namespace MyPacman
             ScoreForRound = InitScoreForRound();
             NumberOfPellets = InitNumberOfPellets();
             NumberOfCollectedPellets = InitNumberOfCollectedPellets();
+            TimeUntilEndOfGlobalBehaviorMode = InitTimeUntilEndOfGlobalBehaviorMode();
 
             PacmanSpawnPos = InitPacmanSpawnPos();
             BlinkySpawnPos = InitBlinkySpawnPos();
@@ -39,6 +43,7 @@ namespace MyPacman
             InkySpawnPos = InitInkySpawnPos();
             ClydeSpawnPos = InitClydeSpawnPos();
             FruitSpawnPos = InitFruitSpawnPos();
+            GlobalStateOfBehavior = InitGlobalStateOfBehavior();
 
             InitEntityCounting();
             InitEntities(mapData);
@@ -149,6 +154,13 @@ namespace MyPacman
             return LevelNumber;
         }
 
+        private ReactiveProperty<float> InitTimeUntilEndOfGlobalBehaviorMode()
+        {
+            var reactiveProperty = new ReactiveProperty<float>(OriginData.TimeUntilEndOfGlobalBehaviorMode);
+            reactiveProperty.Subscribe(value => OriginData.TimeUntilEndOfGlobalBehaviorMode = value);
+            return reactiveProperty;
+        }
+
         private ReactiveProperty<Vector2> InitPacmanSpawnPos()
         {
             var pacmanSpawnPos = new ReactiveProperty<Vector2>(new Vector2(
@@ -232,6 +244,13 @@ namespace MyPacman
             });
 
             return fruitSpawnPos;
+        }
+
+        private ReactiveProperty<GhostBehaviorModeType> InitGlobalStateOfBehavior()
+        {
+            var reactiveProperty = new ReactiveProperty<GhostBehaviorModeType>(OriginData.GlobalStateOfBehavior);
+            reactiveProperty.Subscribe(value => OriginData.GlobalStateOfBehavior = value);
+            return reactiveProperty;
         }
 
         private void InitEntityCounting()

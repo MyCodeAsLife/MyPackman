@@ -14,36 +14,36 @@ namespace MyPacman
         public GhostMovementServicesHandler(
             TimeService timeService,
             IObservableCollection<Entity> entities,
-            ReadOnlyReactiveProperty<Vector2> pacmanPosition,
+            //ReadOnlyReactiveProperty<Vector2> pacmanPosition,
             ILevelConfig levelConfig)
         {
             _timeService = timeService;
 
-            InitGhostMovementServicesMap(entities, pacmanPosition, levelConfig);
+            InitGhostMovementServicesMap(entities, /*pacmanPosition,*/ levelConfig);
         }
 
         private void InitGhostMovementServicesMap(
             IObservableCollection<Entity> entities,
-            ReadOnlyReactiveProperty<Vector2> pacmanPosition,
+            //ReadOnlyReactiveProperty<Vector2> pacmanPosition,
             ILevelConfig levelConfig)
         {
             foreach (var entity in entities)
-                TryCreateMovementService(entity, pacmanPosition, levelConfig);
+                TryCreateMovementService(entity, /*pacmanPosition,*/ levelConfig);
 
-            entities.ObserveAdd().Subscribe(e => TryCreateMovementService(e.Value, pacmanPosition, levelConfig));
+            entities.ObserveAdd().Subscribe(e => TryCreateMovementService(e.Value, /*pacmanPosition,*/ levelConfig));
             entities.ObserveRemove().Subscribe(e => TryDestroyMovementService(e.Value.Type));
         }
 
         public bool TryCreateMovementService(
             Entity entity,
-            ReadOnlyReactiveProperty<Vector2> pacmanPosition,
+            //ReadOnlyReactiveProperty<Vector2> pacmanPosition,
             ILevelConfig levelConfig)
         {
             if (IsGhostEntity(entity.Type))
             {
                 var ghostMovementService = new GhostMovementService(
                     entity as Ghost,
-                    pacmanPosition,
+                    //pacmanPosition,
                     _timeService,
                     levelConfig);
                 GhostMovementServicesMap.Add(entity.Type, ghostMovementService);

@@ -46,7 +46,6 @@ namespace MyPacman
             {
                 _lifePointCounter++;
                 _gameState.LifePoints.Value++;
-                //For test
                 _lifeUpShowing = Coroutines.StartRoutine(LifeUpFlickering(5f));     // Magic
             }
         }

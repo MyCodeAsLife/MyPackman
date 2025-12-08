@@ -8,7 +8,7 @@ namespace MyPacman
     public class GhostMovementService
     {
         private readonly Ghost _entity;
-        private readonly ReadOnlyReactiveProperty<Vector2> _pacmanPosition;
+        //private readonly ReadOnlyReactiveProperty<Vector2> _pacmanPosition;
         private readonly TimeService _timeService;
         private readonly Vector2 _mapSize;
 
@@ -24,12 +24,12 @@ namespace MyPacman
 
         public GhostMovementService(
             Ghost entity,
-            ReadOnlyReactiveProperty<Vector2> pacmanPosition,
+            //ReadOnlyReactiveProperty<Vector2> pacmanPosition,       // Не используется
             TimeService timeService,
             ILevelConfig levelConfig)
         {
             _entity = entity;
-            _pacmanPosition = pacmanPosition;
+            //_pacmanPosition = pacmanPosition;
             _timeService = timeService;
             _mapSize = new Vector2(levelConfig.Map.GetLength(1), -levelConfig.Map.GetLength(0));    //Передать сюда только вектор с размером карты
 
@@ -150,16 +150,16 @@ namespace MyPacman
 
         private void CheckPosition(Vector2 target)  // Расширить до постоянной проверки столкновения с игроком а не только с целью
         {
-            // New
-            if (BehaviorModeType == GhostBehaviorModeType.Scatter)
-            {
-                // проверять столкнулся ли с игроком
-                if (_pacmanPosition.CurrentValue.SqrDistance(_entity.Position.CurrentValue) < 1.2f)// Magic (расстояние между призраком и целевой точкой)
-                {
-                    TargetReached?.Invoke(_entity.Type, _entity.Position.CurrentValue);
-                    return;
-                }
-            }
+            //// New
+            //if (BehaviorModeType == GhostBehaviorModeType.Scatter)
+            //{
+            //    // проверять столкнулся ли с игроком
+            //    if (_pacmanPosition.CurrentValue.SqrDistance(_entity.Position.CurrentValue) < 1.2f)// Magic (расстояние между призраком и целевой точкой)
+            //    {
+            //        TargetReached?.Invoke(_entity.Type, _entity.Position.CurrentValue);
+            //        return;
+            //    }
+            //}
 
             // Old
             if (target.SqrDistance(_entity.Position.CurrentValue) < 1.2f)// Magic (расстояние между призраком и целевой точкой)
