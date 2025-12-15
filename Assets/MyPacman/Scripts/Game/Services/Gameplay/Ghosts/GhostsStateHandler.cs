@@ -14,8 +14,7 @@ namespace MyPacman
         private readonly GhostMovementServicesHandler _ghostMovementServicesHandler;
         private readonly BehaviourModesFactory _behaviourModesFactory;
         private readonly Pacman _pacman;
-
-        public GhostBehaviorModeType GlobalStateOfGhosts;     // Это лишнее?
+        //private readonly ReactiveProperty<GhostBehaviorModeType> _globalStateOfBehavior;        // Реализовать запрос значения?
 
         public GhostsStateHandler(
             IObservableCollection<Entity> entities,
@@ -24,11 +23,14 @@ namespace MyPacman
             Func<SpawnPointType, Vector2> getSpawnPosition,
             TimeService timeService,
             PickableEntityHandler mapHandlerService,
-            ILevelConfig levelConfig)
+            ILevelConfig levelConfig,
+            ReactiveProperty<GhostBehaviorModeType> globalStateOfBehavior)
         {
             var blinkyPosition = entities.First(e => e.Type == EntityType.Blinky).Position;
             Vector2 mapSize = new Vector2(levelConfig.Map.GetLength(1), -levelConfig.Map.GetLength(0));
             _pacman = pacman;
+            //_globalStateOfBehavior = globalStateOfBehavior;
+            globalStateOfBehavior.Subscribe(newState => SetBehaviourModeEveryone(newState));
 
             _behaviourModesFactory = new BehaviourModesFactory(
                 mapHandlerService,
@@ -65,14 +67,6 @@ namespace MyPacman
             }
         }
 
-        public void SetBehaviourModeEveryone(GhostBehaviorModeType behaviorModeType)    // global ghost state handler
-        {
-            GlobalStateOfGhosts = behaviorModeType;
-
-            foreach (var ghost in GhostsMap)
-                SetBehaviourMode(ghost.Key, behaviorModeType);
-        }
-
         public void SetBehaviourMode(EntityType entityType, GhostBehaviorModeType behaviorModeType)
         {
             var movementService = GhostMovementServicesMap[entityType];
@@ -96,6 +90,12 @@ namespace MyPacman
         public bool IsPacmanReached(EntityType ghostType)   // PacmanStateHandler ?
         {
             return GhostsMap[ghostType].Position.CurrentValue.SqrDistance(_pacman.Position.CurrentValue) < 1.2f;// Magic (расстояние между призраком и игроком)
+        }
+
+        private void SetBehaviourModeEveryone(GhostBehaviorModeType behaviorModeType)    // global ghost state handler
+        {
+            foreach (var ghost in GhostsMap)
+                SetBehaviourMode(ghost.Key, behaviorModeType);
         }
 
         private void InitGhostsMap(IObservableCollection<Entity> entities)

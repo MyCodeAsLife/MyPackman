@@ -6,13 +6,14 @@ namespace MyPacman
     [Serializable]
     public class MapData
     {
-        public string MapTag { get; set; }                  // Тэг используемой карты       Допилить загрузку из сохранения
+        public string MapTag { get; set; }                              // Тэг используемой карты       Допилить загрузку из сохранения
         public List<EntityData> Entities { get; set; } = new();
-        public int LevelNumber { get; set; }                // Уровень сложности
-        public int ScoreForRound { get; set; }              // Очков за раунд
-        public int NumberOfPellets { get; set; }           // Кол-во гранул на уровень
-        public int NumberOfCollectedPellets { get; set; }   // Кол-во подобранных за уровень гранул
-        public float TimeUntilEndOfGlobalBehaviorMode { get; set; }
+        public int LevelNumber { get; set; }                            // Уровень сложности (текущий уровень?)
+        public int ScoreForRound { get; set; }                          // Очков за раунд
+        public int NumberOfPellets { get; set; }                        // Кол-во гранул на уровень
+        public int NumberOfCollectedPellets { get; set; }               // Кол-во подобранных за уровень гранул
+        public float TimeLeftUntilEndOfFearMode { get; set; }           // Время до окончания текущего поведения (обнулять по окончанию поведения)
+        public float GlobalBehaviorModeChangeTimer {  get; set; }       // Таймер смены глобального поведения (обнулять при смене уровня и смерти)
         public float PacmanSpawnPosX { get; set; }
         public float PacmanSpawnPosY { get; set; }
         public float BlinkySpawnPosX { get; set; }
