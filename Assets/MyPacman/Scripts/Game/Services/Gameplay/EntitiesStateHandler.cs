@@ -7,9 +7,10 @@ namespace MyPacman
 {
     public class EntitiesStateHandler
     {
-        private readonly ReactiveProperty<float> _levelTimeHasPassed;                       // Время с начала раунда(без пауз)
-        private readonly ReactiveProperty<float> _timeLeftUntilEndOfFearMode;               // Время до окончания страха
-        private readonly ReactiveProperty<float> _globalBehaviorModeChangeTimer;            // Таймер смены глобального поведения
+        private readonly ReactiveProperty<int> _waveNumber;                     // Время до окончания страха
+        private readonly ReactiveProperty<float> _levelTimeHasPassed;           // Время с начала раунда(без пауз)
+        private readonly ReactiveProperty<float> _behaviorStateTimer;           // Таймер смены глобального поведения
+        private readonly ReactiveProperty<float> _frightenedStateTimer;         // Таймер окончания страха
         private readonly ReactiveProperty<GhostBehaviorModeType> _globalStateOfBehavior;    // Текущее глобальное состояние поведения
         private readonly GhostsStateHandler _ghostsStateHandler;    // Нужен или обращатся напрямую к _ghostsStateHandler.GlobalStateOfGhosts?
         private readonly PacmanStateHandler _pacmanStateHandler;
@@ -30,9 +31,10 @@ namespace MyPacman
             PickableEntityHandler mapHandlerService,
             ILevelConfig levelConfig,
             ReactiveProperty<float> levelTimeHasPassed,
-            ReactiveProperty<float> timeLeftUntilEndOfFearMode,
+            ReactiveProperty<int> waveNumber,
             ReactiveProperty<GhostBehaviorModeType> globalStateOfBehavior,
-            ReactiveProperty<float> globalBehaviorModeChangeTimer)
+            ReactiveProperty<float> behaviorStateTimer,
+            ReactiveProperty<float> frightenedStateTimer)
         {
             // New  Вынести в регистрацию? А сюда переавать уже созданный GhostsStateHandler и PacmanStateHandler ????
             _ghostsStateHandler = new GhostsStateHandler(entities, pacman, getSpawnPosition, timeService, mapHandlerService, levelConfig, globalStateOfBehavior);
@@ -41,32 +43,21 @@ namespace MyPacman
             _timeService.TimeHasTicked += Tick;
             _pacmanStateHandler.SubscribeToDeadAnimationFinish(_ghostsStateHandler.ShowGhosts);
             _levelTimeHasPassed = levelTimeHasPassed;
-            _timeLeftUntilEndOfFearMode = timeLeftUntilEndOfFearMode;
+            _waveNumber = waveNumber;
             _globalStateOfBehavior = globalStateOfBehavior;
-            _globalBehaviorModeChangeTimer = globalBehaviorModeChangeTimer;
+            _behaviorStateTimer = behaviorStateTimer;
+            _frightenedStateTimer = frightenedStateTimer;
 
             SubscribeToTargetReachingEvent();
-
-            StartInit();
-
-            ////// For test
-            //SwitchBehaviorModes(GhostBehaviorModeType.Scatter);
+            InitialBehaviorCheck();
         }
 
-        private void StartInit()
+        private void InitialBehaviorCheck()
         {
-            // Проверяем текущее глобальное поведение
-            // 1. Если страх то дожидаемся его окончания
-            // 1.2 По окончанию страха переходим на пункт 2
-            // 2. Если не страх то проверяем текущее время таймера смены поведения
-            // 2.1. Если не равно -1(меньше нуля), то это новая игра и продолжить базовый запуск глобального поведения (включить таймер смены поведения)
-            // 2.2. Если равно -1(меньше нуля), то запуск глобального поведения "перследование".
-            // Таймер смены поведения должен приостанавливатся на время работы страха и сбрасыватся при смерти игрока
-
-            if (_globalStateOfBehavior.Value == GhostBehaviorModeType.Frightened)
-                Timer += TickTimeLeftUntilEndOfFearMode;
+            if (_frightenedStateTimer.Value > 0)
+                Timer += HandleFrightenedTimer;
             else
-                Timer += TickGlobalBehaviorModeChangeTimer;
+                Timer += HandleGlobalBehaviorTimer;
         }
 
         ~EntitiesStateHandler()
@@ -90,40 +81,85 @@ namespace MyPacman
             Timer?.Invoke();
         }
 
-        private void TickTimeLeftUntilEndOfFearMode()   // Переименовать
+        private void HandleGlobalBehaviorTimer()
         {
-            _timeLeftUntilEndOfFearMode.Value -= _timeService.DeltaTime;
+            _behaviorStateTimer.Value -= _timeService.DeltaTime;
 
-            if (_timeLeftUntilEndOfFearMode.Value <= 0)
-            {
-                _globalBehaviorModeChangeTimer.Value = 0;   // Сброс глобального таймера поведения, для его перезапуска
-                _timeLeftUntilEndOfFearMode.Value = 0;
-                Timer -= TickTimeLeftUntilEndOfFearMode;
-                Timer += TickGlobalBehaviorModeChangeTimer; // Возврат к текущему таймеру смены глобальных поведений
-            }
+            if (_behaviorStateTimer.Value < 0)
+                HandleGlobalBehaviorChangeTimer();
         }
 
-        private void TickGlobalBehaviorModeChangeTimer()    // Переименовать
+        private void HandleFrightenedTimer()
         {
+            _frightenedStateTimer.Value -= _timeService.DeltaTime;
+
+            if (_frightenedStateTimer.Value < 0)
+                HandleEndOfFrightenedState();
+        }
+
+        private void HandleEndOfFrightenedState()
+        {
+            _frightenedStateTimer.Value = 0;
+            Timer -= HandleEndOfFrightenedState;
+            Timer += HandleGlobalBehaviorChangeTimer; // Возврат к текущему таймеру смены глобальных поведений
+        }
+
+        private void HandleGlobalBehaviorChangeTimer()
+        {
+            Timer -= HandleGlobalBehaviorTimer;
+            _behaviorStateTimer.Value = 0;
             // 2. Проверяем текущее время таймера смены поведения
             // Таймер смены поведения должен приостанавливатся на время работы страха и сбрасыватся при смерти игрока
 
-            throw new NotImplementedException();
-
-            // 2.1. Если равно 0, то это новая игра и продолжить базовый запуск глобального поведения (включить таймер смены поведения)
-            if (_globalBehaviorModeChangeTimer.Value == 0)
+            // 2.1. Если равно 0, последнее поведение завершилось или не начиналось
+            if (_behaviorStateTimer.Value == 0)
             {
-
+                _waveNumber.Value++;
+                _globalStateOfBehavior.Value = GetGlobalStateOfBehavior();      // Получить тип поведения опираясь на текущую волну
+                float time = GetTimeForBehavior(_globalStateOfBehavior.Value);  // Запросить время для текущего поведения
+                time = AdjustingTimeOfBehavior(time);                           // Скоректировать время относительно текущей волны и уровня
+                _behaviorStateTimer.Value = time;
+                Timer += HandleGlobalBehaviorTimer;
             }
-            // 2.2. Если больше 0 , то это загруженная игра, проверить текущее глобальное состояние и присвоить его всем? (включить таймер смены поведения)
-            else if (_globalBehaviorModeChangeTimer.Value > 0)
+            // 2.2. Если больше 0, то это загруженная игра, включить таймер смены поведения.
+            else if (_behaviorStateTimer.Value > 0)
             {
-
+                _globalStateOfBehavior.Value = GhostBehaviorModeType.Scatter;
+                Timer += HandleGlobalBehaviorTimer;
             }
             // 2.3. Если равно -1(меньше нуля), то запуск глобального поведения "преследование" (отключить таймер смены поведения).
             else
             {
+                _globalStateOfBehavior.Value = GhostBehaviorModeType.Chase;
+            }
+        }
 
+        private GhostBehaviorModeType GetGlobalStateOfBehavior()
+        {
+            throw new NotImplementedException();
+            // Проверка на кратность (чтобы узнать разбегание сейчас или преследование)
+        }
+
+        private float AdjustingTimeOfBehavior(float time)
+        {
+            throw new NotImplementedException();
+        }
+
+        private float GetTimeForBehavior(GhostBehaviorModeType behaviorMode)
+        {
+            switch (behaviorMode)
+            {
+                case GhostBehaviorModeType.Chase:
+                    return 20f;                             // Magic
+
+                case GhostBehaviorModeType.Scatter:
+                    return 7f;                              // Magic
+
+                case GhostBehaviorModeType.Frightened:
+                    return 7f;                              // Magic
+
+                default:
+                    throw new Exception($"Undefined behavior type:{behaviorMode}");         // Magic
             }
         }
 

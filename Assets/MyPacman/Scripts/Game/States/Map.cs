@@ -12,8 +12,9 @@ namespace MyPacman
         public readonly ReactiveProperty<int> ScoreForRound;                    // Обнулять при сменен уровня
         public readonly ReactiveProperty<int> NumberOfPellets;
         public readonly ReactiveProperty<int> NumberOfCollectedPellets;         // Обнулять при сменен уровня ????
-        public readonly ReactiveProperty<float> TimeLeftUntilEndOfFearMode;     // Обнулять при при сменен уровня и окончании действия поведения
-        public readonly ReactiveProperty<float> GlobalBehaviorModeChangeTimer;  // Обнулять при сменен уровня и смерти игрока
+        public readonly ReactiveProperty<int> WaveNumber;                   // Обнулять при при сменен уровня и окончании действия поведения
+        public readonly ReactiveProperty<float> BehaviorStateTimer;         // Обнулять при сменен уровня и смерти игрока
+        public readonly ReactiveProperty<float> FrightenedStateTimer;  // Обнулять при сменен уровня и смерти игрока
 
         public readonly ReactiveProperty<Vector2> PacmanSpawnPos;
         public readonly ReactiveProperty<Vector2> BlinkySpawnPos;
@@ -51,8 +52,9 @@ namespace MyPacman
             ScoreForRound = new ReactiveProperty<int>(OriginData.ScoreForRound);
             NumberOfPellets = new ReactiveProperty<int>(OriginData.NumberOfPellets);
             NumberOfCollectedPellets = new ReactiveProperty<int>(OriginData.NumberOfCollectedPellets);
-            TimeLeftUntilEndOfFearMode = new ReactiveProperty<float>(OriginData.TimeLeftUntilEndOfFearMode);
-            GlobalBehaviorModeChangeTimer = new ReactiveProperty<float>(OriginData.GlobalBehaviorModeChangeTimer);
+            WaveNumber = new ReactiveProperty<int>(OriginData.WaveNumber);
+            BehaviorStateTimer = new ReactiveProperty<float>(OriginData.BehaviorStateTimer);
+            FrightenedStateTimer = new ReactiveProperty<float>(OriginData.FrightenedStateTimer);
             GlobalStateOfBehavior = new ReactiveProperty<GhostBehaviorModeType>(OriginData.GlobalStateOfBehavior);
             PacmanSpawnPos = new ReactiveProperty<Vector2>(new Vector2(OriginData.PacmanSpawnPosX, OriginData.PacmanSpawnPosY));
             BlinkySpawnPos = new ReactiveProperty<Vector2>(new Vector2(OriginData.BlinkySpawnPosX, OriginData.BlinkySpawnPosY));
@@ -149,8 +151,9 @@ namespace MyPacman
             NumberOfPellets.Subscribe(value => OriginData.NumberOfPellets = value);
             GlobalStateOfBehavior.Subscribe(value => OriginData.GlobalStateOfBehavior = value);
             NumberOfCollectedPellets.Subscribe(value => OriginData.NumberOfCollectedPellets = value);
-            TimeLeftUntilEndOfFearMode.Subscribe(value => OriginData.TimeLeftUntilEndOfFearMode = value);
-            GlobalBehaviorModeChangeTimer.Subscribe(value => OriginData.GlobalBehaviorModeChangeTimer = value);
+            WaveNumber.Subscribe(value => OriginData.WaveNumber = value);
+            BehaviorStateTimer.Subscribe(value => OriginData.BehaviorStateTimer = value);
+            FrightenedStateTimer.Subscribe(value => OriginData.FrightenedStateTimer = value);
             PacmanSpawnPos.Subscribe(value =>
                 {
                     OriginData.PacmanSpawnPosX = value.x;

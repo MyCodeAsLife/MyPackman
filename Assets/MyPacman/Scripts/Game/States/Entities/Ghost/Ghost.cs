@@ -20,8 +20,8 @@ namespace MyPacman
             // New
             CurrentBehaviorMode = new ReactiveProperty<GhostBehaviorModeType>(data.CurrentBehaviorMode);
             CurrentBehaviorMode.Subscribe(newBehaviorMode => data.CurrentBehaviorMode = newBehaviorMode);
-            BehaviorTimer = new ReactiveProperty<float>(data.BehaviorTimer);
-            BehaviorTimer.Subscribe(newTime => data.BehaviorTimer = newTime);
+            FrightenedTimer = new ReactiveProperty<float>(data.FrightenedTimer);
+            FrightenedTimer.Subscribe(newTime => data.FrightenedTimer = newTime);
         }
 
         public ReactiveProperty<bool> IsMoving { get; private set; }
@@ -29,7 +29,7 @@ namespace MyPacman
         public ReactiveProperty<float> SpeedModifier { get; private set; }
         //New
         public ReactiveProperty<GhostBehaviorModeType> CurrentBehaviorMode { get; private set; }        // Переименовать
-        public ReactiveProperty<float> BehaviorTimer { get; private set; }
+        public ReactiveProperty<float> FrightenedTimer { get; private set; }
         // Взять теже методы у Fruit, и перенести в Entity, тем самым убрав дублирование
         public void PassFuncHideGhost(Action hideGhost)
         {

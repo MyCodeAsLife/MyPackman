@@ -35,7 +35,6 @@ namespace MyPacman
 
         private Vector2 SubsequentDirectionCalculations(List<Vector2> availableDirections)
         {
-
             availableDirections = RemoveReverseDirection(availableDirections);
             var directionsMap = CalculateDirectionsMap(availableDirections, _targetPosition.Value);
             directionsMap = RemoveWrongDirection(directionsMap, ItNear);

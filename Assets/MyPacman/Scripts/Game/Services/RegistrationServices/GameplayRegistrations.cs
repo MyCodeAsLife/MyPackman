@@ -59,9 +59,10 @@ namespace MyPacman
                     sceneContainer.Resolve<PickableEntityHandler>(),
                     sceneContainer.Resolve<ILevelConfig>(),
                     gameStateService.GameState.LevelTimeHasPassed,
-                    gameStateService.GameState.Map.Value.TimeLeftUntilEndOfFearMode,
+                    gameStateService.GameState.Map.Value.WaveNumber,
                     gameStateService.GameState.Map.Value.GlobalStateOfBehavior,
-                    gameStateService.GameState.Map.Value.GlobalBehaviorModeChangeTimer
+                    gameStateService.GameState.Map.Value.BehaviorStateTimer,
+                    gameStateService.GameState.Map.Value.FrightenedStateTimer
                 )).AsSingle();
 
             sceneContainer.RegisterFactory(_ => new ScoringService(

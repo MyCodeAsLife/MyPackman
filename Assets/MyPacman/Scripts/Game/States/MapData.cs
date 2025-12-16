@@ -12,8 +12,9 @@ namespace MyPacman
         public int ScoreForRound { get; set; }                          // Очков за раунд
         public int NumberOfPellets { get; set; }                        // Кол-во гранул на уровень
         public int NumberOfCollectedPellets { get; set; }               // Кол-во подобранных за уровень гранул
-        public float TimeLeftUntilEndOfFearMode { get; set; }           // Время до окончания текущего поведения (обнулять по окончанию поведения)
-        public float GlobalBehaviorModeChangeTimer {  get; set; }       // Таймер смены глобального поведения (обнулять при смене уровня и смерти)
+        public int WaveNumber { get; set; }                             // Номер волны поведения
+        public float BehaviorStateTimer {  get; set; }          // Таймер окончания текущего глобального поведения
+        public float FrightenedStateTimer {  get; set; }        // Таймер окончания страха
         public float PacmanSpawnPosX { get; set; }
         public float PacmanSpawnPosY { get; set; }
         public float BlinkySpawnPosX { get; set; }

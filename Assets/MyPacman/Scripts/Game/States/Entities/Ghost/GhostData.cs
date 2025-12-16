@@ -9,6 +9,6 @@ namespace MyPacman
         public float SpeedModifier { get; set; } = GameConstants.GhostNormalSpeed​​Modifier;
         // New
         public GhostBehaviorModeType CurrentBehaviorMode { get; set; }          // Переименовать
-        public float BehaviorTimer { get; set; }              // Таймер до завершения текущего поведения (пока не используется)
+        public float FrightenedTimer { get; set; }              // Таймер до завершения текущего поведения (пока не используется)
     }
 }
