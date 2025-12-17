@@ -66,13 +66,19 @@ namespace MyPacman
             _pacmanStateHandler.UnsubscribeFromDeadAnimationFinish(_ghostsStateHandler.ShowGhosts);
 
             foreach (var movementService in _ghostsStateHandler.GhostMovementServicesMap.Values)
+            {
                 movementService.TargetReached -= OnTargetReached;
+                movementService.CollidedWithPacman -= OnRanIntoPacman;
+            }
         }
 
         private void SubscribeToTargetReachingEvent()    // ghostsStateHandler ?
         {
             foreach (var movementService in _ghostsStateHandler.GhostMovementServicesMap.Values)
+            {
                 movementService.TargetReached += OnTargetReached;
+                movementService.CollidedWithPacman += OnRanIntoPacman;
+            }
         }
 
         private void Tick()
@@ -112,37 +118,46 @@ namespace MyPacman
             // Таймер смены поведения должен приостанавливатся на время работы страха и сбрасыватся при смерти игрока
 
             // 2.1. Если равно 0, последнее поведение завершилось или не начиналось
-            if (_behaviorStateTimer.Value == 0)
-            {
-                _waveNumber.Value++;
-                _globalStateOfBehavior.Value = GetGlobalStateOfBehavior();      // Получить тип поведения опираясь на текущую волну
-                float time = GetTimeForBehavior(_globalStateOfBehavior.Value);  // Запросить время для текущего поведения
-                time = AdjustingTimeOfBehavior(time);                           // Скоректировать время относительно текущей волны и уровня
-                _behaviorStateTimer.Value = time;
-                Timer += HandleGlobalBehaviorTimer;
-            }
-            // 2.2. Если больше 0, то это загруженная игра, включить таймер смены поведения.
-            else if (_behaviorStateTimer.Value > 0)
-            {
-                _globalStateOfBehavior.Value = GhostBehaviorModeType.Scatter;
-                Timer += HandleGlobalBehaviorTimer;
-            }
+            _waveNumber.Value++;
+            _globalStateOfBehavior.Value = GetGlobalStateOfBehavior();      // Получить тип поведения опираясь на текущую волну
+            float time = GetTimeForBehavior(_globalStateOfBehavior.Value);  // Запросить время для текущего поведения
+            time = AdjustingTimeOfBehavior(time);                           // Скоректировать время относительно текущей волны и уровня
+            _behaviorStateTimer.Value = time;
+
             // 2.3. Если равно -1(меньше нуля), то запуск глобального поведения "преследование" (отключить таймер смены поведения).
-            else
-            {
+            if (_behaviorStateTimer.Value < 0)
                 _globalStateOfBehavior.Value = GhostBehaviorModeType.Chase;
-            }
+            else // 2.2. Если больше 0, то это загруженная игра, включить таймер смены поведения.
+                Timer += HandleGlobalBehaviorTimer;
         }
 
-        private GhostBehaviorModeType GetGlobalStateOfBehavior()
+        private GhostBehaviorModeType GetGlobalStateOfBehavior()    // Проверка на кратность (чтобы узнать разбегание сейчас или преследование)
         {
-            throw new NotImplementedException();
-            // Проверка на кратность (чтобы узнать разбегание сейчас или преследование)
+            return _waveNumber.Value % 2 == 0 ? GhostBehaviorModeType.Chase : GhostBehaviorModeType.Scatter;   // Magic
         }
 
         private float AdjustingTimeOfBehavior(float time)
         {
-            throw new NotImplementedException();
+            // Доделать алгоритм, рассчитывать время учитывая номер уровня
+            switch (_waveNumber.Value)
+            {
+                case 1:
+                    return time;
+                case 2:
+                    return time;
+                case 3:
+                    return time;
+                case 4:
+                    return time;
+                case 5:
+                    return time - 2;    // Magic    // 5 сек.
+                case 6:
+                    return time;
+                case 7:
+                    return time - 2;    // Magic    //  5 сек.
+                default:
+                    return -1;          // Magic    // Бесконечная длительность
+            }
         }
 
         private float GetTimeForBehavior(GhostBehaviorModeType behaviorMode)
@@ -159,31 +174,16 @@ namespace MyPacman
                     return 7f;                              // Magic
 
                 default:
-                    throw new Exception($"Undefined behavior type:{behaviorMode}");         // Magic
+                    throw new Exception($"For the \"{behaviorMode}\" behavior type, the duration of action is not defined");         // Magic
             }
         }
 
-        private void OnTargetReached(EntityType entityType, Vector2 position)     // ghostsStateHandler ?
+        private void OnTargetReached(EntityType entityType, Vector2 position)
         {
-            // 1. Проверка поведения
             var behaviourModeType = _ghostsStateHandler.GhostMovementServicesMap[entityType].BehaviorModeType;
-            // 1.1. Если возврат домой, то проверка расстояния до "дома".(если true то переключение в разбегание иначе ничего не делать)
-            // 1.2. Если страх, то проверка до игрока. (если true то событие поедания иначе ничего)
-            // 1.3. Если все остальное, то проверка до игрока. (если true то попытатся нанести урон игроку)
 
-            //if (behaviourModeType == GhostBehaviorModeType.Homecomming)
-            //{
-            //    if()
-            //}
-            //--------------------------------------------------------------------------------------------------
             if (behaviourModeType == GhostBehaviorModeType.Homecomming)  // Смена поведения при возврате в загон
-            {
                 _ghostsStateHandler.SetBehaviourMode(entityType, GhostBehaviorModeType.Scatter);
-            }
-            else if (_ghostsStateHandler.IsPacmanReached(entityType))
-            {
-                OnRanIntoPacman(entityType, position);
-            }
         }
 
         private void OnRanIntoPacman(EntityType entityType, Vector2 position)
@@ -210,46 +210,5 @@ namespace MyPacman
                 }
             }
         }
-
-        //// Регулировка поведения призраков
-        //private void SwitchBehaviorModes(GhostBehaviorModeType behaviorModeType)    // global ghost state handler
-        //{
-        //    _ghostsStateHandler.GlobalStateOfGhosts = behaviorModeType;
-        //    _ghostsStateHandler.SetBehaviourModeEveryone(behaviorModeType);
-
-        //    if (behaviorModeType == GhostBehaviorModeType.Chase || behaviorModeType == GhostBehaviorModeType.Scatter)
-        //    {
-        //        _timeLeftUntilEndOfFearMode.Value = _ghostsStateHandler.GetTimerForBehaviorType(behaviorModeType);
-        //    }
-        //    else
-        //    {
-        //        _timeLeftUntilEndOfFearMode.Value = 3f;
-        //    }
-
-        //    //_timer = 0f;
-        //    Timer += CheckTimerTest;
-        //}
-
-        //// For test
-        //private void CheckTimerTest()
-        //{
-        //    _timeLeftUntilEndOfFearMode.Value -= _timeService.DeltaTime;
-
-        //    if (_timeLeftUntilEndOfFearMode.Value <= 0)
-        //    {
-        //        _timeLeftUntilEndOfFearMode.Value = 0;
-
-        //        if (_ghostsStateHandler.GlobalStateOfGhosts == GhostBehaviorModeType.Scatter)
-        //        {
-        //            _ghostsStateHandler.SetBehaviourModeEveryone(GhostBehaviorModeType.Frightened);
-        //        }
-        //        else if (_ghostsStateHandler.GlobalStateOfGhosts == GhostBehaviorModeType.Frightened)
-        //        {
-        //            _ghostsStateHandler.SetBehaviourModeEveryone(GhostBehaviorModeType.Homecomming);
-
-        //            Timer -= CheckTimerTest;
-        //        }
-        //    }
-        //}
     }
 }

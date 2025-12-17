@@ -15,6 +15,9 @@ namespace MyPacman
         private readonly IGameStateService _gameStateService;       //For save
         private float _timer;                                       //For save
 
+        // Объеденить с модификатором скорости у призраков ?
+        private float _speedModifier;   // После загрузки, модификатор скорости будет обнулятся, даже если пакман еще не покинул ячейку где съел гранулу
+
         private Vector2 _mapSize;
         private Vector2Int _lastDirection;
         private Vector2 _lastPosition;
@@ -94,6 +97,11 @@ namespace MyPacman
             StopMove();
         }
 
+        public void ChangeSpeedModifier(float speedModifier)
+        {
+            _speedModifier = speedModifier;
+        }
+
         private void StartMove()
         {
             _entity.IsMoving.OnNext(true);
@@ -154,7 +162,8 @@ namespace MyPacman
         private float MoveOnAxis(float currentPositionOnAxis, float direction)
         {
             direction = Mathf.Round(direction);
-            float nextPosOnAxis = currentPositionOnAxis + (GameConstants.PlayerSpeed * /*Time.fixedDeltaTime*/ _timeService.DeltaTime * direction);
+            float speed = GameConstants.PlayerSpeed - (GameConstants.PlayerSpeed * _speedModifier);
+            float nextPosOnAxis = currentPositionOnAxis + (speed * _timeService.DeltaTime * direction);
 
             return nextPosOnAxis;
         }

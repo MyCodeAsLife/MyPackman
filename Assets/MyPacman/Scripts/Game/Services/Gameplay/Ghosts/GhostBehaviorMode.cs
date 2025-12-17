@@ -150,7 +150,7 @@ namespace MyPacman
                     _self.SpeedModifier.Value != GameConstants.GhostHomecommingSpeedModifier)
                 {
                     if (_self.SpeedModifier.Value == GameConstants.GhostTunelSpeedModifier)
-                        _self.SpeedModifier.Value = GameConstants.GhostNormalSpeed​​Modifier;
+                        _self.SpeedModifier.Value = GameConstants.NormalSpeed​​Modifier;
                     else
                         _self.SpeedModifier.Value = GameConstants.GhostTunelSpeedModifier;
                 }

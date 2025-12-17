@@ -1,6 +1,4 @@
-﻿using UnityEngine;
-
-namespace MyPacman
+﻿namespace MyPacman
 {
     public static class GameConstants   // Разделить на GameConstants и AppConstants?
     {
@@ -50,12 +48,13 @@ namespace MyPacman
         // Gameplay settings
         public const float FruitLifespan = 9f;                      // Normal 9
         public const float PercentageForFruitFlashing = 50f;
+        public const float PowerPelletSpeedModifier = 0.11f;        // Normal 0.11
+        public const float NormalSpeed​​Modifier = 1f;
         public const float PlayerSpeed = 6f;
         public const float PlayerInvincibleTimer = 2.5f;
         public const float ScatterTimer = 6f;                       // Normal 6
         public const float ChaseTimer = 6f;                         // Normal 6
         public const float GhostSpeed = 6f;
-        public const float GhostNormalSpeed​​Modifier = 1f;
         public const float GhostTunelSpeed​​Modifier = 0.4f;
         public const float GhostHomecommingSpeedModifier = 3f;
         public const int StartLifePointsAmount = 3;

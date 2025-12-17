@@ -10,27 +10,30 @@ namespace MyPacman
     public class PickableEntityHandler
     {
         private readonly GameState _gameState;
-        private readonly TilemapHandler _tilemapHandler;
         private readonly TimeService _timeService;
+        private readonly TilemapHandler _tilemapHandler;
         private readonly IObservableCollection<Entity> _entities;
+        private readonly PacmanMovementService _pacmanMovementService;
         private readonly ReadOnlyReactiveProperty<Vector2> _fruitSpawnPosition;
         private readonly Dictionary<Vector3Int, Entity> _edibleEntityMap = new();
 
         public event Action<int, Vector2> EntityEaten;
+        //public event Action PowerPelletEaten;
 
         public PickableEntityHandler(
             GameState gameState,
             ILevelConfig levelConfig,
             Tilemap obstaclesTileMap,
-            PacmanMovementService player,
+            PacmanMovementService pacmanMovementService,
             TimeService timeService)
         {
             _gameState = gameState;
+            _timeService = timeService;
+            _pacmanMovementService = pacmanMovementService;
             _entities = gameState.Map.CurrentValue.Entities;
             _fruitSpawnPosition = _gameState.Map.Value.FruitSpawnPos;
             _tilemapHandler = new TilemapHandler(obstaclesTileMap, levelConfig);
-            _timeService = timeService;
-            player.PlayerTilePosition.Subscribe(PlayerTileChanged);
+            _pacmanMovementService.PlayerTilePosition.Subscribe(PlayerTileChanged);
             gameState.Map.CurrentValue.NumberOfCollectedPellets.Subscribe(OnCollectedPellet);
 
             InitEdibleEntityMap();
@@ -51,10 +54,23 @@ namespace MyPacman
                 var edibleEntity = entity as Edible;
                 _gameState.Map.CurrentValue.RemoveEntity(edibleEntity);
                 EntityEaten?.Invoke((int)edibleEntity.Points, edibleEntity.Position.Value);
-
-                if (edibleEntity.Type <= EntityType.Cherry)
-                    _gameState.PickedFruits.Add(edibleEntity.Type);
+                CheckTypeOfEntityEaten(edibleEntity.Type);
             }
+            else
+            {
+                _pacmanMovementService.ChangeSpeedModifier(0f);
+            }
+        }
+
+        private void CheckTypeOfEntityEaten(EntityType entityType)     // Остановился тут.     При съедании power-pellet включть режим страха
+        {
+            if (entityType == EntityType.LargePellet)
+                PowerPelletEaten?.Invoke();
+            else if (entityType <= EntityType.Cherry)
+                _gameState.PickedFruits.Add(entityType);
+            else
+                // Съедена обычная гранула, снизить скорость до выхода с данной ячейки
+                _pacmanMovementService.ChangeSpeedModifier(GameConstants.PowerPelletSpeedModifier);
         }
 
         private void InitEdibleEntityMap()

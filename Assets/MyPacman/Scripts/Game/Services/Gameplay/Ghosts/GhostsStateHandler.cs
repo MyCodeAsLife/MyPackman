@@ -43,7 +43,7 @@ namespace MyPacman
             _ghostMovementServicesHandler = new GhostMovementServicesHandler(
                 timeService,
                 entities,
-                //pacman.Position,
+                pacman.Position,
                 levelConfig);
 
             InitGhostsMap(entities);

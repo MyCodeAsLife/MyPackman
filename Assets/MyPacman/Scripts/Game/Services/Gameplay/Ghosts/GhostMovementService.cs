@@ -8,7 +8,7 @@ namespace MyPacman
     public class GhostMovementService
     {
         private readonly Ghost _entity;
-        //private readonly ReadOnlyReactiveProperty<Vector2> _pacmanPosition;
+        private readonly ReadOnlyReactiveProperty<Vector2> _pacmanPosition;
         private readonly TimeService _timeService;
         private readonly Vector2 _mapSize;
 
@@ -18,18 +18,19 @@ namespace MyPacman
 
         private Action MoveAccordingSelectedAlgorithm;     //Движение со стартовой проверкой и без
 
-        public event Action<EntityType, Vector2> TargetReached;
+        public event Action<EntityType, Vector2> TargetReached;         // Нужно ли передовать позицию?
+        public event Action<EntityType, Vector2> CollidedWithPacman;    // Нужно ли передовать позицию?
 
-        private event Action Moved;
+        private event Action Iterate;
 
         public GhostMovementService(
             Ghost entity,
-            //ReadOnlyReactiveProperty<Vector2> pacmanPosition,       // Не используется
+            ReadOnlyReactiveProperty<Vector2> pacmanPosition,
             TimeService timeService,
             ILevelConfig levelConfig)
         {
             _entity = entity;
-            //_pacmanPosition = pacmanPosition;
+            _pacmanPosition = pacmanPosition;
             _timeService = timeService;
             _mapSize = new Vector2(levelConfig.Map.GetLength(1), -levelConfig.Map.GetLength(0));    //Передать сюда только вектор с размером карты
 
@@ -48,7 +49,7 @@ namespace MyPacman
         public void BindBehaviorMode(GhostBehaviorMode behaviorMode)
         {
             if (_behaviorMode == null)
-                Moved += Move;
+                Iterate += ProcessIteration;
 
             _behaviorMode = behaviorMode;
             _entity.CurrentBehaviorMode.Value = behaviorMode.Type;
@@ -61,7 +62,7 @@ namespace MyPacman
             if (behaviorType == GhostBehaviorModeType.Scatter
                 && _entity.SpeedModifier.CurrentValue == GameConstants.GhostHomecommingSpeedModifier)
             {
-                _entity.SpeedModifier.Value = GameConstants.GhostNormalSpeedModifier;
+                _entity.SpeedModifier.Value = GameConstants.NormalSpeed​​Modifier;
             }
             else if (behaviorType == GhostBehaviorModeType.Homecomming)
             {
@@ -71,15 +72,16 @@ namespace MyPacman
 
         private void Tick()
         {
-            Moved?.Invoke();
-            CheckPosition(_targetPosition);
+            Iterate?.Invoke();
         }
 
-        private void Move()
+        private void ProcessIteration()
         {
-            Moved -= Move;
+            Iterate -= ProcessIteration;
             _entity.Direction.Value = _behaviorMode.CalculateDirectionOfMovement();
             MoveAccordingSelectedAlgorithm();
+            CheckForCollision(_pacmanPosition.CurrentValue, CollidedWithPacman);
+            CheckForCollision(_targetPosition, TargetReached);
         }
 
         private void MoveWithoutCorrection()
@@ -148,22 +150,10 @@ namespace MyPacman
             return (int)startPos + offset;
         }
 
-        private void CheckPosition(Vector2 target)  // Расширить до постоянной проверки столкновения с игроком а не только с целью
+        private void CheckForCollision(Vector2 target, Action<EntityType, Vector2> collisionEvent)
         {
-            //// New
-            //if (BehaviorModeType == GhostBehaviorModeType.Scatter)
-            //{
-            //    // проверять столкнулся ли с игроком
-            //    if (_pacmanPosition.CurrentValue.SqrDistance(_entity.Position.CurrentValue) < 1.2f)// Magic (расстояние между призраком и целевой точкой)
-            //    {
-            //        TargetReached?.Invoke(_entity.Type, _entity.Position.CurrentValue);
-            //        return;
-            //    }
-            //}
-
-            // Old
-            if (target.SqrDistance(_entity.Position.CurrentValue) < 1.2f)// Magic (расстояние между призраком и целевой точкой)
-                TargetReached?.Invoke(_entity.Type, _entity.Position.CurrentValue);
+            if (target.SqrDistance(_entity.Position.CurrentValue) < 1.2f)  // Magic (расстояние между призраком и целевой точкой)
+                collisionEvent?.Invoke(_entity.Type, _entity.Position.CurrentValue);
         }
 
         private IEnumerator Moving(Vector2 nextPosition)
@@ -190,7 +180,19 @@ namespace MyPacman
             }
 
             _moving = null;
-            Moved += Move;
+            Iterate += ProcessIteration;
         }
+
+        //private void CheckGoalHasBeenCompleted()
+        //{
+        //    if (_targetPosition.SqrDistance(_entity.Position.CurrentValue) < 1.2f)  // Magic (расстояние между призраком и целевой точкой)
+        //        TargetReached?.Invoke(_entity.Type, _entity.Position.CurrentValue);
+        //}
+
+        //private void CheckForCollisionWithPacman()
+        //{
+        //    if (_pacmanPosition.CurrentValue.SqrDistance(_entity.Position.CurrentValue) < 1.2f)// Magic (расстояние между призраком и целевой точкой)
+        //        CollidedWithPacman?.Invoke(_entity.Type, _entity.Position.CurrentValue);
+        //}
     }
 }
